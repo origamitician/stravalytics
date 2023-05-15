@@ -1,0 +1,19 @@
+1) To get response code: https://www.strava.com/oauth/authorize?client_id=107318&redirect_uri=http://localhost&response_type=code&scope=activity:read_all
+
+2) https://www.strava.com/oauth/token?client_id=107318&client_secret=1bac185421708876ddd639fcef0a319d5896d3b1&code=d4ab629b58baf1ff4033a2c8f13d4981ac500727&grant_type=authorization_code
+
+3) https://www.strava.com/oauth/token?client_id=107318&client_secret=1bac185421708876ddd639fcef0a319d5896d3b1&refresh_token=48f138733218bdd7c10c586c704b8f104a5221f2&grant_type=refresh_token
+
+CURRENT ACCESS TOKEN: 22f6309b156ee15eb392524bcc8571fb03cde0f6 (TEMPORARY)
+CURRENT REFRESH TOKEN: 48f138733218bdd7c10c586c704b8f104a5221f2 (PERMANENT)
+
+4) TO GET NEW REFRESH TOKEN: 
+https://www.strava.com/oauth/token?client_id=107318&client_secret=1bac185421708876ddd639fcef0a319d5896d3b1&refresh_token=48f138733218bdd7c10c586c704b8f104a5221f2&grant_type=refresh_token
+
+-------------
+
+POST => https://www.strava.com/oauth/token?client_id=107318&client_secret=1bac185421708876ddd639fcef0a319d5896d3b1&refresh_token=48f138733218bdd7c10c586c704b8f104a5221f2&grant_type=refresh_token
+
+GET => https://www.strava.com/api/v3/athlete/activities?access_token=11cf6d014ed82fb7c87fa5aa8ba42059075875e7
+
+

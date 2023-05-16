@@ -4,10 +4,11 @@ body{
 
 .graph{
     /*border: 1px solid black;*/
-    width: 90%;
-    margin-left:5%;
-    margin-right: 5%;
+    width: 70%;
+    margin-left:15%;
+    margin-right: 0%;
     display: flex;
+    margin-top: 3%;
 }
 
 
@@ -21,32 +22,62 @@ body{
     -webkit-user-select: none;
 }
 
+.verticalHolder{
+    position: relative;
+}
+
 .verticalHolderStat{
     border: 1px solid white;
     color: white;
-    font-size: 125%;
+    font-size: 110%;
     text-align: center;
     margin-bottom: 0;
     -webkit-user-select: none;
+    position: absolute;
+    box-sizing: border-box
+    
 }
 
 .graphHeader{
-    font-size: 300%;
+    font-size: 250%;
     text-align: center;
-    margin-bottom: 5%;
+    margin-bottom: 0%;
 }
 
 .info{
-    font-size: 150%;
+    font-size: 110%;
     margin-bottom: 10%;
     text-align: center;
+    width: 60%;
+    margin-left: 20%;
 }
-.verticalHolder{
-    transition: 0.5s;
-}
+
 
 .verticalHolder:hover{
     filter: brightness(1.5);
-    transition: 0.5s;
+   
     cursor: pointer;
+    border: 1px dotted black;
+}
+
+.verticalHolderStatTop{
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 0;
+    font-size: 110%;
+}
+
+.overview{
+    font-size: 110%;
+    text-align: center;
+    width: 70%;
+    margin-left: 15%;
+}
+
+@media only screen and (orientation: portrait){
+    .graph{
+        width: 100%;
+        margin-left: 0;
+    }
 }

@@ -33,19 +33,9 @@ function getStravaData(page) {
 
 //variables for graph
 var dist_distribution = []
-var dist_distribution_misc = [];
 var pace_distribution = [];
-var pace_distribution_misc = [];
 var elev_distribution = [];
-var elev_distribution_misc = [];
 var elapsed_distribution = [];
-var elapsed_distribution_misc = [];
-
-/*for(var i = 0; i < document.getElementsByClassName("graph").length; i++){
-    document.getElementsByClassName("graph")[i].setAttribute('height', 0.5*window.innerHeight+ "px");
-    document.getElementsByClassName("graph")[i].setAttribute('width', 0.7*window.innerWidth + "px");
-
-}*/
 
 //given a 1280 x 600, the dimensions of individual canvas is ~900 x 300.
 
@@ -66,7 +56,6 @@ function convert(seconds){
 }
 
 
-
 function revertToDefaultStatistics(array){
     for(var i = 0; i < array.length; i++){
         array[i].count = 0
@@ -83,13 +72,35 @@ function revertToDefaultStatistics(array){
     }
 }
 
+
+
 function updateDefaultStatistics(array, index, inputObject){
+    //update these regardless of index
+
+
     //array and index are self-explanatory. inputObject is the object being added from AllActivities.
+    //update at specific index.
     array[index].count++;
     array[index].total_elevation_gain+=inputObject.elevation *3.28;
     array[index].total_miles+=inputObject.distance / 1609;
     array[index].total_time+=inputObject.time;
     array[index].total_elapsed_time+=inputObject.elapsedTime;
+
+    if(inputObject.elevation *3.28 > array[index].most_elevation_gain){
+        array[index].most_elevation_gain = inputObject.elevation *3.28;
+    }
+
+    if (inputObject.elevation *3.28 < array[index].least_elevation_gain){
+        array[index].least_elevation_gain = inputObject.elevation *3.28;
+    }
+
+    if(inputObject.distance / 1609 > array[index].most_miles){
+        array[index].most_miles = inputObject.distance / 1609
+    }
+
+    if(inputObject.distance / 1609 < array[index].least_miles){
+        array[index].least_miles = inputObject.distance / 1609
+    }
 }
 
 /*function showMoreStats(arr, index, type){
@@ -117,13 +128,37 @@ function disableStats(){
 }
 
 function showStatsOnHTML(array, location, id){
-    var convertedMileTime = (array[id].total_time / array[id].total_miles).toString();
-    document.getElementById(location + "_info").innerHTML = "Average pace: " + convert(Math.trunc(array[id].total_time / array[id].total_miles)) + "." + convertedMileTime.split(".")[1].substring(0, 2) + "/mi" +
-    " | Average distance: " + (array[id].total_miles / array[id].count).toFixed(3) + " mi" +
-    " | Average elev gain: " +  (array[id].total_elevation_gain / array[id].count).toFixed(2) + " ft" 
+    var convertedMileTime = convert(array[id].total_time / array[id].total_miles).split(".")
+    var convertedKmTime = convert((array[id].total_time / array[id].total_miles) / 1.609).split('.')
+    //console.log(convertedMileTime)
+    //console.log(convertedKmTime);
+    try{
+        document.getElementById(location + "_info").innerHTML = "Average pace: " + convertedMileTime[0] + "." + convertedMileTime[1].substring(0, 2) + "/mi (" + convertedKmTime[0] + "." + convertedKmTime[1].substring(0, 2) + "/km) <br>" +
+
+        "Average distance: " + (array[id].total_miles / array[id].count).toFixed(3) + " mi (closest " + array[id].least_miles.toFixed(3) + " mi; furthest " + array[id].most_miles.toFixed(3) + " mi) <br>" + 
+
+        "Average elev gain: " +  (array[id].total_elevation_gain / array[id].count).toFixed(2) + " ft (highest " + array[id].most_elevation_gain.toFixed(2) + " ft) <br>" + 
+
+        "Average % moving: " + ((array[id].total_time / array[id].total_elapsed_time)*100).toFixed(2) + " %"
+    }catch{
+        //do nothing here since its buggy
+    }
+    
 }
 
+var totalMileage =0
+var totalElevGain =0
+var totalPace=0
+var totalMovingTime=0
+var totalElapsedTime=0
+
 function renderGraph(){
+
+    totalMileage=0;
+    totalElevGain=0;
+    totalPace=0;
+    totalMovingTime=0;
+    totalElapsedTime=0;
      //resetting pace distributions
     for(var i = 0; i < 14; i++){
         dist_distribution[i] = {}
@@ -140,6 +175,8 @@ function renderGraph(){
     for(var i = 0; i < 19; i++){
         elapsed_distribution[i] = {}
     }
+
+   
 
     revertToDefaultStatistics(dist_distribution);
     revertToDefaultStatistics(pace_distribution);
@@ -191,14 +228,24 @@ function renderGraph(){
 
     renderTypeGraph(dist_distribution, "dist_distribution", "purple");
     renderTypeGraph(pace_distribution, "pace_distribution", "darkgreen");
-    renderTypeGraph(elev_distribution, "elev_distribution", "orange");
+    renderTypeGraph(elev_distribution, "elev_distribution", "#cc0000");
     renderTypeGraph(elapsed_distribution, "time_distribution", "darkblue");
+
+
+    
+    /*convert(Math.trunc(totalPace / allActivities.length)) + "." + (totalPace / allActivities.length).toString().split(".")[1].substring(0, 2) + "/mi"*/ 
 
 }
 //render
 
 //helper method
 function renderTypeGraph(array, type, color){
+    totalMileage=0;
+    totalElevGain=0;
+    totalPace=0;
+    totalMovingTime=0;
+    totalElapsedTime=0;
+
     //array is the array that is getting iterated over
     //type is the destination where the graph is getting added
     //color is the bar color
@@ -222,6 +269,7 @@ function renderTypeGraph(array, type, color){
             var verticalHolder = document.createElement("div");
             verticalHolder.className = "verticalHolder";
             verticalHolder.id = i + "-" + type;
+            verticalHolder.style.height = window.innerHeight / 4 + "px";
             verticalHolder.addEventListener("mouseover", showMoreStats);
             verticalHolder.addEventListener("mouseout", disableStats);
             //verticalHolder.style.height = window.innerHeight / 3 + "px";
@@ -243,14 +291,45 @@ function renderTypeGraph(array, type, color){
             //draw bars
             var verticalHolderStat = document.createElement("p");
             verticalHolderStat.className= "verticalHolderStat";
-            verticalHolderStat.innerHTML = array[i].count;
+            if(array[i].count / greatest > 0.2){
+                verticalHolderStat.innerHTML = array[i].count;
+            }else{
+
+                //creating overflow text on the top of the
+                var verticalHolderStatTop = document.createElement("p");
+                verticalHolderStatTop.className = "verticalHolderStatTop";
+                verticalHolderStatTop.innerHTML = array[i].count;
+                verticalHolderStatTop.style.bottom = ((array[i].count / greatest) * (window.innerHeight / 4)) + "px"
+                document.getElementById(type).getElementsByClassName("verticalHolder")[i].appendChild(verticalHolderStatTop);
+            }
+            
             verticalHolderStat.style.backgroundColor = color;
-            verticalHolderStat.style.height = ((array[i].count / greatest) * (window.innerHeight / 3)) + "px";
-            verticalHolderStat.style.marginTop = (((greatest - array[i].count) / greatest) * (window.innerHeight / 3)) + "px";
+            verticalHolderStat.style.height = ((array[i].count / greatest) * (window.innerHeight / 4)) + "px";
+            verticalHolderStat.style.marginTop = (((greatest - array[i].count) / greatest) * (window.innerHeight / 4)) + "px";
+            verticalHolderStat.style.width = "100%";
             document.getElementById(type).getElementsByClassName("verticalHolder")[i].appendChild(verticalHolderStat);
+
+            console.log(array);
+            totalMileage += array[i].total_miles;
+            totalElevGain +=array[i].total_elevation_gain;
+            totalMovingTime +=array[i].total_time;
+            totalElapsedTime +=array[i].total_elapsed_time;
+            
+            
+
+            document.getElementById(type + "_overview").style.color = color;
         }
+        let calculatedMile = convert(totalMovingTime / totalMileage).split(".");
+        let calculatedKm = convert((totalMovingTime / totalMileage) / 1.609).split(".")
+        document.getElementById("pace_distribution_overview").innerHTML = "Average pace: " + calculatedMile[0] + "." + calculatedMile[1].substring(0, 2) +"/mi (" + calculatedKm[0] + "." + calculatedKm[1].substring(0, 2) + "/km)"
+
+        document.getElementById("elev_distribution_overview").innerHTML = "Total elevation: " + (totalElevGain.toFixed(2)) + " ft (" + (totalElevGain / 3.28).toFixed(2) + " m) <br> Avg per run: " + ((totalElevGain/allActivities.length).toFixed(2)) + " ft (" + ((totalElevGain/allActivities.length) / 3.28).toFixed(2) + "m)"
+
+        document.getElementById("dist_distribution_overview").innerHTML = "Total mileage: " + (totalMileage.toFixed(2)) + " mi (" + (totalMileage*1.609).toFixed(2) + " km) <br> Avg per run: " + ((totalMileage/allActivities.length).toFixed(3)) + " mi (" + ((totalMileage/allActivities.length)*1.609).toFixed(3) + " km)"
+
+        let minutes = Math.floor(totalMovingTime % 3600)
+        document.getElementById("time_distribution_overview").innerHTML = "Total moving time: " + Math.floor(totalMovingTime / 3600) + " hours, " + Math.floor(minutes / 60) + " minutes, " + (minutes % 60) + " seconds <br> Avg. % moving overall: " + (totalMovingTime / totalElapsedTime*100).toFixed(3) + "%"
     }
-    
 }
 
 

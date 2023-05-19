@@ -1,5 +1,6 @@
 body{
     font-family: 'Inter', sans-serif;
+    
 }
 
 .graph{
@@ -9,6 +10,10 @@ body{
     margin-right: 0%;
     display: flex;
     margin-top: 3%;
+}
+
+.infoWrapper{
+    display: none;
 }
 
 
@@ -44,20 +49,32 @@ body{
     margin-bottom: 0%;
 }
 
+.infoWrapper{
+    width: 70%;
+    margin-left: 15%;
+}
+
+.infoWrapperLeft{
+    width: 100%;
+}
+
+
+.infoWrapperRight{
+    width: 100%;
+}
+
 .info{
     font-size: 110%;
     margin-bottom: 10%;
-    text-align: center;
-    width: 60%;
-    margin-left: 20%;
+    
 }
-
 
 .verticalHolder:hover{
     filter: brightness(1.5);
    
     cursor: pointer;
-    border: 1px dotted black;
+    border: 2px dotted black;
+    background-color: gray;
 }
 
 .verticalHolderStatTop{
@@ -75,9 +92,42 @@ body{
     margin-left: 15%;
 }
 
+.counterDisplay{
+    font-size: 150%;
+    padding-left: 2%;
+}
+.indivGrid{
+    display: inline-block;
+    text-align: center;
+}
+
+.outerDiv{
+    padding: 2%;
+    border: 1px solid gray;
+}
+
 @media only screen and (orientation: portrait){
+    body{
+        overflow-x: hidden
+    }
     .graph{
         width: 100%;
         margin-left: 0;
+    }
+
+    .graphHeader{
+        font-size: 200%;
+    }
+
+    .overview{
+        width: 100%;
+        margin-left: 0;
+        font-size: 100%;
+    }
+
+    .info{
+        width: 100%;
+        margin-left: 0;
+        font-size: 95%;
     }
 }

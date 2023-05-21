@@ -5,8 +5,8 @@ body{
 
 .graph{
     /*border: 1px solid black;*/
-    width: 70%;
-    margin-left:15%;
+    width: 80%;
+    margin-left:10%;
     margin-right: 0%;
     display: flex;
     margin-top: 3%;
@@ -47,24 +47,30 @@ body{
     font-size: 250%;
     text-align: center;
     margin-bottom: 0%;
+    margin-top: 3%;
 }
 
 .infoWrapper{
-    width: 70%;
-    margin-left: 15%;
+    width: 80%;
+    margin-left: 10%;
+    margin-top: 3%;
 }
 
 .infoWrapperLeft{
-    width: 100%;
+    width: 35%;
 }
 
 
 .infoWrapperRight{
-    width: 100%;
+    margin-left: 5%;
+    width: 60%;
+    overflow-y:scroll;
+    border: 3px solid black;
+    overflow-x: hidden;
 }
 
 .info{
-    font-size: 110%;
+    font-size: 115%;
     margin-bottom: 10%;
     
 }
@@ -94,15 +100,30 @@ body{
 
 .counterDisplay{
     font-size: 150%;
-    padding-left: 2%;
+    padding-left: 5%;
+    margin-top: 0;
 }
 .indivGrid{
     display: inline-block;
     text-align: center;
+    font-size: 90%;
+    /*border: 2px solid pink;*/
+    box-sizing: border-box;
+}
+
+.headerDiv{
+    padding: 1%;
+    width: 98%;
+    border: 1px solid gray;
+    border-bottom: 2px solid black;
+    position:  sticky;
+    top: 0;
+    background-color: white;
+    font-weight: bold;
 }
 
 .outerDiv{
-    padding: 2%;
+    padding: 1%;
     border: 1px solid gray;
 }
 
@@ -116,7 +137,8 @@ body{
     }
 
     .graphHeader{
-        font-size: 200%;
+        font-size: 175%;
+        margin-top: 10%;
     }
 
     .overview{
@@ -128,6 +150,35 @@ body{
     .info{
         width: 100%;
         margin-left: 0;
-        font-size: 95%;
+        font-size: 90%;
+        margin-bottom: 5%;
+    }
+
+    .infoWrapper{
+        flex-direction: column;
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .infoWrapperLeft{
+        margin-left: 2.5%;
+        width: 95%;
+        margin-bottom: 1%;
+    }
+
+    .counterDisplay{
+        padding-left: 2.5%;
+        font-size: 125%;
+    }
+
+    .infoWrapperRight{
+        margin-left: 0;
+        width: 100%;
+        font-size:70%;
+ 
+    }
+
+    .counterDisplay{
+        font-size: 125%;
     }
 }

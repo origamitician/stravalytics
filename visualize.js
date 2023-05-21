@@ -80,10 +80,6 @@ function revertToDefaultStatistics(array){
 
 function updateDefaultStatistics(array, index, inputObject){
     //update these regardless of index
-
-
-    //array and index are self-explanatory. inputObject is the object being added from AllActivities.
-    //update at specific index.
     array[index].count++;
     array[index].total_elevation_gain+=inputObject.elevation *3.28;
     array[index].total_miles+=inputObject.distance / 1609;
@@ -124,14 +120,15 @@ function showMoreStats(){
     
     this.style.border = "2px dotted black";
     document.getElementById(processed[1] + "_wrapper").style.display = "block";
+    document.getElementById(processed[1] + "_wrapper").style.display = "flex";
     if(processed[1] == "dist_distribution"){
-        showStatsOnHTML(dist_distribution, processed[1], parseInt(processed[0]))
+        showStatsOnHTML(dist_distribution, processed[1], parseInt(processed[0]), processed[2])
     }else if(processed[1] == "pace_distribution"){
-        showStatsOnHTML(pace_distribution, processed[1], parseInt(processed[0]))
+        showStatsOnHTML(pace_distribution, processed[1], parseInt(processed[0]), processed[2])
     }else if(processed[1] == "elev_distribution"){
-        showStatsOnHTML(elev_distribution, processed[1], parseInt(processed[0]))
+        showStatsOnHTML(elev_distribution, processed[1], parseInt(processed[0]), processed[2])
     }else if(processed[1] == "time_distribution"){
-        showStatsOnHTML(elapsed_distribution, processed[1], parseInt(processed[0]))
+        showStatsOnHTML(elapsed_distribution, processed[1], parseInt(processed[0]), processed[2])
     }
     let span1 = document.getElementById(processed[1] + "_counter").getElementsByTagName("span")[0]
     let span2 = document.getElementById(processed[1] + "_counter").getElementsByTagName("span")[1]
@@ -151,7 +148,7 @@ function disableStats(){
     document.getElementById(processed[1] + "_info").innerHTML = "Hover over graph to show more details!"
 }
 
-function showStatsOnHTML(array, location, id){
+function showStatsOnHTML(array, location, id, color){
     var convertedMileTime = convert(array[id].total_time / array[id].total_miles).split(".")
     var convertedKmTime = convert((array[id].total_time / array[id].total_miles) / 1.609).split('.')
     //console.log(convertedMileTime)
@@ -159,23 +156,43 @@ function showStatsOnHTML(array, location, id){
     try{
         document.getElementById(location + "_info").innerHTML = "<b> Average pace: </b>" + convertedMileTime[0] + "." + convertedMileTime[1].substring(0, 2) + "/mi (" + convertedKmTime[0] + "." + convertedKmTime[1].substring(0, 2) + "/km) <br><br>" +
 
-        "<b> Average distance: </b>" + (array[id].total_miles / array[id].count).toFixed(3) + " mi (shortest " + array[id].least_miles.toFixed(3) + " mi; longest " + array[id].most_miles.toFixed(3) + " mi) <br><br>" + 
+        "<b> Average distance: </b>" + (array[id].total_miles / array[id].count).toFixed(3) + " mi <br> (shortest " + array[id].least_miles.toFixed(3) + " mi; longest " + array[id].most_miles.toFixed(3) + " mi) <br><br>" + 
 
-        "<b> Average elev gain: </b>" +  (array[id].total_elevation_gain / array[id].count).toFixed(2) + " ft (highest " + array[id].most_elevation_gain.toFixed(2) + " ft) <br><br>" + 
+        "<b> Average elev gain: </b>" +  (array[id].total_elevation_gain / array[id].count).toFixed(2) + " ft <br>(highest " + array[id].most_elevation_gain.toFixed(2) + " ft) <br><br>" + 
 
-        "<b> Average % moving: </b>" + ((array[id].total_time / array[id].total_elapsed_time)*100).toFixed(2) + " %"
-
-
+        "<b> Average % uptime: </b>" + ((array[id].total_time / array[id].total_elapsed_time)*100).toFixed(2) + " %"
     }catch{
         //do nothing here since its buggy
     }
 
-    console.log(location)
+    var chartRows = document.getElementById(location + "_wrapper").getElementsByClassName('outerDiv');
+
+    while(chartRows[0]) {
+        chartRows[0].parentNode.removeChild(chartRows[0]);
+    }
+
+    if((document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0])){
+        document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].remove()
+    }
+
+    console.log(array[id])
     //render the chart
-    for (var i = 0; i < array[id].list_of_activities.length; i++){
+    for (var i = -1; i < array[id].list_of_activities.length; i++){
         var outerDiv = document.createElement("div");
-        outerDiv.className = "outerDiv";
-        document.getElementById(location + "_wrapper").getElementsByClassName("infoWrapperRight")[0].appendChild(outerDiv);
+        
+
+        if(i >= 0){
+            outerDiv.className = "outerDiv";
+            document.getElementById(location + "_wrapper").getElementsByClassName("infoWrapperRight")[0].appendChild(outerDiv);
+        }else {
+            
+
+                outerDiv.className = "headerDiv"
+                document.getElementById(location + "_wrapper").getElementsByClassName("infoWrapperRight")[0].appendChild(outerDiv);
+            
+        }
+
+        document.getElementById(location + "_wrapper").getElementsByClassName("infoWrapperRight")[0].style.height = window.innerHeight/2 + "px"
 
         let span;
         span = document.createElement("span");
@@ -183,53 +200,103 @@ function showStatsOnHTML(array, location, id){
         //span.id = "date";
         span.style.width = "15%"
         span.style.textAlign = "left";
-        span.innerHTML = array[id].list_of_activities[i].startDate.split("T")[0]
-        document.getElementsByClassName("outerDiv")[i].appendChild(span)
+        if(i == -1){
+            span.innerHTML = "Date"
+            document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
+        }else{
+            let date = array[id].list_of_activities[i].startDate.split("T")[0].split("-")
+            span.innerHTML = date[1] + "/" + date[2] + "/" +date[0].substring(2, 4)
+            document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
+        }
+        
 
         span = document.createElement("a");
         span.className = "indivGrid";
-        //span.id = "title";
-        if(array[id].list_of_activities[i].name.length > 25){
-            var innerLink = document.createTextNode(array[id].list_of_activities[i].name.substring(0, 25) + "...");
-        }else{
-            var innerLink = document.createTextNode(array[id].list_of_activities[i].name);
-        }
-        span.appendChild(innerLink)
         span.style.width = "25%"
         span.style.textAlign = "left";
-        span.setAttribute("href", "https://strava.com/activities/" + array[id].list_of_activities[i].id);
-        span.setAttribute("target", "_blank");
-        //span.innerHTML = array[id].list_of_activities[i].startDate.split("T")[0]
-        document.getElementsByClassName("outerDiv")[i].appendChild(span)
+        //span.id = "title";
+        if(i == -1){
+            span.innerHTML = "Title"
+            document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
+        }else{
+            if(array[id].list_of_activities[i].name.length > 30){
+                var innerLink = document.createTextNode(array[id].list_of_activities[i].name.substring(0, 30) + "...");
+            }else{
+                var innerLink = document.createTextNode(array[id].list_of_activities[i].name);
+            }
+            span.appendChild(innerLink)
+            span.style.color = "darkblue"
+            span.setAttribute("href", "https://strava.com/activities/" + array[id].list_of_activities[i].id);
+            span.setAttribute("target", "_blank");
+            document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
+        }
 
         span = document.createElement("span");
         span.className = "indivGrid";
         span.style.width = "15%"
-        //span.id = "miles";
-        span.innerHTML = (array[id].list_of_activities[i].distance / 1609).toFixed(3) + "mi"
-        document.getElementsByClassName("outerDiv")[i].appendChild(span)
+        if(location == "dist_distribution"){
+            span.style.fontWeight = "bold";
+            span.style.color = color;
+        }
+        if(i == -1){
+            span.innerHTML = "Distance"
+            document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
+        }else{
+            span.innerHTML = (array[id].list_of_activities[i].distance / 1609).toFixed(3) + "mi"
+            document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
+        }
 
         span = document.createElement("span");
         span.className = "indivGrid";
         span.style.width = "15%"
-        //span.id = "pace";
-        let convertedTime = (1609 / array[id].list_of_activities[i].pace).toString().split(".")
-        span.innerHTML = convert(convertedTime[0]) + "." + convertedTime[1].toString().substring(0, 2);
-        document.getElementsByClassName("outerDiv")[i].appendChild(span)
+        if(location == "pace_distribution"){
+            span.style.fontWeight = "bold";
+            span.style.color = color;
+        }
+        if(i == -1){
+            span.innerHTML = "Pace /mi"
+            document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
+        }else{
+            if(array[id].list_of_activities[i].pace == 0){
+                span.innerHTML = "[INVALID]"
+            }else{
+                let convertedTime = (1609 / array[id].list_of_activities[i].pace).toString().split(".")
+                span.innerHTML = convert(convertedTime[0]) + "." + convertedTime[1].toString().substring(0, 2);
+            }
+            
+            document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
+        }
 
         span = document.createElement("span");
         span.className = "indivGrid";
         span.style.width = "15%"
-        //span.id = "pace";
-        span.innerHTML = ((array[id].list_of_activities[i].time / array[id].list_of_activities[i].elapsedTime)*100).toFixed(2) + "%";
-        document.getElementsByClassName("outerDiv")[i].appendChild(span)
+        if(location == "time_distribution"){
+            span.style.fontWeight = "bold";
+            span.style.color = color;
+        }
+        if(i == -1){
+            span.innerHTML = "% Uptime"
+            document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
+        }else{
+            span.innerHTML = ((array[id].list_of_activities[i].time / array[id].list_of_activities[i].elapsedTime)*100).toFixed(2) + "%";
+            document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
+        }
 
         span = document.createElement("span");
         span.className = "indivGrid";
         span.style.width = "15%"
-        //span.id = "pace";
-        span.innerHTML = (array[id].list_of_activities[i].elevation*3.28).toFixed(2) + "ft"
-        document.getElementsByClassName("outerDiv")[i].appendChild(span)
+        if(location == "elev_distribution"){
+            span.style.fontWeight = "bold";
+            span.style.color = color;
+        }
+        if(i == -1){
+            span.innerHTML = "Elev. gain"
+            document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
+        }else{
+            span.innerHTML = (array[id].list_of_activities[i].elevation*3.28).toFixed(2) + "ft"
+            document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
+        }
+        
     }
     
     

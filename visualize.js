@@ -1,5 +1,31 @@
 var accessKey;
 var allActivities = [];
+var startDate = 0;
+var endDate = Math.floor(Date.now() / 1000);
+
+function changeDates(){
+    try{
+        if(document.getElementsByName("startDate")[0].value == ""){
+            startDate = 0;
+        }else{
+            startDate = Math.floor(Date.parse(document.getElementsByName("startDate")[0].value) / 1000)
+        }
+        
+        if(document.getElementsByName("endDate")[0].value == ""){
+            endDate = Math.floor(Date.now() / 1000)
+        }else{
+            endDate = Math.floor(Date.parse(document.getElementsByName("endDate")[0].value) / 1000)
+        }
+        
+        //console.log(Date.parse(document.getElementsByName("startDate")[0].value))
+        allActivities = []
+        getStravaData(1);
+        getStravaData(2)
+        getStravaData(3)
+    }catch (err){
+        alert("Invalid date! " + err)
+    }
+}
 
 fetch('https://www.strava.com/oauth/token?client_id=107318&client_secret=1bac185421708876ddd639fcef0a319d5896d3b1&refresh_token=48f138733218bdd7c10c586c704b8f104a5221f2&grant_type=refresh_token', {
         method: 'POST',
@@ -15,9 +41,10 @@ fetch('https://www.strava.com/oauth/token?client_id=107318&client_secret=1bac185
     })
 
 function getStravaData(page) {
-    fetch("https://www.strava.com/api/v3/athlete/activities?access_token=" + accessKey + "&page=" + page + "&per_page=200").then((response) => response.json()).then((jsonData) => {
-
+    fetch("https://www.strava.com/api/v3/athlete/activities?access_token=" + accessKey + "&page=" + page + "&per_page=200&after=" + startDate + "&before=" + endDate).then((response) => response.json()).then((jsonData) => {
+        
         for (var i = 0; i < jsonData.length; i++){
+            if(jsonData[i].type == "Run")
             allActivities.push({
                 distance: jsonData[i].distance,
                 time: jsonData[i].moving_time,
@@ -331,8 +358,6 @@ function renderGraph(){
     for(var i = 0; i < 19; i++){
         elapsed_distribution[i] = {}
     }
-
-   
 
     revertToDefaultStatistics(dist_distribution);
     revertToDefaultStatistics(pace_distribution);

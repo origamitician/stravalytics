@@ -1,5 +1,8 @@
 body{
     font-family: 'Inter', sans-serif;
+    /*font-family: 'Wix Madefor Display', sans-serif;*/
+    /*font-family: 'Raleway', sans-serif;*/
+
     
 }
 
@@ -96,6 +99,8 @@ body{
     text-align: center;
     width: 70%;
     margin-left: 15%;
+    /*font-family: 'Source Code Pro', monospace;*/
+    font-family: 'Raleway', sans-serif
 }
 
 .counterDisplay{
@@ -125,6 +130,17 @@ body{
 .outerDiv{
     padding: 1%;
     border: 1px solid gray;
+}
+
+.labels{
+    font-size: 115%;
+    
+}
+
+.labelsBox{
+    outline: orange;
+    font-size: 115%;
+    width: 15%;
 }
 
 @media only screen and (orientation: portrait){

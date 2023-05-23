@@ -7,10 +7,22 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Wix+Madefor+Display&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="visualize.css">
     <title>Document</title>
 </head>
 <body>
+    <h1 id = "">Run visualizer</h1>
+    <label for="startDate" class = "labels">Start Date (Optional):</label>
+    <input type="text" name = "startDate" placeholder="mm-dd-yyyy" class = "labelsBox">
+    <span>&nbsp;&nbsp;&nbsp;</span>
+    <label for="endDate" class = "labels">End Date (Optional):</label>
+    <input type="text" name = "endDate" placeholder="mm-dd-yyyy" class = "labelsBox">
+    <Button onclick=changeDates()>Apply</Button>
+    
+    <hr>
     <h1 class = "graphHeader">Pace Distribution</h1>
     <p id = "pace_distribution_overview" class = "overview"></p>
     <!--<canvas id = "pace_distribution" class = "graph"></canvas>-->

@@ -14,15 +14,26 @@
     <title>Document</title>
 </head>
 <body>
-    <h1 id = "">Run visualizer</h1>
-    <label for="startDate" class = "labels">Start Date (Optional):</label>
-    <input type="text" name = "startDate" placeholder="mm-dd-yyyy" class = "labelsBox">
-    <span>&nbsp;&nbsp;&nbsp;</span>
-    <label for="endDate" class = "labels">End Date (Optional):</label>
-    <input type="text" name = "endDate" placeholder="mm-dd-yyyy" class = "labelsBox">
-    <Button onclick=changeDates()>Apply</Button>
+    <h1 id = "title">Run visualizer</h1>
+    <div id = "flexDateHolder">
+        <div>
+            <div class = "innerLabel">
+                <label for="startDate" class = "labels">Start Date (Optional):</label>
+                <input type="text" name = "startDate" placeholder="mm-dd-yyyy" class = "labelsBox">
+            </div>
+            
+            <div class = "innerLabel">
+                <label for="endDate" class = "labels">End Date (Optional):</label>
+                <input type="text" name = "endDate" placeholder="mm-dd-yyyy" class = "labelsBox">
+            </div>
+            
+        </div>
+        <Button onclick=changeDates() id = "applyDateBtn">Apply</Button>
+    </div>
+    
     
     <hr>
+    <p id = "displayNumRuns"></p>
     <h1 class = "graphHeader">Pace Distribution</h1>
     <p id = "pace_distribution_overview" class = "overview"></p>
     <!--<canvas id = "pace_distribution" class = "graph"></canvas>-->

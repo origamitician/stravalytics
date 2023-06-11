@@ -3,6 +3,13 @@ var allActivities = [];
 var startDate = 0;
 var endDate = Math.floor(Date.now() / 1000);
 
+var scrub = {
+    pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null},
+    uptime: {left: 0, right: 36, increment: 2, leftOutlier: false, rightOutlier: true, totalBars: null},
+    distance: {left: 0, right: 13, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null},
+    elevation: {left: 0, right: 480, increment: 40, leftOutlier: false, rightOutlier: true, totalBars: null},
+}
+
 function changeDates(){
     try{
         if(document.getElementsByName("startDate")[0].value == ""){
@@ -214,8 +221,6 @@ function showStatsOnHTML(array, location, id, color){
             outerDiv.className = "outerDiv";
             document.getElementById(location + "_wrapper").getElementsByClassName("infoWrapperRight")[0].appendChild(outerDiv);
         }else {
-            
-
                 outerDiv.className = "headerDiv"
                 document.getElementById(location + "_wrapper").getElementsByClassName("infoWrapperRight")[0].appendChild(outerDiv);
             
@@ -238,7 +243,6 @@ function showStatsOnHTML(array, location, id, color){
             document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
         }
         
-
         span = document.createElement("a");
         span.className = "indivGrid";
         span.style.width = "25%"
@@ -325,10 +329,7 @@ function showStatsOnHTML(array, location, id, color){
             span.innerHTML = (array[id].list_of_activities[i].elevation*3.28).toFixed(2) + "ft"
             document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
         }
-        
     }
-    
-    
 }
 
 var totalMileage =0
@@ -336,6 +337,15 @@ var totalElevGain =0
 var totalPace=0
 var totalMovingTime=0
 var totalElapsedTime=0
+
+function getNumberOfBars(distribution, objectName){
+    let numBars = Number(scrub[objectName].leftOutlier) + Number(scrub[objectName].rightOutlier) + (scrub[objectName].right - scrub[objectName].left) / scrub[objectName].increment
+    scrub[objectName].totalBars = numBars
+
+    for(var i = 0; i < numBars; i++){
+        distribution[i] = {}
+    }
+}
 
 function renderGraph(){
 
@@ -345,21 +355,11 @@ function renderGraph(){
     totalMovingTime=0;
     totalElapsedTime=0;
      //resetting pace distributions
-    for(var i = 0; i < 14; i++){
-        dist_distribution[i] = {}
-    }
 
-    for(var i = 0; i < 19; i++){
-        pace_distribution[i] = {}
-    }
-
-    for(var i = 0; i < 13; i++){
-        elev_distribution[i] = {}
-    }
-
-    for(var i = 0; i < 19; i++){
-        elapsed_distribution[i] = {}
-    }
+    getNumberOfBars(dist_distribution, "distance")
+    getNumberOfBars(pace_distribution, "pace")
+    getNumberOfBars(elev_distribution, "elevation")
+    getNumberOfBars(elapsed_distribution, "uptime")
 
     revertToDefaultStatistics(dist_distribution);
     revertToDefaultStatistics(pace_distribution);
@@ -422,6 +422,40 @@ function renderGraph(){
 //render
 
 //helper method
+
+function getBarTitles(i, scrubName, unit){
+    //i is the index
+    if(i == 0 && scrub[scrubName].leftOutlier){
+        if(scrubName == "pace"){
+            return "<" + convert(scrub[scrubName].left) + unit;
+        }else{
+            return "<" + (scrub[scrubName].left) + unit;
+        }
+        
+    }else if (i == scrub[scrubName].totalBars - 1 && scrub[scrubName].rightOutlier){
+        if(scrubName == "pace"){
+            return  ">" + convert(scrub[scrubName].right) + unit;
+        }else{
+            return  ">" + (scrub[scrubName].right) + unit;
+        }
+        
+    }else{
+        if(scrubName == "pace"){
+            if(!scrub[scrubName].leftOutlier){
+                return (convert(scrub[scrubName].left + (i*scrub[scrubName].increment)) + "-" + convert(scrub[scrubName].left + ((i+1)*scrub[scrubName].increment)) + unit);
+            }else{
+                return (convert(scrub[scrubName].left + ((i-1)*scrub[scrubName].increment)) + "-" + convert(scrub[scrubName].left + ((i)*scrub[scrubName].increment)) + unit);
+            }
+        }else{
+            if(!scrub[scrubName].leftOutlier){
+                return ((scrub[scrubName].left + (i*scrub[scrubName].increment)) + "-" + (scrub[scrubName].left + ((i+1)*scrub[scrubName].increment)) + unit);
+            }else{
+                return ((scrub[scrubName].left + ((i-1)*scrub[scrubName].increment)) + "-" + (scrub[scrubName].left + ((i)*scrub[scrubName].increment)) + unit);
+            }
+        }
+    }
+}
+
 function renderTypeGraph(array, type, color){
     totalMileage=0;
     totalElevGain=0;
@@ -435,15 +469,17 @@ function renderTypeGraph(array, type, color){
     if(array != undefined){
         //console.log("array is: " + array)
         let greatest = -1;
+        
         //get the greatest element in the array
-        for (var i = 0; i < array.length; i++){
-            if(array[i].count > greatest){
-                greatest = array[i].count;
+        for (var j = 0; j< array.length; j++){
+            if(array[j].count > greatest){
+                greatest = array[j].count;
             }
         }
 
         //draw graph + bars
-        for (var i = 0; i < array.length; i++){
+        let i = 0;
+        while(i < array.length){
             var o = document.createElement("div");
             o.className = "verticalOuterContainer";
             o.style.width = 100/array.length + "%";
@@ -461,11 +497,13 @@ function renderTypeGraph(array, type, color){
             var verticalHolderBelow = document.createElement("p");
             verticalHolderBelow.className = "verticalHolderBelow";
             if(type == "pace_distribution"){
-                verticalHolderBelow.innerHTML = convert(240 + (i*20)) + "-" + convert(240 + ((i+1)*20)) + "/mi";
+                verticalHolderBelow.innerHTML = getBarTitles(i, "pace", "/mi")
+                
             }else if(type == "dist_distribution"){
-                verticalHolderBelow.innerHTML = i + "-" + (i+1) + "mi";
+                verticalHolderBelow.innerHTML = getBarTitles(i, "distance", "mi")
+        
             }else if (type == "elev_distribution"){
-                verticalHolderBelow.innerHTML = (i*40) + "-" + ((i+1)*40) + "ft";
+                verticalHolderBelow.innerHTML = getBarTitles(i, "elevation", "ft")
             }else{
                 verticalHolderBelow.innerHTML = ((50-i-1)*2) + "-" + ((50-i)*2) + "%"
             }
@@ -500,6 +538,7 @@ function renderTypeGraph(array, type, color){
             totalElapsedTime +=array[i].total_elapsed_time;
 
             document.getElementById(type + "_overview").style.color = color;
+            i++;
         }
 
         try{

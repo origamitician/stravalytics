@@ -181,6 +181,19 @@ body{
     margin: 1% 0 1% 10%;
 }
 
+#settings{
+    display: none;
+    position: fixed;
+
+    border: 2px solid black;
+    width: 50%;
+    background-color: white;
+    height:  30vh;
+    transform: translate(-50%, -50%);
+    top: 50vh;
+    left: 50vw;
+}
+
 @media only screen and (orientation: portrait){
     body{
         overflow-x: hidden

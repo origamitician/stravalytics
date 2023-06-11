@@ -35,6 +35,7 @@
     <hr>
     <p id = "displayNumRuns"></p>
     <h1 class = "graphHeader">Pace Distribution</h1>
+    
     <p id = "pace_distribution_overview" class = "overview"></p>
     <!--<canvas id = "pace_distribution" class = "graph"></canvas>-->
     <div id = "pace_distribution" class = "graph"></div>
@@ -83,6 +84,25 @@
         <div class = "infoWrapperRight"></div>
     </div>
     <br><br><br>
+
+    <div id = "settings">
+        <label for="leftOutlier" class = "settingsLabels">Left Outlier:</label>
+        <input type="text" name = "leftOutlier"  class = "settingsLabelsBox">
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <label for="rightOutlier" class = "settingsLabels">Right Outlier:</label>
+        <input type="text" name = "rightOutlier" class = "settingsLabelsBox">
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <label for="increment" class = "settingsLabels">Increment By:</label>
+        <input type="text" name = "increment" class = "settingsLabelsBox">
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
+        <input type="checkbox" name = "leftOutlierCheck" class = "settingsLabelsBox">
+        <label for="leftOutlierCheck" class = "settingsLabels">Include values less than left outlier?</label>
+
+        <input type="checkbox" name = "rightOutlierCheck" class = "settingsLabelsBox">
+        <label for="rightOutlierCheck" class = "settingsLabels">Include values greater than right outlier?</label>
+        
+    </div>
 </body>
 <script src="visualize.js"></script>
 </html>

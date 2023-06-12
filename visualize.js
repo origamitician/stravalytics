@@ -6,7 +6,7 @@ var endDate = Math.floor(Date.now() / 1000);
 var scrub = {
     pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null},
     uptime: {left: 0, right: 36, increment: 2, leftOutlier: false, rightOutlier: true, totalBars: null},
-    distance: {left: 0, right: 13, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null},
+    distance: {left: 0, right: 26, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null},
     elevation: {left: 0, right: 480, increment: 40, leftOutlier: false, rightOutlier: true, totalBars: null},
 }
 
@@ -116,6 +116,7 @@ function revertToDefaultStatistics(array){
 
 function updateDefaultStatistics(array, index, inputObject){
     //update these regardless of index
+    
     array[index].count++;
     array[index].total_elevation_gain+=inputObject.elevation *3.28;
     array[index].total_miles+=inputObject.distance / 1609;
@@ -375,10 +376,22 @@ function renderGraph(){
     //console.log(JSON.stringify(dist_distribution[0]))
     allActivities.forEach(e => {
         //console.log(e);
-        if(Math.floor(e.distance/1609) < 13){
-            updateDefaultStatistics(dist_distribution, Math.floor(e.distance/1609), e);
-        }else{
-            updateDefaultStatistics(dist_distribution, 13, e);
+        let distance = e.distance/1609
+        if(distance > scrub.distance.right || distance < scrub.distance.left){
+            if(scrub.distance.rightOutlier && distance > scrub.distance.right){
+                updateDefaultStatistics(dist_distribution, scrub.distance.totalBars-1, e);
+            }      
+
+            if(scrub.distance.leftOutlier && distance < scrub.distance.left){
+                updateDefaultStatistics(dist_distribution, 0, e);
+            }  
+        }else if (distance < scrub.distance.right && distance > scrub.distance.left){
+            if(scrub.distance.leftOutlier){
+                updateDefaultStatistics(dist_distribution, Math.floor((distance - scrub.distance.left)/ scrub.distance.increment) + 1, e);
+            }else{
+                updateDefaultStatistics(dist_distribution, Math.floor((distance - scrub.distance.left) / scrub.distance.increment), e);
+            }
+            
         }
 
         if(1609/e.pace < 260){

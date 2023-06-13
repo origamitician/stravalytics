@@ -350,23 +350,29 @@ function getNumberOfBars(distribution, objectName){
 
 function establishIncrements(item, value, scrubProperty, distributionToUpdate){
     //item is one individual object returned from the Strava API.
-    if(value > scrub[scrubProperty].right || value < scrub[scrubProperty].left){
-        if(scrub[scrubProperty].rightOutlier && value > scrub[scrubProperty].right){
+    console.log(scrubProperty + ": " + value)
+    if(value >= scrub[scrubProperty].right || value <= scrub[scrubProperty].left){
+        //if left outlier is out
+        if((scrub[scrubProperty].rightOutlier && value >= scrub[scrubProperty].right) || (!scrub[scrubProperty].rightOutlier && value == scrub[scrubProperty].right)){
             updateDefaultStatistics(distributionToUpdate, scrub[scrubProperty].totalBars-1, item);
+            console.log("Added to " + scrub[scrubProperty].totalBars-1)
         }      
 
-        if(scrub[scrubProperty].leftOutlier && value < scrub[scrubProperty].left){
+        if((scrub[scrubProperty].leftOutlier && value <= scrub[scrubProperty].left) || (!scrub[scrubProperty].leftOutlier && value == scrub[scrubProperty].left)){
             updateDefaultStatistics(distributionToUpdate, 0, item);
-        }  
+            console.log("Added to " + 0)
+        }
     }else if (value < scrub[scrubProperty].right && value > scrub[scrubProperty].left){
         if(scrub[scrubProperty].leftOutlier){
             updateDefaultStatistics(distributionToUpdate, Math.floor((value - scrub[scrubProperty].left)/ scrub[scrubProperty].increment) + 1, item);
+            console.log("Added to " + Math.floor((value - scrub[scrubProperty].left)/ scrub[scrubProperty].increment) + 1)
         }else{
-            updateDefaultStatistics(distributionToUpdate, Math.floor((value - scrub[scrubProperty].left) / scrub[scrubProperty].increment), item);
+            if(value != scrub[scrubProperty].right && value != scrub[scrubProperty].right){
+                updateDefaultStatistics(distributionToUpdate, Math.floor((value - scrub[scrubProperty].left) / scrub[scrubProperty].increment), item);
+                console.log("Added to " + Math.floor((value - scrub[scrubProperty].left)/ scrub[scrubProperty].increment))
+            }
         }
-
     }
-    
 }
 
 function renderGraph(){

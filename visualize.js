@@ -5,9 +5,9 @@ var endDate = Math.floor(Date.now() / 1000);
 
 var scrub = {
     pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null},
-    uptime: {left: 0, right: 36, increment: 2, leftOutlier: false, rightOutlier: true, totalBars: null},
+    uptime: {left: 50, right: 100, increment: 1, leftOutlier: true, rightOutlier: false, totalBars: null},
     distance: {left: 0, right: 26, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null},
-    elevation: {left: 0, right: 480, increment: 40, leftOutlier: false, rightOutlier: true, totalBars: null},
+    elevation: {left: 0, right: 100, increment: 4, leftOutlier: false, rightOutlier: false, totalBars: null},
 }
 
 function changeDates(){
@@ -348,6 +348,27 @@ function getNumberOfBars(distribution, objectName){
     }
 }
 
+function establishIncrements(item, value, scrubProperty, distributionToUpdate){
+    //item is one individual object returned from the Strava API.
+    if(value > scrub[scrubProperty].right || value < scrub[scrubProperty].left){
+        if(scrub[scrubProperty].rightOutlier && value > scrub[scrubProperty].right){
+            updateDefaultStatistics(distributionToUpdate, scrub[scrubProperty].totalBars-1, item);
+        }      
+
+        if(scrub[scrubProperty].leftOutlier && value < scrub[scrubProperty].left){
+            updateDefaultStatistics(distributionToUpdate, 0, item);
+        }  
+    }else if (value < scrub[scrubProperty].right && value > scrub[scrubProperty].left){
+        if(scrub[scrubProperty].leftOutlier){
+            updateDefaultStatistics(distributionToUpdate, Math.floor((value - scrub[scrubProperty].left)/ scrub[scrubProperty].increment) + 1, item);
+        }else{
+            updateDefaultStatistics(distributionToUpdate, Math.floor((value - scrub[scrubProperty].left) / scrub[scrubProperty].increment), item);
+        }
+
+    }
+    
+}
+
 function renderGraph(){
 
     totalMileage=0;
@@ -376,45 +397,10 @@ function renderGraph(){
     //console.log(JSON.stringify(dist_distribution[0]))
     allActivities.forEach(e => {
         //console.log(e);
-        let distance = e.distance/1609
-        if(distance > scrub.distance.right || distance < scrub.distance.left){
-            if(scrub.distance.rightOutlier && distance > scrub.distance.right){
-                updateDefaultStatistics(dist_distribution, scrub.distance.totalBars-1, e);
-            }      
-
-            if(scrub.distance.leftOutlier && distance < scrub.distance.left){
-                updateDefaultStatistics(dist_distribution, 0, e);
-            }  
-        }else if (distance < scrub.distance.right && distance > scrub.distance.left){
-            if(scrub.distance.leftOutlier){
-                updateDefaultStatistics(dist_distribution, Math.floor((distance - scrub.distance.left)/ scrub.distance.increment) + 1, e);
-            }else{
-                updateDefaultStatistics(dist_distribution, Math.floor((distance - scrub.distance.left) / scrub.distance.increment), e);
-            }
-            
-        }
-
-        if(1609/e.pace < 260){
-            updateDefaultStatistics(pace_distribution, 0, e);
-        }else if(1609/e.pace > 600){
-            updateDefaultStatistics(pace_distribution, 18, e);
-        }else{
-            updateDefaultStatistics(pace_distribution, Math.floor((1609/e.pace - 260) / 20) + 1, e);
-        }
-
-        if(e.elevation * 3.28 > 480){
-            updateDefaultStatistics(elev_distribution, 12, e);
-        }else{
-            updateDefaultStatistics(elev_distribution, Math.floor((e.elevation*3.28) / 40), e);
-        }
-
-        var calcPercent = ((e.elapsedTime - e.time) / e.elapsedTime)*100;
-    
-        if(calcPercent > 36){
-            updateDefaultStatistics(elapsed_distribution, 18, e);
-        }else{
-            updateDefaultStatistics(elapsed_distribution, Math.floor(calcPercent / 2), e);
-        }
+        establishIncrements(e, e.distance/1609, "distance", dist_distribution)
+        establishIncrements(e, 1609/e.pace, "pace", pace_distribution)
+        establishIncrements(e, e.elevation*3.28, "elevation", elev_distribution)
+        establishIncrements(e, (e.time / e.elapsedTime)*100, "uptime", elapsed_distribution)
     })
 
     //console.log(dist_distribution);
@@ -518,7 +504,7 @@ function renderTypeGraph(array, type, color){
             }else if (type == "elev_distribution"){
                 verticalHolderBelow.innerHTML = getBarTitles(i, "elevation", "ft")
             }else{
-                verticalHolderBelow.innerHTML = ((50-i-1)*2) + "-" + ((50-i)*2) + "%"
+                verticalHolderBelow.innerHTML = getBarTitles(i, "uptime", "%")
             }
             document.getElementById(type).getElementsByClassName("verticalOuterContainer")[i].appendChild(verticalHolderBelow);
 

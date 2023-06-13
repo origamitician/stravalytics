@@ -8,8 +8,7 @@ body{
 
 .graph{
     /*border: 1px solid black;*/
-    width: 80%;
-    margin-left:10%;
+    width: 100%;
     margin-right: 0%;
     display: flex;
     margin-top: 3%;
@@ -55,8 +54,8 @@ body{
 }
 
 .infoWrapper{
-    width: 80%;
-    margin-left: 10%;
+    width: 100%;
+    margin-left: 0%;
     margin-top: 3%;
 }
 
@@ -192,6 +191,23 @@ body{
     transform: translate(-50%, -50%);
     top: 50vh;
     left: 50vw;
+}
+
+.graphDiv{
+    position: relative;
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.incrementBtn{
+    font-size: 110%;
+    position: absolute;
+    top: 0;
+    left: 80%;
+    width: 20%;
+    text-align: center;
+    
 }
 
 @media only screen and (orientation: portrait){

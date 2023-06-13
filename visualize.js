@@ -5,9 +5,9 @@ var endDate = Math.floor(Date.now() / 1000);
 
 var scrub = {
     pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null},
-    uptime: {left: 50, right: 100, increment: 1, leftOutlier: true, rightOutlier: false, totalBars: null},
-    distance: {left: 0, right: 26, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null},
-    elevation: {left: 0, right: 100, increment: 4, leftOutlier: false, rightOutlier: false, totalBars: null},
+    uptime: {left: 60, right: 100, increment: 2, leftOutlier: true, rightOutlier: false, totalBars: null},
+    distance: {left: 0, right: 15, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null},
+    elevation: {left: 10, right: 510, increment: 25, leftOutlier: true, rightOutlier: true, totalBars: null},
 }
 
 function changeDates(){
@@ -549,14 +549,14 @@ function renderTypeGraph(array, type, color){
         try{
             let calculatedMile = convert(totalMovingTime / totalMileage).split(".");
             let calculatedKm = convert((totalMovingTime / totalMileage) / 1.609).split(".")
-            document.getElementById("pace_distribution_overview").innerHTML = "Average pace: " + calculatedMile[0] + "." + calculatedMile[1].substring(0, 2) +"/mi (" + calculatedKm[0] + "." + calculatedKm[1].substring(0, 2) + "/km)"
+            document.getElementById("pace_distribution_overview").innerHTML = "Average pace: " + calculatedMile[0] + "." + calculatedMile[1].substring(0, 2) +"/mi (" + calculatedKm[0] + "." + calculatedKm[1].substring(0, 2) + "/km) <br> " + (3600 / (totalMovingTime / totalMileage)).toFixed(3) + "mi/h (" + (3600 / ((totalMovingTime / totalMileage) / 1.609)).toFixed(3) + "km/h)"
 
             document.getElementById("elev_distribution_overview").innerHTML = "Total elevation: " + (totalElevGain.toFixed(2)) + " ft (" + (totalElevGain / 3.28).toFixed(2) + " m) <br> Avg per run: " + ((totalElevGain/allActivities.length).toFixed(2)) + " ft (" + ((totalElevGain/allActivities.length) / 3.28).toFixed(2) + "m)"
 
             document.getElementById("dist_distribution_overview").innerHTML = "Total mileage: " + (totalMileage.toFixed(2)) + " mi (" + (totalMileage*1.609).toFixed(2) + " km) <br> Avg per run: " + ((totalMileage/allActivities.length).toFixed(3)) + " mi (" + ((totalMileage/allActivities.length)*1.609).toFixed(3) + " km)"
 
             let minutes = Math.floor(totalMovingTime % 3600)
-            document.getElementById("time_distribution_overview").innerHTML = "Total moving time: " + Math.floor(totalMovingTime / 3600) + " hours, " + Math.floor(minutes / 60) + " minutes, " + (minutes % 60) + " seconds <br> Avg. % moving overall: " + (totalMovingTime / totalElapsedTime*100).toFixed(3) + "%"
+            document.getElementById("time_distribution_overview").innerHTML = "<b>*Note: Uptime = (Moving time / Elapsed time) * 100</b><br>Total moving time: " + Math.floor(totalMovingTime / 3600) + " hours, " + Math.floor(minutes / 60) + " minutes, " + (minutes % 60) + " seconds <br> Avg. % moving overall: " + (totalMovingTime / totalElapsedTime*100).toFixed(3) + "%"
         }catch{
             
         }

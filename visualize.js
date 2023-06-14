@@ -4,10 +4,10 @@ var startDate = 0;
 var endDate = Math.floor(Date.now() / 1000);
 
 var scrub = {
-    pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null},
-    uptime: {left: 60, right: 100, increment: 2, leftOutlier: true, rightOutlier: false, totalBars: null},
-    distance: {left: 0, right: 15, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null},
-    elevation: {left: 10, right: 510, increment: 25, leftOutlier: true, rightOutlier: true, totalBars: null},
+    pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f"},
+    uptime: {left: 60, right: 100, increment: 2, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad"},
+    distance: {left: 0, right: 15, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5"},
+    elevation: {left: 10, right: 510, increment: 25, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400"},
 }
 
 function changeDates(){
@@ -414,10 +414,10 @@ function renderGraph(){
     //console.log(elev_distribution);
     //console.log(elapsed_distribution);
 
-    renderTypeGraph(dist_distribution, "dist_distribution", "purple");
-    renderTypeGraph(pace_distribution, "pace_distribution", "darkgreen");
-    renderTypeGraph(elev_distribution, "elev_distribution", "#cc0000");
-    renderTypeGraph(elapsed_distribution, "time_distribution", "darkblue");
+    renderTypeGraph(dist_distribution, "dist_distribution", scrub.distance.color);
+    renderTypeGraph(pace_distribution, "pace_distribution", scrub.pace.color);
+    renderTypeGraph(elev_distribution, "elev_distribution", scrub.elevation.color);
+    renderTypeGraph(elapsed_distribution, "time_distribution", scrub.uptime.color);
 
 
     
@@ -459,6 +459,35 @@ function getBarTitles(i, scrubName, unit){
             }
         }
     }
+}
+
+function showIncrementMenu(field){
+    document.getElementById("settingsTitle").innerHTML = "Edit " + field + " increments"
+    document.getElementById("settingsTitle").style.color = scrub[field].color
+    document.getElementById("settings").style.display = "block";
+    document.getElementById("settings").style.border = "4px solid " + scrub[field].color
+
+    document.getElementsByName("leftOutlier")[0].value = scrub[field].left;
+    document.getElementsByName("rightOutlier")[0].value = scrub[field].right;
+    document.getElementsByName("increment")[0].value = scrub[field].increment;
+
+    if(scrub[field].leftOutlier){
+        document.getElementsByName("leftOutlierCheck")[0].checked = true
+    }else{
+        document.getElementsByName("leftOutlierCheck")[0].checked = false
+    }
+
+    if(scrub[field].rightOutlier){
+        document.getElementsByName("rightOutlierCheck")[0].checked = true
+    }else{
+        document.getElementsByName("rightOutlierCheck")[0].checked = false
+    }
+    
+    document.getElementsByName("distributionColor")[0].value = scrub[field].color;
+}
+
+function closeSettingsMenu(){
+    document.getElementById("settings").style.display = "none";
 }
 
 function renderTypeGraph(array, type, color){
@@ -560,7 +589,6 @@ function renderTypeGraph(array, type, color){
         }catch{
             
         }
-        
     }
 }
 

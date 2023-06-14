@@ -35,7 +35,7 @@
     <hr>
     <p id = "displayNumRuns"></p>
     <div class = "graphDiv">
-        <Button class = "incrementBtn">Edit Increments</Button>
+        <Button class = "incrementBtn" onClick = "showIncrementMenu('pace')">Edit Increments</Button>
         <h1 class = "graphHeader">Pace (min / mi)</h1>
         <p id = "pace_distribution_overview" class = "overview"></p>
         <!--<canvas id = "pace_distribution" class = "graph"></canvas>-->
@@ -50,7 +50,7 @@
     </div>
     
     <div class = "graphDiv">
-        <Button class = "incrementBtn">Edit Increments</Button>
+        <Button class = "incrementBtn" onClick = "showIncrementMenu('uptime')">Edit Increments</Button>
         <h1 class = "graphHeader">% Uptime</h1>
         <p id = "time_distribution_overview" class = "overview"></p>
         <!--<canvas id = "time_distribution" class = "graph"></canvas>-->
@@ -65,7 +65,7 @@
     </div>
     
     <div class = "graphDiv">
-        <Button class = "incrementBtn">Edit Increments</Button>
+        <Button class = "incrementBtn" onClick = "showIncrementMenu('distance')">Edit Increments</Button>
         <h1 class = "graphHeader">Distance</h1>
         <p id = "dist_distribution_overview" class = "overview"></p>
         <!--<canvas id = "distance_distribution" class = "graph"></canvas>-->
@@ -80,7 +80,7 @@
     </div>
     
     <div class = "graphDiv">
-        <Button class = "incrementBtn">Edit Increments</Button>
+        <Button class = "incrementBtn" onClick = "showIncrementMenu('elevation')">Edit Increments</Button>
         <h1 class = "graphHeader">Elevation gain</h1>
         <p id = "elev_distribution_overview" class = "overview"></p>
         <!--<canvas id = "elev_distribution" class = "graph"></canvas>-->
@@ -97,21 +97,34 @@
     <br><br><br>
 
     <div id = "settings">
-        <label for="leftOutlier" class = "settingsLabels">Left Outlier:</label>
-        <input type="text" name = "leftOutlier"  class = "settingsLabelsBox">
-        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <label for="rightOutlier" class = "settingsLabels">Right Outlier:</label>
-        <input type="text" name = "rightOutlier" class = "settingsLabelsBox">
-        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <label for="increment" class = "settingsLabels">Increment By:</label>
-        <input type="text" name = "increment" class = "settingsLabelsBox">
-        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-
-        <input type="checkbox" name = "leftOutlierCheck" class = "settingsLabelsBox">
-        <label for="leftOutlierCheck" class = "settingsLabels">Include values less than left outlier?</label>
-
-        <input type="checkbox" name = "rightOutlierCheck" class = "settingsLabelsBox">
-        <label for="rightOutlierCheck" class = "settingsLabels">Include values greater than right outlier?</label>
+        <div id = "settingsDiv">
+            <p id = "settingsTitle"></p>
+            <label for="leftOutlier" class = "settingsLabels">Left Outlier:</label>
+            <input type="number" name = "leftOutlier"  class = "settingsLabelsBox">
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <label for="rightOutlier" class = "settingsLabels">Right Outlier:</label>
+            <input type="number" name = "rightOutlier" class = "settingsLabelsBox">
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <label for="increment" class = "settingsLabels">Increment By:</label>
+            <input type="number" name = "increment" class = "settingsLabelsBox">
+            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <br><br>
+            <input type="checkbox" name = "leftOutlierCheck" class = "settingsLabelsCheck">
+            <label for="leftOutlierCheck" class = "settingsLabels">Include values less than left outlier?</label>
+            <br><br>
+            <input type="checkbox" name = "rightOutlierCheck" class = "settingsLabelsCheck">
+            <label for="rightOutlierCheck" class = "settingsLabels">Include values greater than right outlier?</label>
+            <br><br>
+            <label for="" class = "settingsLabels">Distribution Color: </label>
+            <input type="color" name = "distributionColor" value = "darkgreen" id = "colorPicker">
+            <br><br>
+            <div style = "text-align: right">
+                <button class = "settingsButtons" id = "closeBtn" onClick = "closeSettingsMenu()">Close</button>
+                <button class = "settingsButtons" id = "applyBtn">Apply</button>
+            </div>
+            
+        </div>
+       
         
     </div>
 </body>

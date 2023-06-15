@@ -99,28 +99,28 @@
     <div id = "settings">
         <div id = "settingsDiv">
             <p id = "settingsTitle"></p>
-            <label for="leftOutlier" class = "settingsLabels">Left Outlier:</label>
-            <input type="number" name = "leftOutlier"  class = "settingsLabelsBox">
+            <label for="leftOutlier" class = "settingsLabels" >Left Outlier:</label>
+            <input type="number" name = "leftOutlier"  class = "settingsLabelsBox" onchange = "realtimeUpdateLeft()">
             <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <label for="rightOutlier" class = "settingsLabels">Right Outlier:</label>
-            <input type="number" name = "rightOutlier" class = "settingsLabelsBox">
+            <label for="rightOutlier" class = "settingsLabels" >Right Outlier:</label>
+            <input type="number" name = "rightOutlier" class = "settingsLabelsBox" onchange = "realtimeUpdateRight()">
             <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
             <label for="increment" class = "settingsLabels">Increment By:</label>
             <input type="number" name = "increment" class = "settingsLabelsBox">
             <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
             <br><br>
-            <input type="checkbox" name = "leftOutlierCheck" class = "settingsLabelsCheck">
-            <label for="leftOutlierCheck" class = "settingsLabels">Include values less than left outlier?</label>
+            <input type="checkbox" name = "leftOutlierCheck" class = "settingsLabelsCheck" >
+            <label for="leftOutlierCheck" class = "settingsLabels" id = "leftOutlier">Include values less than left outlier?</label>
             <br><br>
-            <input type="checkbox" name = "rightOutlierCheck" class = "settingsLabelsCheck">
-            <label for="rightOutlierCheck" class = "settingsLabels">Include values greater than right outlier?</label>
+            <input type="checkbox" name = "rightOutlierCheck" class = "settingsLabelsCheck"  >
+            <label for="rightOutlierCheck" class = "settingsLabels" id = "rightOutlier">Include values greater than right outlier?</label>
             <br><br>
             <label for="" class = "settingsLabels">Distribution Color: </label>
             <input type="color" name = "distributionColor" value = "darkgreen" id = "colorPicker">
             <br><br>
             <div style = "text-align: right">
                 <button class = "settingsButtons" id = "closeBtn" onClick = "closeSettingsMenu()">Close</button>
-                <button class = "settingsButtons" id = "applyBtn">Apply</button>
+                <button class = "settingsButtons" id = "applyBtn" onClick = "applySettings()">Apply</button>
             </div>
             
         </div>

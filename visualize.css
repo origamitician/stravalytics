@@ -185,13 +185,13 @@ body{
     position: fixed;
 
     border: 2px solid black;
-    width: 60%;
+    width: 50%;
     background-color: white;
     height:  50vh;
     transform: translate(-50%, -50%);
     top: 50vh;
     left: 50vw;
-    overflow-y: scroll;
+
 }
 
 .graphDiv{
@@ -199,6 +199,7 @@ body{
     width: 80%;
     margin-left: 10%;
     margin-right: 10%;
+    margin-bottom: 10%;
 }
 
 .incrementBtn{

@@ -4,10 +4,10 @@ var startDate = 0;
 var endDate = Math.floor(Date.now() / 1000);
 
 var scrub = {
-    pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f"},
-    uptime: {left: 60, right: 100, increment: 2, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad"},
-    distance: {left: 0, right: 15, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5"},
-    elevation: {left: 10, right: 510, increment: 25, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400"},
+    pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", unit: "seconds/mi"},
+    uptime: {left: 60, right: 100, increment: 2, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", unit: "%"},
+    distance: {left: 0, right: 15, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", unit: "miles"},
+    elevation: {left: 10, right: 510, increment: 25, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", unit: "feet"},
 }
 
 function changeDates(){
@@ -460,8 +460,9 @@ function getBarTitles(i, scrubName, unit){
         }
     }
 }
-
+var currentField = null;
 function showIncrementMenu(field){
+    currentField = field;
     document.getElementById("settingsTitle").innerHTML = "Edit " + field + " increments"
     document.getElementById("settingsTitle").style.color = scrub[field].color
     document.getElementById("settings").style.display = "block";
@@ -470,6 +471,10 @@ function showIncrementMenu(field){
     document.getElementsByName("leftOutlier")[0].value = scrub[field].left;
     document.getElementsByName("rightOutlier")[0].value = scrub[field].right;
     document.getElementsByName("increment")[0].value = scrub[field].increment;
+
+    document.getElementById("leftOutlier").innerHTML = "Include values less than " + document.getElementsByName("leftOutlier")[0].value + " " + scrub[currentField].unit + "?"
+
+    document.getElementById("rightOutlier").innerHTML = "Include values more than " + document.getElementsByName("rightOutlier")[0].value + " " + scrub[currentField].unit + "?"
 
     if(scrub[field].leftOutlier){
         document.getElementsByName("leftOutlierCheck")[0].checked = true
@@ -488,6 +493,32 @@ function showIncrementMenu(field){
 
 function closeSettingsMenu(){
     document.getElementById("settings").style.display = "none";
+}
+
+function applySettings(){
+    let key = currentField;
+    scrub[key].left =  parseFloat(document.getElementsByName("leftOutlier")[0].value);
+    scrub[key].right =  parseFloat(document.getElementsByName("rightOutlier")[0].value);
+    scrub[key].increment = parseFloat(document.getElementsByName("increment")[0].value);
+
+    scrub[key].leftOutlier = document.getElementsByName("leftOutlierCheck")[0].checked;
+    scrub[key].rightOutlier = document.getElementsByName("rightOutlierCheck")[0].checked;
+    scrub[key].color = document.getElementsByName("distributionColor")[0].value;
+    document.getElementById("settings").style.display = "none";
+
+    pace_distribution = [];
+    elev_distribution = [];
+    dist_distribution = [];
+    elapsed_distribution = [];
+    renderGraph()
+}
+
+function realtimeUpdateLeft(){
+    document.getElementById("leftOutlier").innerHTML = "Include values less than " + document.getElementsByName("leftOutlier")[0].value + " " + scrub[currentField].unit + "?"
+}
+
+function realtimeUpdateRight(){
+    document.getElementById("rightOutlier").innerHTML = "Include values more than " + document.getElementsByName("rightOutlier")[0].value + " " + scrub[currentField].unit + "?"
 }
 
 function renderTypeGraph(array, type, color){

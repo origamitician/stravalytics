@@ -243,6 +243,25 @@ body{
     background-color: white;
 }
 
+#scatterPlot{
+    width: 80%;
+    margin-left: 10%;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    position: relative;
+    height: 80vh;
+    margin-top: 5%;
+}
+
+.plot{
+    height: 15px;
+    width: 15px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    background-color: blue;
+    border-radius: 50%;
+}
+
 
 @media only screen and (orientation: portrait){
     body{

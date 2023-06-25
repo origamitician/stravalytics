@@ -1,3 +1,5 @@
+//all variables + bargraph info is here;
+
 var accessKey;
 var allActivities = [];
 var startDate = 0;
@@ -64,7 +66,8 @@ function getStravaData(page) {
             });
         }
         
-        renderGraph();
+        renderGraph(); //histograms
+        renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
         
         document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
     })

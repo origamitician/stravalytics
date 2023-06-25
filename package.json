@@ -1,0 +1,24 @@
+{
+  "name": "run-visualizer",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "An interactive website that uses data from the Strava API to breakdown details for all my runs.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/origamitician/run-visualizer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/origamitician/run-visualizer/issues"
+  },
+  "homepage": "https://github.com/origamitician/run-visualizer#readme",
+  "dependencies": {
+    "regression": "^2.0.1"
+  }
+}

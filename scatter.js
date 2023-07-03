@@ -14,7 +14,7 @@ function renderScatterplot(arr, prop1, prop2){
 
     const array = [];
     arr.forEach(item => {
-        if(item.distance < 30000){
+        if(item.distance < 30000 && item.pace > 2.82){
             array.push({...item});
         }
         

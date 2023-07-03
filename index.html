@@ -130,7 +130,31 @@
 
     <hr>
     <h1 class='graphHeader'>Pace against Mileage</h1>
-    <div id="scatterPlot"></div>
+    <select name="variable1" id="scatterVariable1" onChange = "updateScatterDrawings()">
+        <option value="distance" selected>Distance</option>
+        <option value="time">Moving Time</option>
+        <option value="elapsedTime">Elapsed Time</option>
+        <option value="elevation">Elevation Gain</option>
+        <option value="pace">Pace</option>
+        <option value="kudos">Kudos</option>
+        <option value="maxPace">Top speed</option>
+        <option value="cadence">Cadence</option>
+        <option value="startDate">Date</option>
+    </select>
+
+    <select name="variable2" id="scatterVariable2" onChange = "updateScatterDrawings()">
+        <option value="distance">Distance</option>
+        <option value="time">Moving Time</option>
+        <option value="elapsedTime">Elapsed Time</option>
+        <option value="elevation">Elevation Gain</option>
+        <option value="pace" selected>Pace</option>
+        <option value="kudos">Kudos</option>
+        <option value="maxPace">Top speed</option>
+        <option value="cadence">Cadence</option>
+        <option value="startDate">Date</option>
+    </select>
+    <div id="scatterPlot">
+    </div>
     <br><br><br>
 </body>
 <script src="main.js"></script>

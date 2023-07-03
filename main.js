@@ -62,12 +62,15 @@ function getStravaData(page) {
                 pace: jsonData[i].average_speed,
                 name: jsonData[i].name,
                 startDate: jsonData[i].start_date_local,
-                id:  jsonData[i].id
+                id:  jsonData[i].id,
+                kudos: jsonData[i].kudos_count,
+                maxPace: jsonData[i].max_speed,
+                cadence: jsonData[i].average_cadence
             });
         }
         
         renderGraph(); //histograms
-        renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
+        renderScatterplot(allActivities, 'distance', 'time'); //scatterplot
         
         document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
     })
@@ -90,6 +93,14 @@ var elapsed_distribution = [];
 //helper function to convert seconds to m:ss
 
 function convert(seconds){
+    if(seconds >= 3600){
+        if(seconds % 3600 >= 600) {
+            return Math.floor(seconds / 3600) + ":" +convert(seconds % 3600)
+        }else{
+            return Math.floor(seconds / 3600) + ":0" +convert(seconds % 3600)
+        }
+        
+    }
     if(seconds % 60 >= 10){
         return Math.floor(seconds / 60) + ":" + (seconds % 60);
     }else{

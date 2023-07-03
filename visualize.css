@@ -246,11 +246,12 @@ body{
 #scatterPlot{
     width: 80%;
     margin-left: 10%;
-    border-left: 1px solid black;
-    border-bottom: 1px solid black;
+    border-left: 4px solid black;
+    border-bottom: 4px solid black;
     position: relative;
     height: 80vh;
     margin-top: 5%;
+    padding: 0;
 }
 
 .plot{
@@ -258,8 +259,31 @@ body{
     width: 15px;
     position: absolute;
     transform: translate(-50%, -50%);
-    background-color: blue;
+    background-color: seagreen;
     border-radius: 50%;
+    margin: 0;
+}
+
+.scatterGrid{
+    position: absolute;
+    border: 1px dotted black;
+}
+
+.yScatterDisplay{
+    position: absolute;
+    transform: translate(0%, -100%);
+    font-size:100%;
+    top: 0%;
+    right: 110%;
+}
+
+.xScatterDisplay{
+    position: absolute;
+    transform: translate(0%, 0%);
+    right: 0%;
+    top: 100%;
+    font-size: 100%;
+    margin-top: 2.5%;
 }
 
 
@@ -372,5 +396,19 @@ body{
 
     .settingsButtons{
         font-size: 80%;
+    }
+
+    #scatterPlot{
+        width: 90%;
+        margin-left: 10%;
+    }
+
+    .plot{
+        width: 2vw;
+        height: 2vw;
+    }
+
+    .yScatterDisplay, .xScatterDisplay{
+        font-size: 3vw;
     }
 }

@@ -234,7 +234,16 @@ body{
 .settingsLabelsBox{
     width: 10%;
     font-size: 110%;
+
+    
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .settingsLabels{
     font-size: 110%;
 }

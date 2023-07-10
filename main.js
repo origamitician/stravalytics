@@ -5,11 +5,25 @@ var allActivities = [];
 var startDate = 0;
 var endDate = Math.floor(Date.now() / 1000);
 
-var scrub = {
-    pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", unit: "seconds/mi"},
-    uptime: {left: 60, right: 100, increment: 2, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", unit: "%"},
-    distance: {left: 0, right: 15, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", unit: "miles"},
-    elevation: {left: 10, right: 510, increment: 25, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", unit: "feet"},
+let scrub;
+
+if (window.innerWidth > window.innerHeight) {
+
+    // landscape mode
+    scrub = {
+        pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", unit: "seconds/mi"},
+        uptime: {left: 60, right: 100, increment: 2, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", unit: "%"},
+        distance: {left: 0, right: 15, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", unit: "miles"},
+        elevation: {left: 10, right: 510, increment: 25, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", unit: "feet"},
+    }
+} else {
+    // portrait mode
+    scrub = {
+        pace: {left: 260, right: 600, increment: 34, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", unit: "seconds/mi"},
+        uptime: {left: 60, right: 100, increment: 4, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", unit: "%"},
+        distance: {left: 0, right: 15, increment: 1.5, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", unit: "miles"},
+        elevation: {left: 10, right: 510, increment: 50, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", unit: "feet"},
+    }
 }
 
 function changeDates(){
@@ -528,10 +542,21 @@ function applySettings(){
 }
 
 function realtimeUpdateLeft(){
+    // fix broken outliers
+    const diff = Math.round((document.getElementsByName("rightOutlier")[0].value - document.getElementsByName("leftOutlier")[0].value) / document.getElementsByName("increment")[0].value)
+
+    document.getElementsByName("leftOutlier")[0].value = parseFloat(document.getElementsByName("rightOutlier")[0].value) - (diff * parseFloat(document.getElementsByName("increment")[0].value))
+
     document.getElementById("leftOutlier").innerHTML = "Include values less than " + document.getElementsByName("leftOutlier")[0].value + " " + scrub[currentField].unit + "?"
 }
 
 function realtimeUpdateRight(){
+    // fix broken outliers
+
+    const diff = Math.round((document.getElementsByName("rightOutlier")[0].value - document.getElementsByName("leftOutlier")[0].value) / document.getElementsByName("increment")[0].value)
+
+    document.getElementsByName("rightOutlier")[0].value = parseFloat(document.getElementsByName("leftOutlier")[0].value) + (diff * parseFloat(document.getElementsByName("increment")[0].value))
+
     document.getElementById("rightOutlier").innerHTML = "Include values more than " + document.getElementsByName("rightOutlier")[0].value + " " + scrub[currentField].unit + "?"
 }
 

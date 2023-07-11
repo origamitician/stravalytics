@@ -240,7 +240,6 @@ function showStatsOnHTML(array, location, id, color){
         document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].remove()
     }
 
-    console.log(array[id])
     //render the chart
     for (var i = -1; i < array[id].list_of_activities.length; i++){
         var outerDiv = document.createElement("div");
@@ -378,26 +377,21 @@ function getNumberOfBars(distribution, objectName){
 
 function establishIncrements(item, value, scrubProperty, distributionToUpdate){
     //item is one individual object returned from the Strava API.
-    console.log(scrubProperty + ": " + value)
     if(value >= scrub[scrubProperty].right || value <= scrub[scrubProperty].left){
         //if left outlier is out
         if((scrub[scrubProperty].rightOutlier && value >= scrub[scrubProperty].right) || (!scrub[scrubProperty].rightOutlier && value == scrub[scrubProperty].right)){
             updateDefaultStatistics(distributionToUpdate, scrub[scrubProperty].totalBars-1, item);
-            console.log("Added to " + scrub[scrubProperty].totalBars-1)
         }      
 
         if((scrub[scrubProperty].leftOutlier && value <= scrub[scrubProperty].left) || (!scrub[scrubProperty].leftOutlier && value == scrub[scrubProperty].left)){
             updateDefaultStatistics(distributionToUpdate, 0, item);
-            console.log("Added to " + 0)
         }
     }else if (value < scrub[scrubProperty].right && value > scrub[scrubProperty].left){
         if(scrub[scrubProperty].leftOutlier){
             updateDefaultStatistics(distributionToUpdate, Math.floor((value - scrub[scrubProperty].left)/ scrub[scrubProperty].increment) + 1, item);
-            console.log("Added to " + Math.floor((value - scrub[scrubProperty].left)/ scrub[scrubProperty].increment) + 1)
         }else{
             if(value != scrub[scrubProperty].right && value != scrub[scrubProperty].right){
                 updateDefaultStatistics(distributionToUpdate, Math.floor((value - scrub[scrubProperty].left) / scrub[scrubProperty].increment), item);
-                console.log("Added to " + Math.floor((value - scrub[scrubProperty].left)/ scrub[scrubProperty].increment))
             }
         }
     }
@@ -524,6 +518,10 @@ function closeSettingsMenu(){
 }
 
 function applySettings(){
+    const diff = Math.round((document.getElementsByName("rightOutlier")[0].value - document.getElementsByName("leftOutlier")[0].value) / document.getElementsByName("increment")[0].value)
+
+    document.getElementsByName("rightOutlier")[0].value = parseFloat(document.getElementsByName("leftOutlier")[0].value) + (diff * parseFloat(document.getElementsByName("increment")[0].value))
+
     let key = currentField;
     scrub[key].left =  parseFloat(document.getElementsByName("leftOutlier")[0].value);
     scrub[key].right =  parseFloat(document.getElementsByName("rightOutlier")[0].value);
@@ -542,21 +540,10 @@ function applySettings(){
 }
 
 function realtimeUpdateLeft(){
-    // fix broken outliers
-    const diff = Math.round((document.getElementsByName("rightOutlier")[0].value - document.getElementsByName("leftOutlier")[0].value) / document.getElementsByName("increment")[0].value)
-
-    document.getElementsByName("leftOutlier")[0].value = parseFloat(document.getElementsByName("rightOutlier")[0].value) - (diff * parseFloat(document.getElementsByName("increment")[0].value))
-
     document.getElementById("leftOutlier").innerHTML = "Include values less than " + document.getElementsByName("leftOutlier")[0].value + " " + scrub[currentField].unit + "?"
 }
 
 function realtimeUpdateRight(){
-    // fix broken outliers
-
-    const diff = Math.round((document.getElementsByName("rightOutlier")[0].value - document.getElementsByName("leftOutlier")[0].value) / document.getElementsByName("increment")[0].value)
-
-    document.getElementsByName("rightOutlier")[0].value = parseFloat(document.getElementsByName("leftOutlier")[0].value) + (diff * parseFloat(document.getElementsByName("increment")[0].value))
-
     document.getElementById("rightOutlier").innerHTML = "Include values more than " + document.getElementsByName("rightOutlier")[0].value + " " + scrub[currentField].unit + "?"
 }
 

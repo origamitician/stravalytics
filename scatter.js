@@ -28,7 +28,7 @@ function renderScatterplot(arr, prop1, prop2){
         refArray.push({...item})
     })
 
-    console.log("running!")
+    //console.log("running!")
     let minX = 9223372036854775807
     let minY = 9223372036854775807
     let maxX = -1
@@ -54,11 +54,6 @@ function renderScatterplot(arr, prop1, prop2){
         }
         
     })
-    console.log(regressionArray);
-    console.log(maxX)
-    console.log(minX)
-    console.log(minY)
-    console.log(maxY)
     for(var i = 0; i < fixedArray.length; i++){
         var plot = document.createElement('p');
         plot.className = 'plot';
@@ -78,7 +73,6 @@ function renderScatterplot(arr, prop1, prop2){
             grid.className = 'scatterGrid';
             const txt = getComputedStyle(document.getElementById('scatterPlot')).height
             const height = parseFloat(txt.substring(0, txt.length - 2))
-            console.log(height)
             grid.style.height = (height / verticalIncrement) + "px"
             grid.style.width = 100 / horizontalIncrement + '%'
             grid.style.top = i * (height / verticalIncrement) + "px"
@@ -88,7 +82,6 @@ function renderScatterplot(arr, prop1, prop2){
                 // add the vertical signs
                 let yDisplay = document.createElement('p');
                 yDisplay.className = 'yScatterDisplay';
-                console.log(prop1)
                 if(prop2 == 'pace' || prop2 == 'elapsedTime' || prop2 == 'time'){
                     
                     yDisplay.innerHTML = convert(maxY - i*(((maxY - minY) / verticalIncrement))).split('.')[0]
@@ -103,7 +96,6 @@ function renderScatterplot(arr, prop1, prop2){
                 // add the vertical signs
                 let xDisplay = document.createElement('p');
                 xDisplay.className = 'xScatterDisplay';
-                console.log(prop1)
                 if(prop1 == 'pace' || prop1 == 'elapsedTime' || prop1 == 'time'){
                     xDisplay.innerHTML = convert(minX + (j+1)*(((maxX - minX) / horizontalIncrement))).split('.')[0]
                 }else{

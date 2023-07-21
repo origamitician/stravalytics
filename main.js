@@ -45,6 +45,7 @@ function changeDates(){
         getStravaData(1);
         getStravaData(2)
         getStravaData(3)
+        getStravaData(4)
     }catch (err){
         alert("Invalid date! " + err)
     }
@@ -61,6 +62,7 @@ fetch('https://www.strava.com/oauth/token?client_id=107318&client_secret=1bac185
         getStravaData(1);
         getStravaData(2);
         getStravaData(3);
+        getStravaData(4);
     })
 
 function getStravaData(page) {

@@ -187,7 +187,7 @@ body{
     border: 2px solid black;
     width: 50%;
     background-color: white;
-    height:  50vh;
+    height:  55vh;
     transform: translate(-50%, -50%);
     top: 50vh;
     left: 50vw;
@@ -248,7 +248,7 @@ input::-webkit-inner-spin-button {
     font-size: 110%;
 }
 
-#colorPicker{
+#colorPicker, #colorPicker2{
     background-color: white;
 }
 
@@ -271,6 +271,13 @@ input::-webkit-inner-spin-button {
     background-color: seagreen;
     border-radius: 50%;
     margin: 0;
+    transition: 0.75;
+}
+
+.plot:hover{
+    background-color: orange;
+    transition: 0.75;
+    cursor: pointer;
 }
 
 .scatterGrid{
@@ -293,6 +300,16 @@ input::-webkit-inner-spin-button {
     top: 100%;
     font-size: 100%;
     margin-top: 2.5%;
+    
+}
+
+#scatterVariable1, #scatterVariable2{
+    font-size: 150%;
+    outline: none;
+}
+
+#scatterVariable1{
+    margin-left: 10%;
 }
 
 

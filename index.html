@@ -115,8 +115,11 @@
             <input type="checkbox" name = "rightOutlierCheck" class = "settingsLabelsCheck"  >
             <label for="rightOutlierCheck" class = "settingsLabels" id = "rightOutlier">Include values greater than right outlier?</label>
             <br><br>
-            <label for="" class = "settingsLabels">Distribution Color: </label>
-            <input type="color" name = "distributionColor" value = "darkgreen" id = "colorPicker">
+            <label for="" class = "settingsLabels">Primary Distribution Color: </label>
+            <input type="color" name = "distributionColor" value = "#149c1f" id = "colorPicker">
+            <br><br>
+            <label for="" class = "settingsLabels">Secondary Distribution Color: </label>
+            <input type="color" name = "distributionColor2" value = "#149c1f" id = "colorPicker2">
             <br><br>
             <div style = "text-align: right">
                 <button class = "settingsButtons" id = "closeBtn" onClick = "closeSettingsMenu()">Close</button>
@@ -130,6 +133,7 @@
 
     <hr>
     <h1 class='graphHeader'>Pace against Mileage</h1>
+    <br><br>
     <select name="variable1" id="scatterVariable1" onChange = "updateScatterDrawings()">
         <option value="distance" selected>Distance</option>
         <option value="time">Moving Time</option>
@@ -154,9 +158,10 @@
         <option value="startDate">Date</option>
     </select>
     <div id="scatterPlot">
+
     </div>
     <br><br><br>
 </body>
 <script src="main.js"></script>
-<script src="scatter.js" ></script>
+<script src="scatter.js"></script>
 </html>

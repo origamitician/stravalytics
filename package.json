@@ -1,6 +1,6 @@
 {
   "name": "run-visualizer",
-  "type": "module",
+  
   "version": "1.0.0",
   "description": "An interactive website that uses data from the Strava API to breakdown details for all my runs.",
   "main": "main.js",
@@ -20,5 +20,7 @@
   "homepage": "https://github.com/origamitician/run-visualizer#readme",
   "dependencies": {
     "regression": "^2.0.1"
-  }
+  },
+  "devDependencies": {},
+  "type": "module"
 }

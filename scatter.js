@@ -1,4 +1,7 @@
+
+
 let refArray = [];
+
 function renderScatterplot(arr, prop1, prop2){
     refArray = [];
     var paras = document.getElementsByClassName('plot');
@@ -14,7 +17,7 @@ function renderScatterplot(arr, prop1, prop2){
 
     const array = [];
     arr.forEach(item => {
-        if(item.distance < 30000 && item.pace > 2.82){
+        if(item.distance < 30000){
             array.push({...item});
         }
         
@@ -114,5 +117,6 @@ function updateScatterDrawings() {
 }
 
 function show(){
+    console.log("alsdfjlkdsjaf;ljsd;lfjsad;lkj")
     console.log(JSON.stringify(refArray[this.id]))
 }

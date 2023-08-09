@@ -1,5 +1,4 @@
 //all variables + bargraph info is here;
-
 var accessKey;
 var allActivities = [];
 var startDate = 0;
@@ -11,20 +10,42 @@ if (window.innerWidth > window.innerHeight) {
 
     // landscape mode
     scrub = {
-        pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", unit: "seconds/mi"},
-        uptime: {left: 60, right: 100, increment: 2, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", unit: "%"},
-        distance: {left: 0, right: 15, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", unit: "miles"},
-        elevation: {left: 10, right: 510, increment: 25, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", unit: "feet"},
+        pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", color2: "#32a893", unit: "seconds/mi"},
+        uptime: {left: 60, right: 100, increment: 2, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", color2: "#db25a2", unit: "%"},
+        distance: {left: 0, right: 15, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", color2: '#221980', unit: "miles"},
+        elevation: {left: 10, right: 510, increment: 25, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", color2: '#b8a44d', unit: "feet"},
     }
 } else {
     // portrait mode
     scrub = {
-        pace: {left: 260, right: 600, increment: 34, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", unit: "seconds/mi"},
-        uptime: {left: 60, right: 100, increment: 4, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", unit: "%"},
-        distance: {left: 0, right: 15, increment: 1.5, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", unit: "miles"},
-        elevation: {left: 10, right: 510, increment: 50, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", unit: "feet"},
+        pace: {left: 260, right: 600, increment: 34, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", color2: "#32a893", unit: "seconds/mi"},
+        uptime: {left: 60, right: 100, increment: 4, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", color2: "#db25a2", unit: "%"},
+        distance: {left: 0, right: 15, increment: 1.5, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", color2: '#221980', unit: "miles"},
+        elevation: {left: 10, right: 510, increment: 50, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", color2: '#b8a44d', unit: "feet"},
     }
 }
+
+// to establish gradients. Totally didn't copy this from StackOverflow
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+  
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+// end of stackoverflow code
+  
 
 function changeDates(){
     try{
@@ -86,7 +107,7 @@ function getStravaData(page) {
         }
         
         renderGraph(); //histograms
-        renderScatterplot(allActivities, 'distance', 'time'); //scatterplot
+        renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
         
         document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
     })
@@ -97,14 +118,6 @@ var dist_distribution = []
 var pace_distribution = [];
 var elev_distribution = [];
 var elapsed_distribution = [];
-
-//given a 1280 x 600, the dimensions of individual canvas is ~900 x 300.
-
-//cutoffs for pace: <4:20 /mi, 4:20-4:40, 4:40-5:00, 5:00-5:20, 5:20-5:40, 5:40-6:00, 6:00-6:20, 6:20-6:40, 6:40-7:00, 7:00-7:20, 7:20-7:40, 7:40-8:00, 8:00-8:20, 8:20-8:40, 8:40-9:00, 9:00-9:20, 9:20-9:40, 9:40-10:00, 10:00~ (19 total subgraphs with 20 second increments)
-
-//cutoffs for elevation: 0-40, 40-80, 80-120... until 440-480, 480+. 13 subgraphs w/ 40ft increments
-
-//cutoffs for elapsed time: 0-2%, 2-4%, ... until 36+%. 19 subgraphs w/ 2% increments
 
 //helper function to convert seconds to m:ss
 
@@ -433,20 +446,10 @@ function renderGraph(){
         establishIncrements(e, (e.time / e.elapsedTime)*100, "uptime", elapsed_distribution)
     })
 
-    //console.log(dist_distribution);
-    //console.log(pace_distribution);
-    //console.log(elev_distribution);
-    //console.log(elapsed_distribution);
-
-    renderTypeGraph(dist_distribution, "dist_distribution", scrub.distance.color);
-    renderTypeGraph(pace_distribution, "pace_distribution", scrub.pace.color);
-    renderTypeGraph(elev_distribution, "elev_distribution", scrub.elevation.color);
-    renderTypeGraph(elapsed_distribution, "time_distribution", scrub.uptime.color);
-
-
-    
-    /*convert(Math.trunc(totalPace / allActivities.length)) + "." + (totalPace / allActivities.length).toString().split(".")[1].substring(0, 2) + "/mi"*/ 
-
+    renderTypeGraph(dist_distribution, "dist_distribution", scrub.distance.color, scrub.distance.color2);
+    renderTypeGraph(pace_distribution, "pace_distribution", scrub.pace.color, scrub.pace.color2);
+    renderTypeGraph(elev_distribution, "elev_distribution", scrub.elevation.color, scrub.elevation.color2);
+    renderTypeGraph(elapsed_distribution, "time_distribution", scrub.uptime.color, scrub.uptime.color2);
 }
 //render
 
@@ -513,6 +516,7 @@ function showIncrementMenu(field){
     }
     
     document.getElementsByName("distributionColor")[0].value = scrub[field].color;
+    document.getElementsByName("distributionColor2")[0].value = scrub[field].color2;
 }
 
 function closeSettingsMenu(){
@@ -532,6 +536,7 @@ function applySettings(){
     scrub[key].leftOutlier = document.getElementsByName("leftOutlierCheck")[0].checked;
     scrub[key].rightOutlier = document.getElementsByName("rightOutlierCheck")[0].checked;
     scrub[key].color = document.getElementsByName("distributionColor")[0].value;
+    scrub[key].color2 = document.getElementsByName("distributionColor2")[0].value;
     document.getElementById("settings").style.display = "none";
 
     pace_distribution = [];
@@ -549,12 +554,15 @@ function realtimeUpdateRight(){
     document.getElementById("rightOutlier").innerHTML = "Include values more than " + document.getElementsByName("rightOutlier")[0].value + " " + scrub[currentField].unit + "?"
 }
 
-function renderTypeGraph(array, type, color){
+function renderTypeGraph(array, type, color, color2){
     totalMileage=0;
     totalElevGain=0;
     totalPace=0;
     totalMovingTime=0;
     totalElapsedTime=0;
+
+    const clr1 = hexToRgb(color)
+    const clr2 = hexToRgb(color2)
 
     //array is the array that is getting iterated over
     //type is the destination where the graph is getting added
@@ -573,6 +581,10 @@ function renderTypeGraph(array, type, color){
         //draw graph + bars
         let i = 0;
         while(i < array.length){
+            const red = (clr1.r + (clr2.r - clr1.r) * (i / array.length))
+            const green = (clr1.g + (clr2.g - clr1.g) * (i / array.length))
+            const blue = (clr1.b + (clr2.b - clr1.b) * (i / array.length))
+            const gradientClr = 'rgb(' + red + ', ' + green + ', ' + blue + ')'
             var o = document.createElement("div");
             o.className = "verticalOuterContainer";
             o.style.width = 100/array.length + "%";
@@ -580,7 +592,7 @@ function renderTypeGraph(array, type, color){
 
             var verticalHolder = document.createElement("div");
             verticalHolder.className = "verticalHolder";
-            verticalHolder.id = i + "-" + type + "-" + color;
+            verticalHolder.id = i + "-" + type + "-" + rgbToHex(Math.round(red), Math.round(green), Math.round(blue))
             verticalHolder.style.height = window.innerHeight / 4 + "px";
             verticalHolder.addEventListener("click", showMoreStats);
             //verticalHolder.addEventListener("mouseout", disableStats);
@@ -618,7 +630,7 @@ function renderTypeGraph(array, type, color){
                 document.getElementById(type).getElementsByClassName("verticalHolder")[i].appendChild(verticalHolderStatTop);
             }
             
-            verticalHolderStat.style.backgroundColor = color;
+            verticalHolderStat.style.backgroundColor = gradientClr;
             verticalHolderStat.style.height = ((array[i].count / greatest) * (window.innerHeight / 4)) + "px";
             verticalHolderStat.style.marginTop = (((greatest - array[i].count) / greatest) * (window.innerHeight / 4)) + "px";
             verticalHolderStat.style.width = "100%";

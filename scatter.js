@@ -15,27 +15,56 @@ function renderScatterplot(arr, prop1, prop2){
         paras[0].parentNode.removeChild(paras[0]);
     }
 
+    let topX
+    let bottomX
+    let topY
+    let bottomY
+
+    if (document.getElementsByName('xAxisMin')[0].value == '') {
+        bottomX = 0;
+    } else {
+        bottomX = document.getElementsByName('xAxisMin')[0].value
+    }
+
+    if (document.getElementsByName('xAxisMax')[0].value == '') {
+        topX = 9223372036854775807;
+    } else {
+        topX = document.getElementsByName('xAxisMax')[0].value
+    }
+
+    if (document.getElementsByName('yAxisMin')[0].value == '') {
+        bottomY = 0;
+    } else {
+        bottomY = document.getElementsByName('yAxisMin')[0].value
+    }
+
+    if (document.getElementsByName('yAxisMax')[0].value == '') {
+        topY = 9223372036854775807;
+    } else {
+        topY = document.getElementsByName('yAxisMax')[0].value
+    }
+
     const array = [];
-    arr.forEach(item => {
-        if(item.distance < 30000){
-            array.push({...item});
-        }
-        
-    })
-    array.forEach(item => {
+    arr.forEach(i => {
+        const item = {...i};
         item.distance /= 1609
         item.elevation *= 3.28;
         item.pace = 1609 / item.pace;
         item.cadence = 2 * item.cadence
         item.startDate = Date.parse(item.startDate) / 1000
-        refArray.push({...item})
+        console.log(item)
+        if(item[prop1] > bottomX && item[prop1] < topX && item[prop2] > bottomY && item[prop2] < topY){
+            array.push({...item})
+            refArray.push({...item})
+        }
     })
 
     //console.log("running!")
-    let minX = 9223372036854775807
-    let minY = 9223372036854775807
-    let maxX = -1
-    let maxY = -1
+    let minX = 9223372036854775807;
+    let minY = 9223372036854775807;
+    let maxX = -1;
+    let maxY = -1;
+    
     const fixedArray = [];
     const regressionArray = [];
     array.forEach(item => {
@@ -68,7 +97,7 @@ function renderScatterplot(arr, prop1, prop2){
     }
 
     const verticalIncrement = 8;
-    const horizontalIncrement = 6;
+    const horizontalIncrement = 7;
 
     for(let i = 0; i < verticalIncrement; i++){
         for(let j = 0; j < horizontalIncrement; j++){
@@ -113,6 +142,15 @@ function renderScatterplot(arr, prop1, prop2){
 }
 
 function updateScatterDrawings() {
+    console.log('updating')
+    renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value)
+}
+
+function updateScatterDrawingsInResponseToVariableChange() {
+    document.getElementsByName('xAxisMax')[0].value = ''
+    document.getElementsByName('yAxisMax')[0].value = ''
+    document.getElementsByName('xAxisMin')[0].value = ''
+    document.getElementsByName('yAxisMin')[0].value = ''
     renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value)
 }
 

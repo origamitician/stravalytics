@@ -85,6 +85,7 @@ function renderScatterplot(arr, prop1, prop2){
         item.pace = 1609 / item.pace;
         item.cadence = 2 * item.cadence
         item.uptime = parseFloat(((item.time / item.elapsedTime)*100).toFixed(2))
+        item.maxPace = 1609 / item.maxPace;
         item.startDate = Date.parse(item.startDate) / 1000
         if(item[prop1] > bottomX && item[prop1] < topX && item[prop2] > bottomY && item[prop2] < topY){
             array.push({...item})
@@ -145,7 +146,7 @@ function renderScatterplot(arr, prop1, prop2){
                 // add the vertical signs
                 let yDisplay = document.createElement('p');
                 yDisplay.className = 'yScatterDisplay';
-                if(prop2 == 'pace' || prop2 == 'elapsedTime' || prop2 == 'time'){
+                if(prop2 == 'pace' || prop2 == 'elapsedTime' || prop2 == 'time' || prop2 == 'maxPace'){
                     
                     yDisplay.innerHTML = convert(maxY - i*(((maxY - minY) / verticalIncrement))).split('.')[0]
                 }else{
@@ -159,7 +160,7 @@ function renderScatterplot(arr, prop1, prop2){
                 // add the vertical signs
                 let xDisplay = document.createElement('p');
                 xDisplay.className = 'xScatterDisplay';
-                if(prop1 == 'pace' || prop1 == 'elapsedTime' || prop1 == 'time'){
+                if(prop1 == 'pace' || prop1 == 'elapsedTime' || prop1 == 'time' || prop1 == 'maxPace'){
                     xDisplay.innerHTML = convert(minX + (j+1)*(((maxX - minX) / horizontalIncrement))).split('.')[0]
                 }else{
                    xDisplay.innerHTML = (minX + (j+1)*(((maxX - minX) / horizontalIncrement))).toFixed(1)

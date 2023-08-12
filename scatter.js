@@ -2,6 +2,39 @@
 
 let refArray = [];
 
+function getNumberOfColons(str) {
+    let colonNum = 0;
+    for (let i = 0; i < str.length; i++) {
+        if(str.substring(i, i+1) === ":") {
+            colonNum++;
+        }
+    }
+    return colonNum;
+}
+
+function processString(val){
+    let resultantString;
+    if (val.includes(":")) {
+        const breakPoint = val.indexOf(":");
+        if (getNumberOfColons(val) === 1) {
+            resultantString = parseFloat(val.substring(0, breakPoint))*60 
+            + parseFloat(val.substring(breakPoint+1))
+        } else if (getNumberOfColons(val) === 2) {
+            const secondBreakPoint = val.substring(breakPoint + 1).indexOf(":") + breakPoint + 1;
+            console.log(secondBreakPoint)
+            resultantString = parseFloat(val.substring(0, breakPoint))*3600 
+            + parseFloat(val.substring(breakPoint+1, secondBreakPoint))*60 
+            + parseFloat(val.substring(secondBreakPoint+1)) 
+        }
+    } else if (val.includes("-")) {
+        resultantString = Date.parse(val) / 1000
+    } else {
+        resultantString = val
+    }
+    console.log(resultantString)
+    return resultantString;
+}
+
 function renderScatterplot(arr, prop1, prop2){
     refArray = [];
     var paras = document.getElementsByClassName('plot');
@@ -23,25 +56,25 @@ function renderScatterplot(arr, prop1, prop2){
     if (document.getElementsByName('xAxisMin')[0].value == '') {
         bottomX = 0;
     } else {
-        bottomX = document.getElementsByName('xAxisMin')[0].value
+        bottomX =  processString(document.getElementsByName('xAxisMin')[0].value)
     }
 
     if (document.getElementsByName('xAxisMax')[0].value == '') {
         topX = 9223372036854775807;
     } else {
-        topX = document.getElementsByName('xAxisMax')[0].value
+        topX = processString(document.getElementsByName('xAxisMax')[0].value)
     }
 
     if (document.getElementsByName('yAxisMin')[0].value == '') {
         bottomY = 0;
     } else {
-        bottomY = document.getElementsByName('yAxisMin')[0].value
+        bottomY = processString(document.getElementsByName('yAxisMin')[0].value)
     }
 
     if (document.getElementsByName('yAxisMax')[0].value == '') {
         topY = 9223372036854775807;
     } else {
-        topY = document.getElementsByName('yAxisMax')[0].value
+        topY = processString(document.getElementsByName('yAxisMax')[0].value)
     }
 
     const array = [];
@@ -51,8 +84,8 @@ function renderScatterplot(arr, prop1, prop2){
         item.elevation *= 3.28;
         item.pace = 1609 / item.pace;
         item.cadence = 2 * item.cadence
+        item.uptime = parseFloat(((item.time / item.elapsedTime)*100).toFixed(2))
         item.startDate = Date.parse(item.startDate) / 1000
-        console.log(item)
         if(item[prop1] > bottomX && item[prop1] < topX && item[prop2] > bottomY && item[prop2] < topY){
             array.push({...item})
             refArray.push({...item})
@@ -68,24 +101,22 @@ function renderScatterplot(arr, prop1, prop2){
     const fixedArray = [];
     const regressionArray = [];
     array.forEach(item => {
-        if(item[prop1] != null && item[prop2] != null && item[prop1] != NaN && item[prop2] != NaN) {
+        if(item[prop1] != null && item[prop2] != null && item[prop1] != null && item[prop2] !=null) {
             fixedArray.push({x: item[prop1], y: item[prop2]})
             regressionArray.push([item[prop1], item[prop2]])
             if(item[prop1] < minX){
                 minX = item[prop1]
-            }
-            if(item[prop1] > maxX){
+            }else if(item[prop1] > maxX){
                 maxX = item[prop1]
             }
             if(item[prop2] < minY){
                 minY= item[prop2]
-            }
-            if(item[prop2] > maxY){
+            }else if(item[prop2] > maxY){
                 maxY = item[prop2]
             }
         }
-        
     })
+
     for(var i = 0; i < fixedArray.length; i++){
         var plot = document.createElement('p');
         plot.className = 'plot';

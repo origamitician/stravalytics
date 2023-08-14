@@ -21,7 +21,6 @@ function processString(val){
             + parseFloat(val.substring(breakPoint+1))
         } else if (getNumberOfColons(val) === 2) {
             const secondBreakPoint = val.substring(breakPoint + 1).indexOf(":") + breakPoint + 1;
-            console.log(secondBreakPoint)
             resultantString = parseFloat(val.substring(0, breakPoint))*3600 
             + parseFloat(val.substring(breakPoint+1, secondBreakPoint))*60 
             + parseFloat(val.substring(secondBreakPoint+1)) 
@@ -31,8 +30,25 @@ function processString(val){
     } else {
         resultantString = val
     }
-    console.log(resultantString)
     return resultantString;
+}
+
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+  
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
 function show(){
@@ -41,7 +57,8 @@ function show(){
 }
 
 
-function renderScatterplot(arr, prop1, prop2){
+function renderScatterplot(arr, prop1, prop2, tertiaryProp){
+    console.log(tertiaryProp)
     refArray = [];
     var paras = document.getElementsByClassName('plot');
 
@@ -58,6 +75,8 @@ function renderScatterplot(arr, prop1, prop2){
     let bottomX
     let topY
     let bottomY
+    let topZ
+    let bottomZ
 
     if (document.getElementsByName('xAxisMin')[0].value == '') {
         bottomX = 0;
@@ -102,14 +121,21 @@ function renderScatterplot(arr, prop1, prop2){
     //console.log("running!")
     let minX = 9223372036854775807;
     let minY = 9223372036854775807;
+    let minZ = 9223372036854775807;
     let maxX = -1;
     let maxY = -1;
-    
+    let maxZ = -1;
+
     const fixedArray = [];
     const regressionArray = [];
     array.forEach(item => {
         if(item[prop1] != null && item[prop2] != null && item[prop1] != null && item[prop2] !=null) {
-            fixedArray.push({x: item[prop1], y: item[prop2]})
+            if(tertiaryProp) {
+                fixedArray.push({x: item[prop1], y: item[prop2], z: item[tertiaryProp]})
+            } else {
+                fixedArray.push({x: item[prop1], y: item[prop2]})
+            }
+            
             regressionArray.push([item[prop1], item[prop2]])
             if(item[prop1] < minX){
                 minX = item[prop1]
@@ -121,6 +147,24 @@ function renderScatterplot(arr, prop1, prop2){
             }else if(item[prop2] > maxY){
                 maxY = item[prop2]
             }
+
+            if(tertiaryProp) {
+                if(item[tertiaryProp] < minZ){
+                    minZ= item[tertiaryProp]
+                    if(document.getElementsByName('zAxisMin')[0].value == ''){
+                        bottomZ = minZ
+                    } else {
+                        bottomZ = processString(document.getElementsByName('zAxisMin')[0].value)
+                    }
+                }else if(item[tertiaryProp] > maxZ){
+                    maxZ = item[tertiaryProp]
+                    if(document.getElementsByName('zAxisMax')[0].value == ''){
+                        topZ = maxZ
+                    } else {
+                        topZ = processString(document.getElementsByName('zAxisMax')[0].value)
+                    }
+                } 
+            }
         }
     })
 
@@ -129,9 +173,26 @@ function renderScatterplot(arr, prop1, prop2){
         plot.className = 'plot';
         plot.style.left = ((fixedArray[i].x - minX) / (maxX - minX))*100 + '%';
         plot.style.bottom = ((fixedArray[i].y - minY) / (maxY- minY))*100 -3 + '%';
+        if(tertiaryProp) {
+            // if user selects a tertiary prop
+            if(fixedArray[i].z < bottomZ) {
+                plot.style.backgroundColor = document.getElementsByName('scatterColor1')[0].value
+            } else if (fixedArray[i].z > topZ) {
+                plot.style.backgroundColor = document.getElementsByName('scatterColor2')[0].value
+            } else {
+                const clr1 = hexToRgb(document.getElementsByName('scatterColor1')[0].value)
+                const clr2 = hexToRgb(document.getElementsByName('scatterColor2')[0].value)
+                const red = (clr1.r + (clr2.r - clr1.r) * ((fixedArray[i].z - bottomZ) / (topZ - bottomZ)))
+                const green = (clr1.g + (clr2.g - clr1.g) * ((fixedArray[i].z - bottomZ) / (topZ - bottomZ)))
+                const blue = (clr1.b + (clr2.b - clr1.b) * ((fixedArray[i].z - bottomZ) / (topZ - bottomZ)))
+                const gradientClr = 'rgb(' + red + ', ' + green + ', ' + blue + ')'
+                plot.style.backgroundColor = gradientClr;
+            }
+        } else {
+            plot.style.backgroundColor = "seagreen";
+        }
         plot.id = i;
         plot.addEventListener('click', show)
-        console.log(plot)
         document.getElementById('scatterPlot').appendChild(plot)
     }
 
@@ -182,7 +243,7 @@ function renderScatterplot(arr, prop1, prop2){
 
 function updateScatterDrawings() {
     console.log('updating')
-    renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value)
+    renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value, document.getElementsByName('variable3')[0].value)
 }
 
 function updateScatterDrawingsInResponseToVariableChange() {
@@ -190,6 +251,6 @@ function updateScatterDrawingsInResponseToVariableChange() {
     document.getElementsByName('yAxisMax')[0].value = ''
     document.getElementsByName('xAxisMin')[0].value = ''
     document.getElementsByName('yAxisMin')[0].value = ''
-    renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value)
+    renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value, document.getElementsByName('variable3')[0].value)
 }
 

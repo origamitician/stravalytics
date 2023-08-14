@@ -332,6 +332,33 @@ input::-webkit-inner-spin-button {
     width: 45%;
 }
 
+#spectrum{
+    border: 1px solid black;
+    height: 8vh;
+    width: 80%;
+    position: relative;
+    padding: 0;
+}
+
+#spectrumUpperBound, #spectrumLowerBound {
+    color: white;
+    position: absolute;
+    top: 0%;
+
+    padding-top: 0;
+    padding-bottom: 0;
+    font-size: 125%;
+}
+
+#spectrumLowerBound {
+    left: 0;
+    
+}
+
+#spectrumUpperBound{
+    right: 0;
+}
+
 #footer{
     text-align: center;
     background-color: grey;

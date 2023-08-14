@@ -168,6 +168,15 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         }
     })
 
+    if(tertiaryProp){
+        document.getElementById('spectrum').style.display = 'block';
+        document.getElementById('spectrum').style.background = 'linear-gradient(to right, ' + document.getElementsByName('scatterColor1')[0].value + ', ' + document.getElementsByName('scatterColor2')[0].value + ')'
+        document.getElementById('spectrumLowerBound').innerHTML = bottomZ.toFixed(2)
+        document.getElementById('spectrumUpperBound').innerHTML = topZ.toFixed(2)
+    } else {
+        document.getElementById('spectrum').style.display = 'none';
+    }
+
     for(var i = 0; i < fixedArray.length; i++){
         var plot = document.createElement('p');
         plot.className = 'plot';

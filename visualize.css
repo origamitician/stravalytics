@@ -3,7 +3,7 @@ body{
     /*font-family: 'Wix Madefor Display', sans-serif;*/
     /*font-family: 'Raleway', sans-serif;*/
     font-size: 1.15vw;
-    
+    overflow-x: hidden;
 }
 
 .graph{
@@ -332,6 +332,17 @@ input::-webkit-inner-spin-button {
     width: 45%;
 }
 
+#footer{
+    text-align: center;
+    background-color: grey;
+    width: 102%;
+    margin-left: -1%;
+    font-size: 150%;
+    padding-top: 1.5%;
+    padding-bottom: 1.5%;
+    margin-bottom: -1%;
+}
+
 
 @media only screen and (orientation: portrait){
     body{
@@ -456,5 +467,41 @@ input::-webkit-inner-spin-button {
 
     .yScatterDisplay, .xScatterDisplay{
         font-size: 3vw;
+    }
+
+    #footer{
+        margin-left: -2%;
+        width: 104%;
+        margin-bottom: -2%;
+    }
+
+    #scatterSettingsHolder{
+        flex-direction: column;
+        margin-left: 2.5%;
+        margin-right: 2.5%;
+        width: 95%;
+    }
+
+    #scatterSettingsHolderMain{
+        width: 100%;
+        border: none;
+    }
+
+    #addTertiaryVariable{
+        width: 100%;
+        margin-left: 0;
+        margin-top: 5%;
+    }
+
+    .scatterInputLabels{
+        font-size: 4.5vw;
+    }
+
+    .subScatterInputLabels{
+        font-size: 3.5vw;
+    }
+
+    .scatterBoundInput{
+        font-size: 3.5vw;
     }
 }

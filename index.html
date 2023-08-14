@@ -136,17 +136,17 @@
     <div id = 'scatterSettingsHolder'>
         <div id = 'scatterSettingsHolderMain'>
             <h2 class = 'scatterInputLabels'>X-Axis: &nbsp;&nbsp;
-                <select name="variable1" id="scatterVariable1" onChange = "updateScatterDrawingsInResponseToVariableChange()">
-                    <option value="distance" selected>Distance</option>
-                    <option value="time">Moving Time</option>
-                    <option value="elapsedTime">Elapsed Time</option>
-                    <option value="uptime">Uptime</option>
-                    <option value="elevation">Elevation Gain</option>
-                    <option value="pace">Pace</option>
+                <select name="variable1" id="scatterVariable1" onChange = "updateScatterDrawingsInResponseToVariableChange(1)">
+                    <option value="distance" selected>Distance (mi)</option>
+                    <option value="time">Moving Time (h:mm:ss or mm:ss)</option>
+                    <option value="elapsedTime">Elapsed Time (h:mm:ss or mm:ss)</option>
+                    <option value="uptime">Uptime (%)</option>
+                    <option value="elevation">Elevation Gain (ft)</option>
+                    <option value="pace">Pace (m:ss /mi)</option>
                     <option value="kudos">Kudos</option>
-                    <option value="maxPace">Top speed</option>
-                    <option value="cadence">Cadence</option>
-                    <option value="startDate">Date</option>
+                    <option value="maxPace">Top speed (m:ss /mi)</option>
+                    <option value="cadence">Cadence (steps/min)</option>
+                    <option value="startDate">Date (mm-dd-yyyy)</option>
                 </select>
             </h2>
             <label for="xAxisMin" class = 'subScatterInputLabels'>Lower Bound</label>
@@ -155,17 +155,17 @@
             <input type="text" name="xAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
             <br><br><br>
             <h2 class = 'scatterInputLabels'>Y-Axis: &nbsp;&nbsp;
-                <select name="variable2" id="scatterVariable2" onChange = "updateScatterDrawingsInResponseToVariableChange()">
-                    <option value="distance">Distance</option>
-                    <option value="time">Moving Time</option>
-                    <option value="elapsedTime">Elapsed Time</option>
-                    <option value="uptime">Uptime</option>
-                    <option value="elevation">Elevation Gain</option>
-                    <option value="pace" selected>Pace</option>
+                <select name="variable2" id="scatterVariable2" onChange = "updateScatterDrawingsInResponseToVariableChange(2)">
+                    <option value="distance" selected>Distance (mi)</option>
+                    <option value="time">Moving Time (h:mm:ss or mm:ss)</option>
+                    <option value="elapsedTime">Elapsed Time (h:mm:ss or mm:ss)</option>
+                    <option value="uptime">Uptime (%)</option>
+                    <option value="elevation">Elevation Gain (ft)</option>
+                    <option value="pace" selected>Pace (m:ss /mi)</option>
                     <option value="kudos">Kudos</option>
-                    <option value="maxPace">Top speed</option>
-                    <option value="cadence">Cadence</option>
-                    <option value="startDate">Date</option>
+                    <option value="maxPace">Top speed (m:ss /mi)</option>
+                    <option value="cadence">Cadence (steps/min)</option>
+                    <option value="startDate">Date (mm-dd-yyyy)</option>
                 </select>
             </h2>
             <label for="yAxisMin" class = 'subScatterInputLabels'>Lower Bound</label>
@@ -176,18 +176,18 @@
         </div>
         <div id = 'addTertiaryVariable'>
             <h2 class = 'scatterInputLabels'>Tertiary Variable... &nbsp;&nbsp;
-                <select name="variable3" id="scatterVariable3" onChange = "updateScatterDrawingsInResponseToVariableChange()">
+                <select name="variable3" id="scatterVariable3" onChange = "updateScatterDrawingsInResponseToVariableChange(3)">
                     <option value="" selected>None</option>
-                    <option value="distance">Distance</option>
-                    <option value="time">Moving Time</option>
-                    <option value="elapsedTime">Elapsed Time</option>
-                    <option value="uptime">Uptime</option>
-                    <option value="elevation">Elevation Gain</option>
-                    <option value="pace">Pace</option>
+                    <option value="distance">Distance (mi)</option>
+                    <option value="time">Moving Time (h:mm:ss or mm:ss)</option>
+                    <option value="elapsedTime">Elapsed Time (h:mm:ss or mm:ss)</option>
+                    <option value="uptime">Uptime (%)</option>
+                    <option value="elevation">Elevation Gain (ft)</option>
+                    <option value="pace">Pace (m:ss /mi)</option>
                     <option value="kudos">Kudos</option>
-                    <option value="maxPace">Top speed</option>
-                    <option value="cadence">Cadence</option>
-                    <option value="startDate">Date</option>
+                    <option value="maxPace">Top speed (m:ss /mi)</option>
+                    <option value="cadence">Cadence (steps/min)</option>
+                    <option value="startDate">Date (mm-dd-yyyy)</option>
                 </select>
             </h2>
     

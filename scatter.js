@@ -171,8 +171,15 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     if(tertiaryProp){
         document.getElementById('spectrum').style.display = 'block';
         document.getElementById('spectrum').style.background = 'linear-gradient(to right, ' + document.getElementsByName('scatterColor1')[0].value + ', ' + document.getElementsByName('scatterColor2')[0].value + ')'
-        document.getElementById('spectrumLowerBound').innerHTML = parseFloat(bottomZ).toFixed(2)
-        document.getElementById('spectrumUpperBound').innerHTML = parseFloat(topZ).toFixed(2)
+        if(tertiaryProp == 'pace' || tertiaryProp == 'elapsedTime' || tertiaryProp == 'time' || tertiaryProp == 'maxPace'){
+            // yDisplay.innerHTML = convert(maxY - i*(((maxY - minY) / verticalIncrement))).split('.')[0]
+            document.getElementById('spectrumLowerBound').innerHTML = convert(parseFloat(bottomZ)).split('.')[0]
+            document.getElementById('spectrumUpperBound').innerHTML = convert(parseFloat(topZ)).split('.')[0]
+        } else {
+            document.getElementById('spectrumLowerBound').innerHTML = parseFloat(bottomZ).toFixed(2)
+            document.getElementById('spectrumUpperBound').innerHTML = parseFloat(topZ).toFixed(2)
+        }
+        
     } else {
         document.getElementById('spectrum').style.display = 'none';
     }
@@ -255,11 +262,17 @@ function updateScatterDrawings() {
     renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value, document.getElementsByName('variable3')[0].value)
 }
 
-function updateScatterDrawingsInResponseToVariableChange() {
-    document.getElementsByName('xAxisMax')[0].value = ''
-    document.getElementsByName('yAxisMax')[0].value = ''
-    document.getElementsByName('xAxisMin')[0].value = ''
-    document.getElementsByName('yAxisMin')[0].value = ''
+function updateScatterDrawingsInResponseToVariableChange(callerID) {
+    if(callerID === 1) {
+        document.getElementsByName('xAxisMax')[0].value = ''
+        document.getElementsByName('xAxisMin')[0].value = ''
+    } else if (callerID === 2) {
+        document.getElementsByName('yAxisMin')[0].value = ''
+        document.getElementsByName('yAxisMax')[0].value = ''
+    } else if (callerID === 3) {
+        document.getElementsByName('zAxisMin')[0].value = ''
+        document.getElementsByName('zAxisMax')[0].value = ''
+    }
     renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value, document.getElementsByName('variable3')[0].value)
 }
 

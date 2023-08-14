@@ -107,11 +107,19 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         const item = {...i};
         item.distance /= 1609
         item.elevation *= 3.28;
+        item.incline = parseFloat(((item.elevation / (item.distance * 5280))*100).toFixed(2))
         item.pace = 1609 / item.pace;
         item.cadence = 2 * item.cadence
         item.uptime = parseFloat(((item.time / item.elapsedTime)*100).toFixed(2))
         item.maxPace = 1609 / item.maxPace;
         item.startDate = Date.parse(item.startDate) / 1000
+        if (item.cadence) {
+            item.stepsPerMile = item.cadence * (item.pace / 60) 
+            item.strideLength = 5280 / item.stepsPerMile
+        } else {
+            item.stepsPerMile = null;
+            item.strideLength = null;
+        }
         if(item[prop1] > bottomX && item[prop1] < topX && item[prop2] > bottomY && item[prop2] < topY){
             array.push({...item})
             refArray.push({...item})
@@ -205,7 +213,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
                 plot.style.backgroundColor = gradientClr;
             }
         } else {
-            plot.style.backgroundColor = "seagreen";
+            plot.style.backgroundColor = document.getElementsByName('scatterColor2')[0].value;
         }
         plot.id = i;
         plot.addEventListener('click', show)

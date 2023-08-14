@@ -303,14 +303,14 @@ input::-webkit-inner-spin-button {
     
 }
 
-#scatterVariable1, #scatterVariable2{
+#scatterVariable1, #scatterVariable2, #scatterVariable3{
     font-size: 100%;
     outline: none;
 }
 
 .scatterBoundInput{
-    font-size: 135%;
-    width: 10%;
+    font-size: 120%;
+    width: 20%;
     outline: none;
     border-radius: 5px;
     margin-right: 2%;
@@ -319,6 +319,18 @@ input::-webkit-inner-spin-button {
 
 #scatterSettingsHolder{
     margin-left: 10%;
+    display: flex;
+}
+
+#scatterSettingsHolderMain{
+    width: 45%;
+    margin-left: 0;
+    border-right: 2px dotted black;
+}
+
+#addTertiaryVariable{
+    margin-left: 2%;
+    width: 45%;
 }
 
 

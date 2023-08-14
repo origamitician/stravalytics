@@ -135,45 +135,76 @@
     <h1 class='graphHeader'>Pace against Mileage</h1>
     <br><br>
     <div id = 'scatterSettingsHolder'>
-        <h2>X-Axis: &nbsp;&nbsp;
-            <select name="variable1" id="scatterVariable1" onChange = "updateScatterDrawingsInResponseToVariableChange()">
-                <option value="distance" selected>Distance</option>
-                <option value="time">Moving Time</option>
-                <option value="elapsedTime">Elapsed Time</option>
-                <option value="uptime">Uptime</option>
-                <option value="elevation">Elevation Gain</option>
-                <option value="pace">Pace</option>
-                <option value="kudos">Kudos</option>
-                <option value="maxPace">Top speed</option>
-                <option value="cadence">Cadence</option>
-                <option value="startDate">Date</option>
-            </select>
-        </h2>
-        <label for="xAxisMin">Lower Bound</label>
-        <input type="text" name="xAxisMin" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
-        <label for="xAxisMax">Upper Bound</label>
-        <input type="text" name="xAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
-        <br><br><br>
-        <h2>Y-Axis: &nbsp;&nbsp;
-            <select name="variable2" id="scatterVariable2" onChange = "updateScatterDrawingsInResponseToVariableChange()">
-                <option value="distance">Distance</option>
-                <option value="time">Moving Time</option>
-                <option value="elapsedTime">Elapsed Time</option>
-                <option value="uptime">Uptime</option>
-                <option value="elevation">Elevation Gain</option>
-                <option value="pace" selected>Pace</option>
-                <option value="kudos">Kudos</option>
-                <option value="maxPace">Top speed</option>
-                <option value="cadence">Cadence</option>
-                <option value="startDate">Date</option>
-            </select>
-        </h2>
-        <label for="yAxisMin">Lower Bound</label>
-        <input type="text" name="yAxisMin" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
-        <label for="yAxisMax">Upper Bound</label>
-        <input type="text" name="yAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+        <div id = 'scatterSettingsHolderMain'>
+            <h2>X-Axis: &nbsp;&nbsp;
+                <select name="variable1" id="scatterVariable1" onChange = "updateScatterDrawingsInResponseToVariableChange()">
+                    <option value="distance" selected>Distance</option>
+                    <option value="time">Moving Time</option>
+                    <option value="elapsedTime">Elapsed Time</option>
+                    <option value="uptime">Uptime</option>
+                    <option value="elevation">Elevation Gain</option>
+                    <option value="pace">Pace</option>
+                    <option value="kudos">Kudos</option>
+                    <option value="maxPace">Top speed</option>
+                    <option value="cadence">Cadence</option>
+                    <option value="startDate">Date</option>
+                </select>
+            </h2>
+            <label for="xAxisMin">Lower Bound</label>
+            <input type="text" name="xAxisMin" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+            <label for="xAxisMax">Upper Bound</label>
+            <input type="text" name="xAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+            <br><br><br>
+            <h2>Y-Axis: &nbsp;&nbsp;
+                <select name="variable2" id="scatterVariable2" onChange = "updateScatterDrawingsInResponseToVariableChange()">
+                    <option value="distance">Distance</option>
+                    <option value="time">Moving Time</option>
+                    <option value="elapsedTime">Elapsed Time</option>
+                    <option value="uptime">Uptime</option>
+                    <option value="elevation">Elevation Gain</option>
+                    <option value="pace" selected>Pace</option>
+                    <option value="kudos">Kudos</option>
+                    <option value="maxPace">Top speed</option>
+                    <option value="cadence">Cadence</option>
+                    <option value="startDate">Date</option>
+                </select>
+            </h2>
+            <label for="yAxisMin">Lower Bound</label>
+            <input type="text" name="yAxisMin" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+            <label for="yAxisMax">Upper Bound</label>
+            <input type="text" name="yAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+    
+        </div>
+        <div id = 'addTertiaryVariable'>
+            <h2>Tertiary Variable... &nbsp;&nbsp;
+                <select name="variable3" id="scatterVariable3" onChange = "updateScatterDrawingsInResponseToVariableChange()">
+                    <option value="" selected>None</option>
+                    <option value="distance">Distance</option>
+                    <option value="time">Moving Time</option>
+                    <option value="elapsedTime">Elapsed Time</option>
+                    <option value="uptime">Uptime</option>
+                    <option value="elevation">Elevation Gain</option>
+                    <option value="pace">Pace</option>
+                    <option value="kudos">Kudos</option>
+                    <option value="maxPace">Top speed</option>
+                    <option value="cadence">Cadence</option>
+                    <option value="startDate">Date</option>
+                </select>
+            </h2>
+    
+            <label for="xAxisMin">Lower Bound</label>
+            <input type="text" name="zAxisMin" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+            <input type="color" name = "distributionColor2" value = "#149c1f" id = "colorPicker2">
+            <br><br>
+            <label for="xAxisMax">Upper Bound</label>
+            <input type="text" name="zAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+            <input type="color" name = "distributionColor2" value = "#149c1f" id = "colorPicker2">
 
+            <br><br>
+            
+        </div>
     </div>
+    
     
     
 

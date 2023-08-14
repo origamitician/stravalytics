@@ -35,6 +35,12 @@ function processString(val){
     return resultantString;
 }
 
+function show(){
+    console.log("alsdfjlkdsjaf;ljsd;lfjsad;lkj")
+    console.log(JSON.stringify(refArray[this.id]))
+}
+
+
 function renderScatterplot(arr, prop1, prop2){
     refArray = [];
     var paras = document.getElementsByClassName('plot');
@@ -124,7 +130,8 @@ function renderScatterplot(arr, prop1, prop2){
         plot.style.left = ((fixedArray[i].x - minX) / (maxX - minX))*100 + '%';
         plot.style.bottom = ((fixedArray[i].y - minY) / (maxY- minY))*100 -3 + '%';
         plot.id = i;
-        plot.addEventListener('onmouseenter', show)
+        plot.addEventListener('click', show)
+        console.log(plot)
         document.getElementById('scatterPlot').appendChild(plot)
     }
 
@@ -186,7 +193,3 @@ function updateScatterDrawingsInResponseToVariableChange() {
     renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value)
 }
 
-function show(){
-    console.log("alsdfjlkdsjaf;ljsd;lfjsad;lkj")
-    console.log(JSON.stringify(refArray[this.id]))
-}

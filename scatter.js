@@ -156,7 +156,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
                 maxY = item[prop2]
             }
 
-            if(tertiaryProp) {
+            if(tertiaryProp && item[tertiaryProp]) {
                 if(item[tertiaryProp] < minZ){
                     minZ= item[tertiaryProp]
                     if(document.getElementsByName('zAxisMin')[0].value == ''){

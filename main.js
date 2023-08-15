@@ -1,9 +1,7 @@
 //all variables + bargraph info is here;
-var accessKey;
 var allActivities = [];
 var startDate = 0;
 var endDate = Math.floor(Date.now() / 1000);
-
 let scrub;
 
 if (window.innerWidth > window.innerHeight) {
@@ -70,47 +68,6 @@ function changeDates(){
     }catch (err){
         alert("Invalid date! " + err)
     }
-}
-
-fetch('https://www.strava.com/oauth/token?client_id=107318&client_secret=1bac185421708876ddd639fcef0a319d5896d3b1&refresh_token=48f138733218bdd7c10c586c704b8f104a5221f2&grant_type=refresh_token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-    }).then((response) => response.json())
-    .then((json) => {
-        accessKey = json.access_token
-        getStravaData(1);
-        getStravaData(2);
-        getStravaData(3);
-        getStravaData(4);
-    })
-
-function getStravaData(page) {
-    fetch("https://www.strava.com/api/v3/athlete/activities?access_token=" + accessKey + "&page=" + page + "&per_page=200&after=" + startDate + "&before=" + endDate).then((response) => response.json()).then((jsonData) => {
-        
-        for (var i = 0; i < jsonData.length; i++){
-            if(jsonData[i].type == "Run")
-            allActivities.push({
-                distance: jsonData[i].distance,
-                time: jsonData[i].moving_time,
-                elapsedTime: jsonData[i].elapsed_time,
-                elevation: jsonData[i].total_elevation_gain,
-                pace: jsonData[i].average_speed,
-                name: jsonData[i].name,
-                startDate: jsonData[i].start_date_local,
-                id:  jsonData[i].id,
-                kudos: jsonData[i].kudos_count,
-                maxPace: jsonData[i].max_speed,
-                cadence: jsonData[i].average_cadence
-            });
-        }
-        
-        renderGraph(); //histograms
-        renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
-        
-        document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
-    })
 }
 
 //variables for graph

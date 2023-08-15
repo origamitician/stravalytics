@@ -3,7 +3,7 @@ const CLIENT_ID = 107318
 const CLIENT_SECRET = '1bac185421708876ddd639fcef0a319d5896d3b1'
 
 function init(){
-    window.location = `http://www.strava.com/oauth/authorize?client_id=107318&response_type=code&redirect_uri=${window.location.href}&approval_prompt=force&scope=activity:read_all`
+    window.location = `http://www.strava.com/oauth/authorize?client_id=107318&response_type=code&redirect_uri=${window.location.href}&approval_prompt=auto&scope=activity:read_all`
 }
 
 
@@ -40,10 +40,10 @@ if (index == -1) {
     // when the user hasn't connected the Strava account yet.
 } else {
     // when the user is redirected from the authorization page
+    document.getElementById('loginbtn').style.display = 'none'
     const cut = window.location.href.substring(index + 6)
     const accessCode = cut.substring(0, cut.indexOf('&'))
     console.log(accessCode)
-
     fetch(`https://www.strava.com/api/v3/oauth/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&code=${accessCode}&grant_type=authorization_code`, {
         method: 'POST',
         headers: {
@@ -55,7 +55,8 @@ if (index == -1) {
         const refreshToken = json.refresh_token
         document.getElementById('welcomeMsg').innerHTML = 'Welcome, <b>' + json.athlete.firstname + ' ' + json.athlete.lastname + '! </b>'
         document.getElementById('welcomeMsg').style.display = 'block'
-
+        
+        
         fetch(`https://www.strava.com/api/v3/oauth/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&refresh_token=${refreshToken}&grant_type=refresh_token`, {
             method: 'POST',
             headers: {

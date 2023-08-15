@@ -361,6 +361,19 @@ input::-webkit-inner-spin-button {
     right: 1%;
 }
 
+#welcomeMsg{
+    width: 102%;
+    margin-left: -1%;
+    color: white;
+    font-size: 150%;
+    padding-left: 2%;
+    background-color: orange;
+    margin-top: -0.5%;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    display: none;
+}
+
 #footer{
     text-align: center;
     background-color: grey;

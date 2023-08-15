@@ -53,6 +53,9 @@ if (index == -1) {
     .then((json) => {
         console.log(json)
         const refreshToken = json.refresh_token
+        document.getElementById('welcomeMsg').innerHTML = 'Welcome, <b>' + json.athlete.firstname + ' ' + json.athlete.lastname + '! </b>'
+        document.getElementById('welcomeMsg').style.display = 'block'
+
         fetch(`https://www.strava.com/api/v3/oauth/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&refresh_token=${refreshToken}&grant_type=refresh_token`, {
             method: 'POST',
             headers: {
@@ -60,7 +63,6 @@ if (index == -1) {
             },
         }).then((res) => res.json())
         .then((j) => {
-            console.log(j)
             const accessKey = j.access_token
             getStravaData(1, accessKey);
             getStravaData(2, accessKey);

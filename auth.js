@@ -43,7 +43,7 @@ if (index == -1) {
     document.getElementById('loginbtn').style.display = 'none'
     const cut = window.location.href.substring(index + 6)
     const accessCode = cut.substring(0, cut.indexOf('&'))
-    console.log(accessCode)
+    console.log('Access code: ' + accessCode)
     fetch(`https://www.strava.com/api/v3/oauth/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&code=${accessCode}&grant_type=authorization_code`, {
         method: 'POST',
         headers: {
@@ -53,6 +53,7 @@ if (index == -1) {
     .then((json) => {
         console.log(json)
         const refreshToken = json.refresh_token
+        console.log('Refresh Token: ' + refreshToken)
         document.getElementById('welcomeMsg').innerHTML = 'Welcome, <b>' + json.athlete.firstname + ' ' + json.athlete.lastname + '! </b>'
         document.getElementById('welcomeMsg').style.display = 'block'
         
@@ -65,6 +66,7 @@ if (index == -1) {
         }).then((res) => res.json())
         .then((j) => {
             const accessKey = j.access_token
+            console.log('Access Token: ' + accessKey)
             getStravaData(1, accessKey);
             getStravaData(2, accessKey);
             getStravaData(3, accessKey);

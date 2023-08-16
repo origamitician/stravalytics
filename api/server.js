@@ -46,7 +46,6 @@ app.get('/api/activities/', (req, res) => {
                 }).then((res) => res.json()).then((j) => {
                     // fetching each page of activities using the obtained access token
                     const key = j.access_token
-                    console.log('Access Token: ' + key)
                     
                     //make sure this is an array of Promise objects.
                     Promise.all([
@@ -54,8 +53,6 @@ app.get('/api/activities/', (req, res) => {
                         getIndividualPaginatedData(2, key), 
                         getIndividualPaginatedData(3, key), 
                         getIndividualPaginatedData(4, key)]).then(() => {
-                            console.log('got everythin\'')
-                            console.log(allActivities.length)
                             res.send(allActivities)
                         })
                 })
@@ -68,10 +65,8 @@ app.get('/api/activities/', (req, res) => {
 //     const [prom1, prom2, prom3, prom4] = await 
 // }
 
-async function getIndividualPaginatedData(page, accessKey) {
-    const prom =new Promise ((resolve, reject) => {
-        console.log("https://www.strava.com/api/v3/athlete/activities?access_token=" + accessKey + "&page=" + page + "&per_page=200&after=" + 0 + "&before=" + (Date.now()/1000))
-
+function getIndividualPaginatedData(page, accessKey) {
+    return new Promise ((resolve, reject) => {
         // WAIT until this fetch function finishes, then resolve the promise
         fetch("https://www.strava.com/api/v3/athlete/activities?access_token=" + accessKey + "&page=" + page + "&per_page=200&after=" + 0 + "&before=" + Math.round(Date.now()/1000)).then((response) => response.json()).then((jsonData) => {  
             for (var i = 0; i < jsonData.length; i++){
@@ -90,12 +85,9 @@ async function getIndividualPaginatedData(page, accessKey) {
                     cadence: jsonData[i].average_cadence
                 });
             }
-            console.log(allActivities.length)
             resolve("success")
-            console.log(prom)
         })
     })
-    console.log(prom)
 }
 
 const refreshTokenDoc = new mongoose.Schema({

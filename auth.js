@@ -2,8 +2,23 @@
 const CLIENT_ID = 107318
 const CLIENT_SECRET = '1bac185421708876ddd639fcef0a319d5896d3b1'
 
+
+
+
 function init(){
-    window.location = `http://www.strava.com/oauth/authorize?client_id=107318&response_type=code&redirect_uri=${window.location.href}&approval_prompt=auto&scope=activity:read_all`
+    /*window.location = `http://www.strava.com/oauth/authorize?client_id=107318&response_type=code&redirect_uri=${window.location.href}&approval_prompt=auto&scope=activity:read_all`*/
+    fetch('/api/activities')
+    .then((response) => response.json())
+    .then((data) => {
+        data.forEach(d => {
+            allActivities.push(d)
+        })
+
+        renderGraph(); //histograms
+        renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
+        
+        document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
+    })
 }
 
 
@@ -35,7 +50,16 @@ function getStravaData(page, accessKey) {
 }
 
 //the following runs every time the page loads.
+
+console.log(localStorage.isLoggedIn)
+if (!localStorage.isLoggedIn || localStorage.isLoggedIn == 'false'/*|| !localStorage.id*/) {
+    document.getElementById('applicationBody').style.display = 'none';
+} else {
+    document.getElementById('applicationBody').style.display = 'block';
+}
+
 const index = window.location.href.indexOf('&code=')
+
 if (index == -1) {
     // when the user hasn't connected the Strava account yet.
 } else {

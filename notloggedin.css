@@ -1,0 +1,41 @@
+#coverImg{
+    width: 104%;
+    filter: brightness(0.12);
+    margin-left: -2%;
+    margin-top: -1%;
+    position: relative;
+}
+
+#notLoggedInContainer{
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    width: 70%;
+    border: 1px solid white;
+}
+
+#notLoggedInSubtitle, #notLoggedInTitle{
+    color: white;
+}
+
+#notLoggedInTitle{
+    color: orange;
+    font-size: 350%;
+}
+
+#notLoggedInSubtitle{
+    font-size: 175%;
+    font-weight: light;
+    width: 80%;
+    margin-left: 10%;
+}
+
+#break{
+    background-color: white;
+    width: 40%;
+    margin-left: 30%;
+    height: 1vh;
+    margin-bottom: 5%;
+}

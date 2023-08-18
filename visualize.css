@@ -1,10 +1,11 @@
 body{
     /* font-family: 'Inter', sans-serif; */
-    font-family: 'Wix Madefor Display', sans-serif;
-    /*font-family: 'Raleway', sans-serif;*/
+    /* font-family: 'Wix Madefor Display', sans-serif; */
+    font-family: 'Raleway', sans-serif;
     font-size: 1.15vw;
     overflow-x: hidden;
 }
+
 
 .graph{
     /*border: 1px solid black;*/

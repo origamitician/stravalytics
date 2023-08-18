@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json())
 app.use(express.static(path.join(__dirname, '../')));
 
-require('dotenv').config();
+require('dotenv').config({ path: path.join(__dirname, 'secrets.env') });
 
 let allActivities = []
 
@@ -17,13 +17,20 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../', 'index.html'))
 })
 
-mongoose.connect("mongodb+srv://micaiahcape22:micaiah05@urlshortener.afsxdo4.mongodb.net/?retryWrites=true&w=majority")
+mongoose.connect(process.env.MONGO_URI)
+
+if (typeof localStorage === "undefined" || localStorage === null) {
+    var LocalStorage = require('node-localstorage').LocalStorage;
+    localStorage = new LocalStorage('./scratch');
+ }
+ 
 
 app.get('/api/activities/', (req, res) => {
+    console.log(localStorage)
     allActivities = [];
     // mini callback hell!!!!!!11!11!1!!1!1
-    const CLIENT_ID = 107318
-    const CLIENT_SECRET = '1bac185421708876ddd639fcef0a319d5896d3b1'
+    const CLIENT_ID = process.env.CLIENT_ID
+    const CLIENT_SECRET = process.env.CLIENT_SECRET
     RefreshTokens.findOne({}).then((err, data) => {
         if (err) {
             console.log(err)
@@ -61,13 +68,8 @@ app.get('/api/activities/', (req, res) => {
     })
 })
 
-// async function getAllPaginatedData(key){
-//     const [prom1, prom2, prom3, prom4] = await 
-// }
-
 function getIndividualPaginatedData(page, accessKey) {
     return new Promise ((resolve, reject) => {
-        // WAIT until this fetch function finishes, then resolve the promise
         fetch("https://www.strava.com/api/v3/athlete/activities?access_token=" + accessKey + "&page=" + page + "&per_page=200&after=" + 0 + "&before=" + Math.round(Date.now()/1000)).then((response) => response.json()).then((jsonData) => {  
             for (var i = 0; i < jsonData.length; i++){
                 if(jsonData[i].type == "Run")

@@ -18,21 +18,64 @@ app.get('/', (req, res) => {
 })
 
 mongoose.connect(process.env.MONGO_URI)
+mongoose.set('strictQuery', true);
 
 if (typeof localStorage === "undefined" || localStorage === null) {
     var LocalStorage = require('node-localstorage').LocalStorage;
     localStorage = new LocalStorage('./scratch');
- }
+}
  
+app.get('/api/token/:authCode', (req, res) => {
+    // runs when the user is redirected from the authorization page.
+    fetch(`https://www.strava.com/api/v3/oauth/token?client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&code=${req.params.authCode}&grant_type=authorization_code`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    }).then((response) => response.json())
+    .then((json) => {
+        const obtainedToken = json.refresh_token
+        // obtain refreshtoken for a user. It should be the same every time the same user logs in. 
+        console.log('-----')
+        console.log('trying to find doc w refresh token ' + obtainedToken)
+
+        RefreshTokens.findOne({ refreshToken : obtainedToken }).exec((err, data) => {
+            console.log('result for finding one: ' + JSON.stringify(data))
+            if(data){
+                // if the refresh token exists.
+                localStorage.setItem('account', data._id)
+            } else {
+                // if the refresh token doesn't exist in the database; create a new user.
+                let r = new RefreshTokens({refreshToken: obtainedToken});
+                r.save().then((err, data) => {
+                    console.log('refresh token doesnt exist and creating a new one')
+                    if(err) console.log(err);
+                    localStorage.setItem('account', data._id)
+                })
+            }
+            if (localStorage.getItem('account')){
+                // if the localStorage was successfully updated
+                res.sendStatus(200)
+            } else {
+                // if the localStorage was NOT successfully updated
+                res.sendStatus(404)
+            }
+            
+        })
+    })
+})
+    
+
 
 app.get('/api/activities/', (req, res) => {
-    console.log(localStorage)
+    // console.log(localStorage)
     allActivities = [];
     // mini callback hell!!!!!!11!11!1!!1!1
     const CLIENT_ID = process.env.CLIENT_ID
     const CLIENT_SECRET = process.env.CLIENT_SECRET
     RefreshTokens.findOne({}).then((err, data) => {
         if (err) {
+            
             console.log(err)
         } else {
             if (data) {

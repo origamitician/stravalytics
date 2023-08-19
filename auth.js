@@ -6,8 +6,8 @@ const CLIENT_SECRET = '1bac185421708876ddd639fcef0a319d5896d3b1'
 
 
 function init(){
-    /*window.location = `http://www.strava.com/oauth/authorize?client_id=107318&response_type=code&redirect_uri=${window.location.href}&approval_prompt=auto&scope=activity:read_all`*/
-    fetch('/api/activities')
+    window.location = `http://www.strava.com/oauth/authorize?client_id=107318&response_type=code&redirect_uri=${window.location.href}&approval_prompt=auto&scope=activity:read_all`
+    /*fetch('/api/activities')
     .then((response) => response.json())
     .then((data) => {
         data.forEach(d => {
@@ -18,7 +18,7 @@ function init(){
         renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
         
         document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
-    })
+    })*/
 }
 
 
@@ -61,40 +61,22 @@ if (!localStorage.isLoggedIn || localStorage.isLoggedIn == 'false'/*|| !localSto
 const index = window.location.href.indexOf('&code=')
 
 if (index == -1) {
-    // when the user hasn't connected the Strava account yet.
+    // when the user hasn't connected the Strava account yet, OR the user has connected the Strava account and has valid localStorage keys.
+    if(localStorage.isLoggedIn == 'true'){
+        document.getElementById('welcomeMsg').innerHTML = 'Welcome!'
+        document.getElementById('welcomeMsg').style.display = 'block'
+    }
 } else {
     // when the user is redirected from the authorization page
     document.getElementById('loginbtn').style.display = 'none'
     const cut = window.location.href.substring(index + 6)
     const accessCode = cut.substring(0, cut.indexOf('&'))
     console.log('Access code: ' + accessCode)
-    fetch(`https://www.strava.com/api/v3/oauth/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&code=${accessCode}&grant_type=authorization_code`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-    }).then((response) => response.json())
-    .then((json) => {
-        console.log(json)
-        const refreshToken = json.refresh_token
-        console.log('Refresh Token: ' + refreshToken)
-        document.getElementById('welcomeMsg').innerHTML = 'Welcome, <b>' + json.athlete.firstname + ' ' + json.athlete.lastname + '! </b>'
-        document.getElementById('welcomeMsg').style.display = 'block'
-        
-        
-        fetch(`https://www.strava.com/api/v3/oauth/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&refresh_token=${refreshToken}&grant_type=refresh_token`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        }).then((res) => res.json())
-        .then((j) => {
-            const accessKey = j.access_token
-            console.log('Access Token: ' + accessKey)
-            getStravaData(1, accessKey);
-            getStravaData(2, accessKey);
-            getStravaData(3, accessKey);
-            getStravaData(4, accessKey);
-        })
+
+    fetch('/api/token/' + accessCode)
+    .then(response => {
+        localStorage.setItem('isLoggedIn', 'true')
+        window.location = '/'
     })
+    .catch(err => {console.log(err)})
 }

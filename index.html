@@ -23,7 +23,10 @@
         <div id = 'notLoggedInContainer'>
             <h1 id = 'notLoggedInTitle'>Visualize your Strava runs!</h1>
             <div id = 'break'></div>
-            <h2 id = 'notLoggedInSubtitle'>Want to know the pace distribution of your runs? The relationship between your stride length and pace? Your progress overtime? You're covered. AAAA</h2>
+            <p id = 'notLoggedInSubtitle'>Want to show the pace distribution of all your runs? Analyze relationship between your stride length and pace? Visualize other numerical metrics?</p>
+            
+            <button onclick="init()" id = 'loginbtn'>Connect with Strava!</button>
+            <p id = 'noStravaAccount'>Don't have a Strava account? View a sample visualization instead.</p>
         </div>
        
     </div>
@@ -47,7 +50,7 @@
         </div>
         
         <hr>
-        <button onclick="init()" id = 'loginbtn'>Login</button>
+        
         <p id = "displayNumRuns"></p>
         <div class = "graphDiv">
             <Button class = "incrementBtn" onClick = "showIncrementMenu('pace')">Edit Increments</Button>

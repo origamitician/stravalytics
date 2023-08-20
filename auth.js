@@ -46,8 +46,7 @@ if (index == -1) {
         document.getElementById('applicationBody').style.display = 'none';
         document.getElementById('transition').style.display = 'block';
         fetch('/api/activities/' + localStorage.getItem('accountID'))
-        .then((response) => response.json())
-        .then((data) => {
+        .then((response) => response.json()).then((data) => {
             data.forEach(d => {
                 allActivities.push(d)
             })

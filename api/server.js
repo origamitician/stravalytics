@@ -26,6 +26,7 @@ if (typeof localStorage === "undefined" || localStorage === null) {
 }
  
 app.get('/api/token/:authCode', (req, res) => {
+
     // runs when the user is redirected from the authorization page.
     fetch(`https://www.strava.com/api/v3/oauth/token?client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&code=${req.params.authCode}&grant_type=authorization_code`, {
         method: 'POST',
@@ -35,67 +36,65 @@ app.get('/api/token/:authCode', (req, res) => {
     }).then((response) => response.json())
     .then((json) => {
         const obtainedToken = json.refresh_token
+        const name = json.athlete.firstname + ' ' + json.athlete.lastname
         // obtain refreshtoken for a user. It should be the same every time the same user logs in. 
         console.log('-----')
+        console.log(localStorage)
         console.log('trying to find doc w refresh token ' + obtainedToken)
 
         RefreshTokens.findOne({ refreshToken : obtainedToken }).exec((err, data) => {
             console.log('result for finding one: ' + JSON.stringify(data))
+            let accountId;
             if(data){
                 // if the refresh token exists.
-                localStorage.setItem('account', data._id)
+                accountId = data._id
             } else {
                 // if the refresh token doesn't exist in the database; create a new user.
                 let r = new RefreshTokens({refreshToken: obtainedToken});
                 r.save().then((err, data) => {
                     console.log('refresh token doesnt exist and creating a new one')
                     if(err) console.log(err);
-                    localStorage.setItem('account', data._id)
+                    accountId = data._id
                 })
             }
-            if (localStorage.getItem('account')){
-                // if the localStorage was successfully updated
-                res.sendStatus(200)
+            if (accountId){
+                // if accountID was successfully fetched
+                res.json({accountID: accountId, stravaName: name})
             } else {
-                // if the localStorage was NOT successfully updated
+                // if accountID was NOT successfully fetched
                 res.sendStatus(404)
             }
-            
         })
     })
 })
     
-
-
-app.get('/api/activities/', (req, res) => {
-    // console.log(localStorage)
+app.get('/api/activities/:accountID', (req, res) => {
     allActivities = [];
-    // mini callback hell!!!!!!11!11!1!!1!1
     const CLIENT_ID = process.env.CLIENT_ID
     const CLIENT_SECRET = process.env.CLIENT_SECRET
-    RefreshTokens.findOne({}).then((err, data) => {
+    console.log(localStorage)
+    console.log('trying to find by id ' + req.params.accountID)
+    RefreshTokens.findById(req.params.accountID).exec((err, data) => {
+        console.log
         if (err) {
-            
             console.log(err)
         } else {
+            console.log(data)
             if (data) {
-                // if the document found something - start requesting resources.
-                
-            } else {
-                // if no refresh tokens were not found - create a new RefreshToken instance.
-                // const token = data.refreshToken
-
-                //  getting the access token using the refresh token
                 console.log('no refresh tokens')
-                const token = '48f138733218bdd7c10c586c704b8f104a5221f2'
+                const token = data.refreshToken
+                console.log(`https://www.strava.com/api/v3/oauth/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&refresh_token=${token}&grant_type=refresh_token`)
                 fetch(`https://www.strava.com/api/v3/oauth/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&refresh_token=${token}&grant_type=refresh_token`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                }).then((res) => res.json()).then((j) => {
+                })
+                .then((res) => res.json())
+                .then((j) => {
                     // fetching each page of activities using the obtained access token
                     const key = j.access_token
+                    const stravaName = 'asfd;asdf;lsadjf;'
                     
                     //make sure this is an array of Promise objects.
                     Promise.all([
@@ -106,6 +105,8 @@ app.get('/api/activities/', (req, res) => {
                             res.send(allActivities)
                         })
                 })
+            } else {
+                res.sendStatus(404)
             }
         }
     })

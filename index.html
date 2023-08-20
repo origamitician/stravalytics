@@ -16,7 +16,10 @@
     <title>Document</title>
 </head>
 <body>
-    <div id = 'welcomeMsg'></div>
+    <div id = 'welcomeMsg'>
+        <p id = 'welcomeText'></p>
+        <p id = 'logoutBtn'>Logout</p>
+    </div>
 
     <div id = 'notLoggedInBody'>
         <img src="/public/scatter.png" alt="" id = 'coverImg'>
@@ -28,7 +31,14 @@
             <button onclick="init()" id = 'loginbtn'>Connect with Strava!</button>
             <p id = 'noStravaAccount'>Don't have a Strava account? View a sample visualization instead.</p>
         </div>
-       
+    </div>
+
+    <div id = 'transition'>
+        <div id = 'transitionDiv'>
+            <p id = 'statusMsg'>Fetching your data...</p>
+            <div id = 'loadingBar'></div>
+        </div>
+        
     </div>
 
     <div id = 'applicationBody'>

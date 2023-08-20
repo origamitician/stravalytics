@@ -1,9 +1,38 @@
 body{
-    /* font-family: 'Inter', sans-serif; */
-    font-family: 'Wix Madefor Display', sans-serif;
-    /*font-family: 'Raleway', sans-serif;*/
+    /*font-family: 'Inter', sans-serif;  */
+    font-family: 'Wix Madefor Display', sans-serif; 
+    /* font-family: 'Raleway', sans-serif; */
     font-size: 1.15vw;
     overflow-x: hidden;
+}
+
+#transition{
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+}
+
+#transitionDiv{
+    width: 50%;
+    position: relative;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+}
+
+#loadingBar{
+    width: 100%;
+    border: 1px solid black;
+    height: 3vh;
+    background: linear-gradient(to right, gold, #ff2200 25%, gold 40%);
+}
+
+#statusMsg{
+    width: 80%;
+    margin-left: 10%;
+    font-size: 350%;
+    opacity: 0.7;
+    text-align: center
 }
 
 .graph{
@@ -365,13 +394,41 @@ input::-webkit-inner-spin-button {
     width: 102%;
     margin-left: -1%;
     color: white;
-    font-size: 150%;
-    padding-left: 2%;
+    font-size: 175%;
     background-color: orange;
     margin-top: -0.5%;
-    padding-top: 1%;
-    padding-bottom: 1%;
+    padding-top: 0.5%;
+    padding-bottom: 0.5%;
+    
+    display: flex;
     display: none;
+    font-family: 'Raleway', sans-serif;
+}
+
+#welcomeText{
+    width: 70%;
+    margin-left: 10%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+
+#logoutBtn {
+    width: 10%;
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: 85%;
+    border: 2px solid white;
+    padding-top: 0.5%;
+    padding-bottom: 0.5%;
+    transition: 0.5s;
+}
+
+#logoutBtn:hover{
+    background-color: white;
+    color: orange;
+    cursor: pointer;
+    transition: 0.5s;
 }
 
 #footer{

@@ -1,6 +1,4 @@
 
-const CLIENT_ID = 107318
-const CLIENT_SECRET = '1bac185421708876ddd639fcef0a319d5896d3b1'
 
 function init(){
     window.location = `http://www.strava.com/oauth/authorize?client_id=107318&response_type=code&redirect_uri=${window.location.href}&approval_prompt=auto&scope=activity:read_all`
@@ -35,40 +33,74 @@ function getStravaData(page, accessKey) {
 }
 
 //the following runs every time the page loads.
+
+console.log(localStorage)
+
 const index = window.location.href.indexOf('&code=')
+
 if (index == -1) {
-    // when the user hasn't connected the Strava account yet.
+    if(localStorage.isLoggedIn == 'true'){
+        // when the user is logged in.
+        const loadingBarInterval = setInterval(updateLoadingBar, 10)
+        document.getElementById('notLoggedInBody').style.display = 'none';
+        document.getElementById('applicationBody').style.display = 'none';
+        document.getElementById('transition').style.display = 'block';
+        fetch('/api/activities/' + localStorage.getItem('accountID'))
+        .then((response) => response.json())
+        .then((data) => {
+            data.forEach(d => {
+                allActivities.push(d)
+            })
+
+            renderGraph(); //histograms
+            renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
+            
+            document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
+            document.getElementById('applicationBody').style.display = 'block';
+            clearInterval(loadingBarInterval)
+            document.getElementById('transition').style.display = 'none';
+            document.getElementById('welcomeText').innerHTML = 'Welcome, ' + '<b>' + localStorage.getItem('stravaName') + '!</b>'
+            document.getElementById('welcomeMsg').style.display = 'block';
+            document.getElementById('welcomeMsg').style.display = 'flex';
+        })
+    } else {
+        // if new user and not logged in.
+        document.getElementById('applicationBody').style.display = 'none';
+    }
 } else {
     // when the user is redirected from the authorization page
-    document.getElementById('loginbtn').style.display = 'none'
     const cut = window.location.href.substring(index + 6)
     const accessCode = cut.substring(0, cut.indexOf('&'))
-    console.log(accessCode)
-    fetch(`https://www.strava.com/api/v3/oauth/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&code=${accessCode}&grant_type=authorization_code`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-    }).then((response) => response.json())
-    .then((json) => {
+    
+    const loadingBarInterval = setInterval(updateLoadingBar, 10)
+    document.getElementById('notLoggedInBody').style.display = 'none';
+    document.getElementById('transition').style.display = 'block';
+    document.getElementById('statusMsg').innerHTML = 'Redirecting...'
+    fetch('/api/token/' + accessCode)
+    .then((res)=> res.json()).then(json => {
         console.log(json)
-        const refreshToken = json.refresh_token
-        document.getElementById('welcomeMsg').innerHTML = 'Welcome, <b>' + json.athlete.firstname + ' ' + json.athlete.lastname + '! </b>'
-        document.getElementById('welcomeMsg').style.display = 'block'
-        
-        
-        fetch(`https://www.strava.com/api/v3/oauth/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&refresh_token=${refreshToken}&grant_type=refresh_token`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        }).then((res) => res.json())
-        .then((j) => {
-            const accessKey = j.access_token
-            getStravaData(1, accessKey);
-            getStravaData(2, accessKey);
-            getStravaData(3, accessKey);
-            getStravaData(4, accessKey);
-        })
+        localStorage.setItem('isLoggedIn', 'true')
+        localStorage.setItem('accountID', json.accountID)
+        localStorage.setItem('stravaName', json.stravaName)
+        clearInterval(loadingBarInterval)
+        window.location = '/'
     })
+    .catch(err => {console.log(err)})
+}
+
+let loadingBarFrame = 0;
+
+function updateLoadingBar(){
+    document.getElementById("loadingBar").style.background = 'linear-gradient(to right, gold, #ff2200 ' + loadingBarFrame + '%, gold ' + (loadingBarFrame + 15) +'%)';
+    loadingBarFrame++;
+    if(loadingBarFrame >= 100) {
+        loadingBarFrame = 0;
+    }
+}
+
+function logout() {
+    localStorage.setItem('isLoggedIn', 'false');
+    localStorage.removeItem('accountID');
+    localStorage.removeItem('stravaName')
+    window.location = '/'
 }

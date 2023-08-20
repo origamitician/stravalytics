@@ -27,6 +27,7 @@ function processString(val){
         }
     } else if (val.includes("-")) {
         resultantString = Date.parse(val) / 1000
+        console.log(resultantString)
     } else {
         resultantString = val
     }
@@ -241,7 +242,10 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
                 if(prop2 == 'pace' || prop2 == 'elapsedTime' || prop2 == 'time' || prop2 == 'maxPace'){
                     
                     yDisplay.innerHTML = convert(maxY - i*(((maxY - minY) / verticalIncrement))).split('.')[0]
-                }else{
+                } else if (prop2 == 'startDate'){
+                    const convertedDate = (maxY - i*(((maxY - minY) / verticalIncrement)))*1000
+                    yDisplay.innerHTML = new Date(convertedDate).toLocaleString('en-US').split(', ')[0]
+                } else {
                     yDisplay.innerHTML = (maxY - i*(((maxY - minY) / verticalIncrement))).toFixed(1)
                 }
                 
@@ -254,6 +258,9 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
                 xDisplay.className = 'xScatterDisplay';
                 if(prop1 == 'pace' || prop1 == 'elapsedTime' || prop1 == 'time' || prop1 == 'maxPace'){
                     xDisplay.innerHTML = convert(minX + (j+1)*(((maxX - minX) / horizontalIncrement))).split('.')[0]
+                }else if (prop1 == 'startDate'){
+                    const convertedDate = (minX + (j+1)*(((maxX - minX) / horizontalIncrement)))*1000
+                    xDisplay.innerHTML = new Date(convertedDate).toLocaleString('en-US').split(', ')[0]
                 }else{
                    xDisplay.innerHTML = (minX + (j+1)*(((maxX - minX) / horizontalIncrement))).toFixed(1)
                 }
@@ -268,6 +275,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
 function updateScatterDrawings() {
     console.log('updating')
     renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value, document.getElementsByName('variable3')[0].value)
+    console.log(localStorage)
 }
 
 function updateScatterDrawingsInResponseToVariableChange(callerID) {

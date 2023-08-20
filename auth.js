@@ -59,6 +59,9 @@ if (index == -1) {
             document.getElementById('applicationBody').style.display = 'block';
             clearInterval(loadingBarInterval)
             document.getElementById('transition').style.display = 'none';
+            document.getElementById('welcomeText').innerHTML = 'Welcome, ' + '<b>' + localStorage.getItem('stravaName') + '!</b>'
+            document.getElementById('welcomeMsg').style.display = 'block';
+            document.getElementById('welcomeMsg').style.display = 'flex';
         })
     } else {
         // if new user and not logged in.
@@ -66,17 +69,20 @@ if (index == -1) {
     }
 } else {
     // when the user is redirected from the authorization page
-    document.getElementById('loginbtn').style.display = 'none'
     const cut = window.location.href.substring(index + 6)
     const accessCode = cut.substring(0, cut.indexOf('&'))
-    console.log('Access code: ' + accessCode)
-
+    
+    const loadingBarInterval = setInterval(updateLoadingBar, 10)
+    document.getElementById('notLoggedInBody').style.display = 'none';
+    document.getElementById('transition').style.display = 'block';
+    document.getElementById('statusMsg').innerHTML = 'Redirecting...'
     fetch('/api/token/' + accessCode)
     .then((res)=> res.json()).then(json => {
         console.log(json)
         localStorage.setItem('isLoggedIn', 'true')
         localStorage.setItem('accountID', json.accountID)
         localStorage.setItem('stravaName', json.stravaName)
+        clearInterval(loadingBarInterval)
         window.location = '/'
     })
     .catch(err => {console.log(err)})
@@ -90,4 +96,11 @@ function updateLoadingBar(){
     if(loadingBarFrame >= 100) {
         loadingBarFrame = 0;
     }
+}
+
+function logout() {
+    localStorage.setItem('isLoggedIn', 'false');
+    localStorage.removeItem('accountID');
+    localStorage.removeItem('stravaName')
+    window.location = '/'
 }

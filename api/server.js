@@ -51,9 +51,10 @@ app.get('/api/token/:authCode', (req, res) => {
             } else {
                 // if the refresh token doesn't exist in the database; create a new user.
                 let r = new RefreshTokens({refreshToken: obtainedToken});
-                r.save().then((err, data) => {
+                r.save((err, data) => {
                     console.log('refresh token doesnt exist and creating a new one')
                     if(err) console.log(err);
+                    console.log(data)
                     accountId = data._id
                 })
             }

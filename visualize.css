@@ -394,13 +394,41 @@ input::-webkit-inner-spin-button {
     width: 102%;
     margin-left: -1%;
     color: white;
-    font-size: 150%;
-    padding-left: 2%;
+    font-size: 175%;
     background-color: orange;
     margin-top: -0.5%;
-    padding-top: 1%;
-    padding-bottom: 1%;
+    padding-top: 0.5%;
+    padding-bottom: 0.5%;
+    
+    display: flex;
     display: none;
+    font-family: 'Raleway', sans-serif;
+}
+
+#welcomeText{
+    width: 70%;
+    margin-left: 10%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+
+#logoutBtn {
+    width: 10%;
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: 85%;
+    border: 2px solid white;
+    padding-top: 0.5%;
+    padding-bottom: 0.5%;
+    transition: 0.5s;
+}
+
+#logoutBtn:hover{
+    background-color: white;
+    color: orange;
+    cursor: pointer;
+    transition: 0.5s;
 }
 
 #footer{

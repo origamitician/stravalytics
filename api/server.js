@@ -17,7 +17,13 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../', 'index.html'))
 })
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, () => {
+    const port = 3000
+    app.listen(port, () => {
+        console.log("Server is running on port: " + port);
+    })
+})
+
 mongoose.set('strictQuery', true);
 
 if (typeof localStorage === "undefined" || localStorage === null) {
@@ -76,7 +82,6 @@ app.get('/api/activities/:accountID', (req, res) => {
     console.log(localStorage)
     console.log('trying to find by id ' + req.params.accountID)
     RefreshTokens.findById(req.params.accountID).exec((err, data) => {
-        console.log
         if (err) {
             console.log(err)
         } else {
@@ -143,7 +148,3 @@ const refreshTokenDoc = new mongoose.Schema({
 
 const RefreshTokens = mongoose.model("tokens", refreshTokenDoc);
 
-const port = 3000
-app.listen(port, () => {
-    console.log("Server is running on port: " + port);
-});

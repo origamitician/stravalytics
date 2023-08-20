@@ -25,11 +25,6 @@ mongoose.connect(process.env.MONGO_URI, () => {
 })
 
 mongoose.set('strictQuery', true);
-
-if (typeof localStorage === "undefined" || localStorage === null) {
-    var LocalStorage = require('node-localstorage').LocalStorage;
-    localStorage = new LocalStorage('./scratch');
-}
  
 app.get('/api/token/:authCode', (req, res) => {
 
@@ -45,7 +40,6 @@ app.get('/api/token/:authCode', (req, res) => {
         const name = json.athlete.firstname + ' ' + json.athlete.lastname
         // obtain refreshtoken for a user. It should be the same every time the same user logs in. 
         console.log('-----')
-        console.log(localStorage)
         console.log('trying to find doc w refresh token ' + obtainedToken)
 
         RefreshTokens.findOne({ refreshToken : obtainedToken }).exec((err, data) => {
@@ -79,7 +73,6 @@ app.get('/api/activities/:accountID', (req, res) => {
     allActivities = [];
     const CLIENT_ID = process.env.CLIENT_ID
     const CLIENT_SECRET = process.env.CLIENT_SECRET
-    console.log(localStorage)
     console.log('trying to find by id ' + req.params.accountID)
     RefreshTokens.findById(req.params.accountID).exec((err, data) => {
         if (err) {

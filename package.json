@@ -1,26 +1,26 @@
 {
-  "name": "run-visualizer",
-  
+  "name": "api",
   "version": "1.0.0",
-  "description": "An interactive website that uses data from the Strava API to breakdown details for all my runs.",
-  "main": "main.js",
+  "description": "",
+  "main": "api/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/origamitician/run-visualizer.git"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/origamitician/run-visualizer/issues"
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   },
-  "homepage": "https://github.com/origamitician/run-visualizer#readme",
   "dependencies": {
-    "regression": "^2.0.1"
-  },
-  "devDependencies": {},
-  "type": "module"
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "env": "0.0.2",
+    "express": "^4.18.2",
+    "mongoose": "^6.10.0",
+    "node-fetch": "^2.6.12",
+    "node-localstorage": "^3.0.5",
+    "path": "^0.12.7"
+  }
 }

@@ -68,3 +68,74 @@
     color: white;
     opacity: 0.8;
 }
+
+@media only screen and (orientation: portrait){
+
+    #notLoggedInBody{
+        width: 100%;
+    }
+    
+    #coverImg {
+        height: 100vh;
+        width: auto;
+        margin-left: -2%;
+        margin-top: -4%;
+    }
+
+    #notLoggedInContainer{
+        width: 90vw;
+        border: none;
+        text-align: left;
+    }
+
+    #notLoggedInTitle{
+        font-size: 8vw;
+        width: 100%;
+    }
+
+    #break{
+        height: 0.75vh;
+        width: 60%;
+        margin-left: 0;
+        margin-top: 6%;
+        margin-bottom: 6%;
+    }
+
+    #notLoggedInSubtitle{
+        font-size: 4vw;
+        margin-left: 0;
+        line-height: 1.5;
+        width: 100%;
+    }
+
+    #loginbtn{
+        font-size: 6vw;
+        width: fit-content;
+        padding-left: 4%;
+        padding-right: 6%;
+        margin-left: 0;
+        border-radius: 0;
+        border-top-right-radius: 50px;
+        border-bottom-right-radius: 50px;
+        border: 3px solid #ff5100;
+    }
+
+    #loginbtn:hover{
+        border: 3px solid white;
+    }
+
+    #noStravaAccount{
+        position: absolute;
+        bottom: 0;
+        margin-left: 5%;
+        opacity: 0.6;
+        margin-right: 5%;
+        text-align: right;
+        width:90%;
+    }
+
+    #viewSampleData{
+        color: orange;
+        text-decoration: underline;
+    }
+}

@@ -36,9 +36,10 @@ function getStravaData(page, accessKey) {
 
 console.log(localStorage)
 
-const index = window.location.href.indexOf('&code=')
+const indexOfAuthorization = window.location.href.indexOf('&code=')
+const indexOfRandom = window.location.href.indexOf('?random=true')
 
-if (index == -1) {
+if (indexOfAuthorization == -1) {
     if(localStorage.isLoggedIn == 'true'){
         // when the user is logged in.
         const loadingBarInterval = setInterval(updateLoadingBar, 10)
@@ -64,11 +65,18 @@ if (index == -1) {
         })
     } else {
         // if new user and not logged in.
-        document.getElementById('applicationBody').style.display = 'none';
+        if(indexOfRandom == -1){
+            // if user is on the home page.
+            document.getElementById('applicationBody').style.display = 'none';
+            document.getElementById('transition').style.display = 'none';
+        }else{
+            // if user wants to generate random data
+            setTimeout (generateRandomData, 100)
+        }
     }
 } else {
     // when the user is redirected from the authorization page
-    const cut = window.location.href.substring(index + 6)
+    const cut = window.location.href.substring(indexOfAuthorization + 6)
     const accessCode = cut.substring(0, cut.indexOf('&'))
     
     const loadingBarInterval = setInterval(updateLoadingBar, 10)
@@ -85,6 +93,30 @@ if (index == -1) {
         window.location = '/'
     })
     .catch(err => {console.log(err)})
+}
+
+function generateRandomData(){
+    for (let i = 0; i < 500; i++){
+        const generatedDistance = (Math.random()*22000) + 1000;
+        const generatedPace = Math.random()*3.25 + 2.25
+        const elapsedPaceDifferencePercent = Math.random()*35
+        const generatedTime = generatedDistance / generatedPace
+        allActivities.push({
+            distance: generatedDistance,
+            pace: generatedPace,
+            time: generatedTime,
+            elapsedTime: generatedTime * (1+elapsedPaceDifferencePercent/100),
+            elevation: Math.random()*400 + 6,
+            kudos: Math.round(Math.random()*15),
+            maxPace: generatedPace * (1 + ((Math.random() * 50) / 100)),
+            id: -1,
+            startDate: "2021-07-21T16:20:13Z",
+            name: "Run " + i
+        })
+    }
+    document.getElementById('applicationBody').style.display = 'block';
+    renderGraph(); //histograms
+        renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
 }
 
 let loadingBarFrame = 0;

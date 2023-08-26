@@ -29,9 +29,10 @@
             <p id = 'notLoggedInSubtitle'>Want to show the pace distribution of all your runs? Analyze relationship between your stride length and pace? Visualize other numerical metrics?</p>
             
             <button onclick="init()" id = 'loginbtn'>Connect with Strava!</button>
-            
+           
         </div>
-        <p id = 'noStravaAccount'>No Strava account? <br> <span id = 'viewSampleData'>View sample data instead.</span></p>
+        <p id = 'noStravaAccount'>No Strava account? <br> <span id = 'viewSampleData' onclick="generateRandomData()">View sample data instead.</span></p>
+        <div id = 'footer'>&lt;/&gt; (Coded) by <a href="https://github.com/origamitician">Micaiah C.</a></div>
     </div>
 
     <div id = 'transition'>
@@ -250,7 +251,7 @@
         <br><br><br>
     </div>
     
-    <div id = 'footer'>&lt;/&gt; (Coded) by <a href="https://github.com/origamitician">Micaiah C.</a></div>
+    
 </body>
 <script src="auth.js"></script>
 <script src="main.js"></script>

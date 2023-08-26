@@ -4,16 +4,25 @@
     margin-left: -2%;
     margin-top: -1%;
     position: relative;
+    top: 0;
+    left: 0;
+}
+
+#notLoggedInBody{
+    position: relative;
+    height: 100vh;
+    width: 100%;
 }
 
 #notLoggedInContainer{
     position: absolute;
+    margin-top: 0;
     transform: translate(-50%, -50%);
+    object-fit: cover;
     top: 50%;
     left: 50%;
     text-align: center;
     width: 70%;
-    border: 1px solid white;
 }
 
 #notLoggedInSubtitle, #notLoggedInTitle{
@@ -63,14 +72,34 @@
     transition: 0.5s;
 }
 
-#noStravaAccount {
-    font-size: 125%;
+#noStravaAccount{
+    position: absolute;
+    bottom: 3%;
+    margin-left: 5%;
+    opacity: 0.6;
+    margin-right: 5%;
+    text-align: right;
+    width:90%;
     color: white;
-    opacity: 0.8;
+    display: block;
+    font-size: 135%;
+}
+
+#viewSampleData{
+    color: orange;
+    text-decoration: underline;
+}
+
+@media only screen and (max-aspect-ratio: 1146/676){
+    #coverImg {
+        height: 100vh;
+        width: auto;
+        margin-left: -2%;
+        margin-top: -2%;
+    }
 }
 
 @media only screen and (orientation: portrait){
-
     #notLoggedInBody{
         width: 100%;
     }
@@ -86,6 +115,7 @@
         width: 90vw;
         border: none;
         text-align: left;
+        top: 45%;
     }
 
     #notLoggedInTitle{
@@ -132,6 +162,7 @@
         margin-right: 5%;
         text-align: right;
         width:90%;
+        display: block;
     }
 
     #viewSampleData{

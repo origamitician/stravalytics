@@ -440,6 +440,7 @@ input::-webkit-inner-spin-button {
     padding-top: 1.5%;
     padding-bottom: 1.5%;
     margin-bottom: -1%;
+    margin-top: -0.25%;
 }
 
 

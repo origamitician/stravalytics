@@ -147,6 +147,7 @@ function updateDefaultStatistics(array, index, inputObject){
 
 
 function showMoreStats(){
+
     //process - get index and graph type from the id that was clicked.
     var processed = this.id.split("-");
     for(let i = 0; i <  document.getElementById(processed[1]).getElementsByClassName("verticalHolder").length; i++){

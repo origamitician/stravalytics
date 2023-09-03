@@ -1,4 +1,5 @@
-
+const myCanvas = document.getElementById("scatterCanv");
+const c = myCanvas.getContext("2d");
 
 let refArray = [];
 
@@ -59,6 +60,7 @@ function show(){
 
 
 function renderScatterplot(arr, prop1, prop2, tertiaryProp){
+    c.clearRect(0, 0, c.width, c.height);
     console.log(tertiaryProp)
     refArray = [];
     var paras = document.getElementsByClassName('plot');
@@ -270,6 +272,61 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
             document.getElementById('scatterPlot').appendChild(grid)
         }
     }
+
+    // calculate the best line / curve of fit
+    const calib = regression.polynomial(regressionArray, { order: 2 });
+    console.log(calib);
+
+
+    let canvWidth
+    let canvHeight;
+    if(myCanvas.getBoundingClientRect().width == 0) {
+        canvWidth = window.innerWidth *0.8;
+        canvHeight = window.innerHeight *0.8
+    } else {
+        canvWidth = myCanvas.getBoundingClientRect().width;
+        canvHeight = myCanvas.getBoundingClientRect().height;
+    }
+
+    console.log(canvWidth + ' ' + canvHeight)
+    
+    
+    console.log(window)
+
+    c.beginPath();
+    c.lineWidth = 4;
+    c.strokeStyle = "orange";
+    const scrubbingRate = 200
+
+    c.moveTo(0, canvHeight)
+    for (let i = 0; i < scrubbingRate; i++) {
+        const calculatedX = i * ((maxX - minX) / scrubbingRate)
+        const calculatedY = calib.equation[0] * (calculatedX ** 2) + calib.equation[1] * calculatedX + calib.equation[2]
+        console.log(calculatedX + ' ' + calculatedY)
+        console.log('moving line to: ' + (canvWidth * (i / scrubbingRate)) + ' ' + (1 - (calculatedY - minY) / (maxY - minY))*canvHeight)
+        c.fillStyle = 'orange';
+
+        plot = document.createElement('p');
+        plot.className = 'plot';
+        plot.style.left = ((calculatedX - minX) / (maxX - minX))*100 + '%';
+        plot.style.bottom = ((calculatedY - minY) / (maxY- minY))*100 -3 + '%';
+        plot.id = "prediction_" + i;
+        plot.style.backgroundColor = "orange"
+        plot.addEventListener('click', show)
+        document.getElementById('scatterPlot').appendChild(plot)
+        // c.fillRect(canvWidth * (i / scrubbingRate), (1 - (calculatedY - minY) / (maxY - minY))*canvHeight, 5, 5)
+
+        // c.lineTo((canvWidth * (i / scrubbingRate)), (1 - (calculatedY - minY) / (maxY - minY))*canvHeight)
+    //     c.beginPath()
+    //     c.moveTo(0, canvHeight)
+    //     c.lineTo(500, 0)
+    //     c.lineWidth = 4;
+    // c.strokeStyle = "orange";
+    }
+    // c.lineWidth = 4;
+    // c.strokeStyle = "orange";
+    // c.stroke();
+    // c.closePath();
 }
 
 function updateScatterDrawings() {

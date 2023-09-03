@@ -290,7 +290,9 @@ input::-webkit-inner-spin-button {
     height: 80vh;
     margin-top: 5%;
     padding: 0;
+    box-sizing: border-box;
 }
+
 
 .plot{
     height: 15px;

@@ -56,6 +56,8 @@ function rgbToHex(r, g, b) {
 function show(){
     console.log("alsdfjlkdsjaf;ljsd;lfjsad;lkj")
     console.log(JSON.stringify(refArray[this.id]))
+
+
 }
 
 
@@ -147,7 +149,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
                 fixedArray.push({x: item[prop1], y: item[prop2]})
             }
             
-            regressionArray.push([item[prop1], item[prop2]])
+            
             if(item[prop1] < minX){
                 minX = item[prop1]
             }else if(item[prop1] > maxX){
@@ -196,6 +198,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     }
 
     for(var i = 0; i < fixedArray.length; i++){
+        regressionArray.push([fixedArray[i].x, fixedArray[i].y])
         var plot = document.createElement('p');
         plot.className = 'plot';
         plot.style.left = ((fixedArray[i].x - minX) / (maxX - minX))*100 + '%';
@@ -274,9 +277,53 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     }
 
     // calculate the best line / curve of fit
-    const calib = regression.polynomial(regressionArray, { order: 2 });
-    console.log(calib);
 
+    // find the best way of regression by finding the greatest r squared values
+    let calibR;
+    let maxRSquared = -2;
+    let regressionType = null;
+    let calib;
+    let calibCoefficients;
+
+    calib = regression.linear(regressionArray);
+    console.log(calib)
+    if(calib.r2 > maxRSquared) {
+        regressionType = 'linear';
+        maxRSquared = calib.r2;
+        calibCoefficients = calib.equation
+    }
+
+    calib = regression.polynomial(regressionArray, { order: 2 });
+    console.log(calib)
+    if(calib.r2 > maxRSquared) {
+        regressionType = 'parabolic';
+        maxRSquared = calib.r2;
+        calibCoefficients = calib.equation
+    }
+
+    calib = regression.exponential(regressionArray);
+    console.log(calib)
+    if(calib.r2 > maxRSquared) {
+        regressionType = 'exponential';
+        maxRSquared = calib.r2;
+        calibCoefficients = calib.equation
+    }
+
+    calib = regression.logarithmic(regressionArray);
+    console.log(calib)
+    if(calib.r2 > maxRSquared) {
+        regressionType = 'logarithmic';
+        maxRSquared = calib.r2;
+        calibCoefficients = calib.equation
+    }
+
+    calib = regression.power(regressionArray);
+    console.log(calib)
+    if(calib.r2 > maxRSquared) {
+        regressionType = 'power';
+        maxRSquared = calib.r2;
+        calibCoefficients = calib.equation
+    }
 
     let canvWidth
     let canvHeight;
@@ -288,31 +335,43 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         canvHeight = myCanvas.getBoundingClientRect().height;
     }
 
-    console.log(canvWidth + ' ' + canvHeight)
-    
-    
-    console.log(window)
-
     c.beginPath();
     c.lineWidth = 4;
     c.strokeStyle = "orange";
     const scrubbingRate = 200
 
     c.moveTo(0, canvHeight)
+    console.log(regressionType)
+
+    console.log("MaxX: " + maxX + " MinX: " +  minX + " MaxY: " + maxY + " MinY: " + minY)
     for (let i = 0; i < scrubbingRate; i++) {
-        const calculatedX = i * ((maxX - minX) / scrubbingRate)
-        const calculatedY = calib.equation[0] * (calculatedX ** 2) + calib.equation[1] * calculatedX + calib.equation[2]
-        console.log(calculatedX + ' ' + calculatedY)
-        console.log('moving line to: ' + (canvWidth * (i / scrubbingRate)) + ' ' + (1 - (calculatedY - minY) / (maxY - minY))*canvHeight)
+        const calculatedX = i * ((maxX - minX) / scrubbingRate) + minX
+        let calculatedY;
+        if(regressionType == 'linear') {
+            calculatedY = calibCoefficients[0] * (calculatedX) + calibCoefficients[1]
+        } else if (regressionType == 'parabolic') {
+            calculatedY = calibCoefficients[0] * (calculatedX ** 2) + calibCoefficients[1] * calculatedX + calibCoefficients[2]
+        } else if (regressionType == 'cubic') {
+            calculatedY = calibCoefficients[0] * (calculatedX ** 3) + calibCoefficients[1] * (calculatedX ** 2) + calibCoefficients[2] + (calculatedX) + calibCoefficients[3];
+        } else if (regressionType == 'exponential') {
+            calculatedY = calibCoefficients[0] * (Math.E ** (calculatedX * calibCoefficients[1]))
+        } else if (regressionType == 'logarithmic') {
+            calculatedY = calibCoefficients[0] + calibCoefficients[1]*Math.log(calculatedX);
+        } else if (regressionType == 'power') {
+            calculatedY = calibCoefficients[0] * (calculatedX ** calibCoefficients[1]);
+        }
+        
+        // console.log(calculatedX + ' ' + calculatedY)
+        // console.log('moving line to: ' + (canvWidth * (i / scrubbingRate)) + ' ' + (1 - (calculatedY - minY) / (maxY - minY))*canvHeight)
         c.fillStyle = 'orange';
 
         plot = document.createElement('p');
         plot.className = 'plot';
         plot.style.left = ((calculatedX - minX) / (maxX - minX))*100 + '%';
         plot.style.bottom = ((calculatedY - minY) / (maxY- minY))*100 -3 + '%';
-        plot.id = "prediction_" + i;
+        plot.id = "prediction_" + calculatedX + '_' + calculatedY;
         plot.style.backgroundColor = "orange"
-        plot.addEventListener('click', show)
+        plot.addEventListener('mouseover', showPrediction)
         document.getElementById('scatterPlot').appendChild(plot)
         // c.fillRect(canvWidth * (i / scrubbingRate), (1 - (calculatedY - minY) / (maxY - minY))*canvHeight, 5, 5)
 
@@ -330,9 +389,13 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
 }
 
 function updateScatterDrawings() {
-    console.log('updating')
     renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value, document.getElementsByName('variable3')[0].value)
-    console.log(localStorage)
+}
+
+function showPrediction(){
+    const breakdown = this.id.split('_')
+
+    document.getElementById('predictionTxt').innerHTML = "X: " + parseFloat(breakdown[1]).toFixed(2) + ", Y: " + parseFloat(breakdown[2]).toFixed(2)
 }
 
 function updateScatterDrawingsInResponseToVariableChange(callerID) {

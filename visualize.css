@@ -445,6 +445,11 @@ input::-webkit-inner-spin-button {
     margin-top: -0.25%;
 }
 
+#predictionTxt{
+    font-size: 150%;
+    color: orange;
+    font-weight: bold;
+}
 
 @media only screen and (orientation: portrait){
     body{

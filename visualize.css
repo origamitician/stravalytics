@@ -445,10 +445,11 @@ input::-webkit-inner-spin-button {
     margin-top: -0.25%;
 }
 
-#predictionTxt{
-    font-size: 150%;
-    color: orange;
-    font-weight: bold;
+#predictionDiv{
+    position: absolute;
+    border: 2px solid orange;
+    background-color: white;
+    z-index: 999;
 }
 
 @media only screen and (orientation: portrait){

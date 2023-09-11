@@ -13,6 +13,32 @@ function getNumberOfColons(str) {
     return colonNum;
 }
 
+//variable names that are referenced by the values of the dropdown.
+const variableDisplay = [
+    {value: 'distance', display: 'Distance', placeholder: 'Distance', unit: 'mi'}, 
+    {value: 'time', display: 'Moving Time', placeholder: 'h:mm:ss / mm:ss'},
+    {value: 'elapsedTime', display: 'Elapsed Time', placeholder: 'h:mm:ss / mm:ss'},
+    {value: 'uptime', display: 'Uptime', placeholder: '% uptime', unit: "%"},
+    {value: 'elevation', display: 'Elevation Gain', placeholder: 'Gain in ft', unit: "ft"},
+    {value: 'incline', display: 'Incline', placeholder: '% incline', unit: "%"},
+    {value: 'pace', display: 'Pace', placeholder: 'm:ss', unit: "/mi"},
+    {value: 'kudos', display: 'Kudos', placeholder: '# kudos'},
+    {value: 'maxPace', display: 'Maximum Pace', placeholder: 'm:ss', unit: "/mi"},
+    {value: 'cadence', display: 'Cadence', placeholder: 'steps/min', unit: "steps/min"},
+    {value: 'stepsPerMile', display: 'Steps / mile', placeholder: 'steps/mi', unit: "steps/mi"},
+    {value: 'strideLength', display: 'Stride length', placeholder: 'length in ft', unit: "ft"},
+    {value: 'startDate', display: 'Date', placeholder: 'mm-dd-yyyy'},
+]
+
+function getVariableDisplayInfo(value) {
+    for(let i = 0; i < variableDisplay.length; i++) {
+        if (variableDisplay[i].value === value) {
+            return variableDisplay[i]
+        }
+    }
+    return {};
+}
+
 function processString(val){
     let resultantString;
     if (val.includes(":")) {
@@ -287,7 +313,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
 
     calib = regression.linear(regressionArray);
     console.log(calib)
-    if(calib.r2 > maxRSquared) {
+    if(calib.r2 >= maxRSquared) {
         regressionType = 'linear';
         maxRSquared = calib.r2;
         calibCoefficients = calib.equation
@@ -295,7 +321,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
 
     calib = regression.polynomial(regressionArray, { order: 2 });
     console.log(calib)
-    if(calib.r2 > maxRSquared) {
+    if(calib.r2 >= maxRSquared) {
         regressionType = 'parabolic';
         maxRSquared = calib.r2;
         calibCoefficients = calib.equation
@@ -303,7 +329,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
 
     calib = regression.exponential(regressionArray);
     console.log(calib)
-    if(calib.r2 > maxRSquared) {
+    if(calib.r2 >= maxRSquared) {
         regressionType = 'exponential';
         maxRSquared = calib.r2;
         calibCoefficients = calib.equation
@@ -311,7 +337,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
 
     calib = regression.logarithmic(regressionArray);
     console.log(calib)
-    if(calib.r2 > maxRSquared) {
+    if(calib.r2 >= maxRSquared) {
         regressionType = 'logarithmic';
         maxRSquared = calib.r2;
         calibCoefficients = calib.equation
@@ -319,7 +345,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
 
     calib = regression.power(regressionArray);
     console.log(calib)
-    if(calib.r2 > maxRSquared) {
+    if(calib.r2 >= maxRSquared) {
         regressionType = 'power';
         maxRSquared = calib.r2;
         calibCoefficients = calib.equation
@@ -338,7 +364,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     c.beginPath();
     c.lineWidth = 4;
     c.strokeStyle = "orange";
-    const scrubbingRate = 200
+    const scrubbingRate = 201
 
     c.moveTo(0, canvHeight)
     console.log(regressionType)
@@ -367,12 +393,20 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
 
         plot = document.createElement('p');
         plot.className = 'plot';
-        plot.style.left = ((calculatedX - minX) / (maxX - minX))*100 + '%';
-        plot.style.bottom = ((calculatedY - minY) / (maxY- minY))*100 -3 + '%';
-        plot.id = "prediction_" + calculatedX + '_' + calculatedY;
-        plot.style.backgroundColor = "orange"
-        plot.addEventListener('mouseover', showPrediction)
-        document.getElementById('scatterPlot').appendChild(plot)
+        const left = ((calculatedX - minX) / (maxX - minX))*100
+        plot.style.left = left + '%';
+        const bot = ((calculatedY - minY) / (maxY- minY))*100 
+        plot.style.bottom = bot -3 + '%';
+        
+        if(bot <= 100 && bot >= 0) {
+            const newID = "prediction_" + calculatedX + '_' + calculatedY + '_' + left.toFixed(2) + '_' + bot.toFixed(2);
+            plot.id = newID
+            plot.style.backgroundColor = "orange"
+            plot.addEventListener('mouseover', () => showPrediction(prop1, prop2, newID))
+            plot.addEventListener('mouseout', hidePrediction)
+            document.getElementById('scatterPlot').appendChild(plot)
+        }
+        
         // c.fillRect(canvWidth * (i / scrubbingRate), (1 - (calculatedY - minY) / (maxY - minY))*canvHeight, 5, 5)
 
         // c.lineTo((canvWidth * (i / scrubbingRate)), (1 - (calculatedY - minY) / (maxY - minY))*canvHeight)
@@ -392,10 +426,20 @@ function updateScatterDrawings() {
     renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value, document.getElementsByName('variable3')[0].value)
 }
 
-function showPrediction(){
-    const breakdown = this.id.split('_')
+function showPrediction(property1, property2, id){
+    const breakdown = id.split('_')
+    // id is in the form of prediction_<xvalue>_<yvalue>_<xPosOnCanvas>_<yPosOnCanvas>
 
-    document.getElementById('predictionTxt').innerHTML = "X: " + parseFloat(breakdown[1]).toFixed(2) + ", Y: " + parseFloat(breakdown[2]).toFixed(2)
+    document.getElementById('predictionDiv').style.display = 'block';
+    document.getElementById('predictionDiv').style.bottom = parseFloat(breakdown[4]) + 5 + "%"
+    document.getElementById('predictionDiv').style.left= parseFloat(breakdown[3]) + 2 + "%"
+
+    document.getElementById('predictionTxtX').innerHTML = getVariableDisplayInfo(property1).display + ": " + parseFloat(breakdown[1]).toFixed(2) + getVariableDisplayInfo(property1).unit
+    document.getElementById('predictionTxtY').innerHTML = getVariableDisplayInfo(property2).display + ": " + parseFloat(breakdown[2]).toFixed(2) + getVariableDisplayInfo(property2).unit
+}
+
+function hidePrediction(){
+    document.getElementById('predictionDiv').style.display = 'none';
 }
 
 function updateScatterDrawingsInResponseToVariableChange(callerID) {

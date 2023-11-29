@@ -1,6 +1,6 @@
 //all variables + bargraph info is here;
 var allActivities = [];
-var startDate = 0;
+var startDate = Math.floor(Date.parse("01-01-2023") / 1000)
 var endDate = Math.floor(Date.now() / 1000);
 let scrub;
 

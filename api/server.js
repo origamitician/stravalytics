@@ -113,7 +113,7 @@ app.get('/api/activities/:accountID', (req, res) => {
 
 function getIndividualPaginatedData(page, accessKey) {
     return new Promise ((resolve, reject) => {
-        fetch("https://www.strava.com/api/v3/athlete/activities?access_token=" + accessKey + "&page=" + page + "&per_page=200&after=" + 0 + "&before=" + Math.round(Date.now()/1000)).then((response) => response.json()).then((jsonData) => {  
+        fetch("https://www.strava.com/api/v3/athlete/activities?access_token=" + accessKey + "&page=" + page + "&per_page=200&after=1672560000" +  "&before=" + Math.round(Date.now()/1000)).then((response) => response.json()).then((jsonData) => {  
             for (var i = 0; i < jsonData.length; i++){
                 if(jsonData[i].type == "Run")
                 allActivities.push({

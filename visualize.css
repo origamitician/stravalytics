@@ -6,6 +6,23 @@ body{
     overflow-x: hidden;
 }
 
+#applicationMain{
+    display: flex;
+}
+
+#applicationBody{
+    width: 80%;
+}
+
+#applicationMenu{
+    width: 20%;
+}
+
+.applicationMenuOption{
+    width: 100%;
+    font-size: 135%;
+}
+
 #transition{
     position: relative;
     height: 100vh;
@@ -225,9 +242,9 @@ body{
 
 .graphDiv{
     position: relative;
-    width: 80%;
-    margin-left: 10%;
-    margin-right: 10%;
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
     margin-bottom: 10%;
 }
 

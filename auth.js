@@ -1,12 +1,12 @@
-
+let loadingBarFrame = 0;
 
 function init(){
     window.location = `http://www.strava.com/oauth/authorize?client_id=107318&response_type=code&redirect_uri=${window.location.href}&approval_prompt=auto&scope=activity:read_all`
 }
 
-
-function getStravaData(page, accessKey) {
-    fetch("https://www.strava.com/api/v3/athlete/activities?access_token=" + accessKey + "&page=" + page + "&per_page=200&after=" + startDate + "&before=" + endDate).then((response) => response.json()).then((jsonData) => {
+// OLD FUNCTION. NOT USED ANYMORE
+/*function getStravaData(page, accessKey) {
+    fetch("https://www.strava.com/api/v3/athlete/activities?access_token=" + accessKey + "&page=" + page + "&per_page=200&after=1672560000" + "&before=" + endDate).then((response) => response.json()).then((jsonData) => {
         
         for (var i = 0; i < jsonData.length; i++){
             if(jsonData[i].type == "Run")
@@ -30,7 +30,7 @@ function getStravaData(page, accessKey) {
         
         document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
     })
-}
+}*/
 
 //the following runs every time the page loads.
 
@@ -118,8 +118,6 @@ function generateRandomData(){
     renderGraph(); //histograms
         renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
 }
-
-let loadingBarFrame = 0;
 
 function updateLoadingBar(){
     document.getElementById("loadingBar").style.background = 'linear-gradient(to right, gold, #ff2200 ' + loadingBarFrame + '%, gold ' + (loadingBarFrame + 15) +'%)';

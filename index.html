@@ -46,19 +46,19 @@
         <div id = 'applicationMenu'>
             <h1 id = "title">Run visualizer</h1>
             <div id = "flexDateHolder">
-                <div>
+                <div id = "flexDateHolderLeft">
                     <div class = "innerLabel">
-                        <label for="startDate" class = "labels">Start Date (Optional):</label>
-                        <input type="text" name = "startDate" placeholder="mm-dd-yyyy" class = "labelsBox">
+                        <label for="startDate" class = "labels">Start</label>
+                        <input type="date" name = "startDate" placeholder="mm-dd-yyyy" class = "labelsBox">
                     </div>
                     
                     <div class = "innerLabel">
-                        <label for="endDate" class = "labels">End Date (Optional):</label>
-                        <input type="text" name = "endDate" placeholder="mm-dd-yyyy" class = "labelsBox">
+                        <label for="endDate" class = "labels">End</label>
+                        <input type="date" name = "endDate" placeholder="mm-dd-yyyy" class = "labelsBox">
                     </div>
                     
                 </div>
-                <Button onclick=changeDates() id = "applyDateBtn">Apply</Button>
+                <Button onclick=changeDates() id = "applyDateBtn">✅</Button>
             </div>
             <hr>
             <p class = 'applicationMenuOption'>Home</p>

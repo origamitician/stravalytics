@@ -1,5 +1,6 @@
 //all variables + bargraph info is here;
-var allActivities = [];
+var allActivities = []; // actual, dynamically changing activities list upon filtering.
+const allActivitiesRef = []; // FIXED activities list. All lifetime activities are stored in here so that 
 var startDate = Math.floor(Date.parse("01-01-2023") / 1000)
 var endDate = Math.floor(Date.now() / 1000);
 let scrub;
@@ -40,34 +41,6 @@ function componentToHex(c) {
   
 function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-}
-
-// end of stackoverflow code
-  
-
-function changeDates(){
-    try{
-        if(document.getElementsByName("startDate")[0].value == ""){
-            startDate = 0;
-        }else{
-            startDate = Math.floor(Date.parse(document.getElementsByName("startDate")[0].value) / 1000)
-        }
-        
-        if(document.getElementsByName("endDate")[0].value == ""){
-            endDate = Math.floor(Date.now() / 1000)
-        }else{
-            endDate = Math.floor(Date.parse(document.getElementsByName("endDate")[0].value) / 1000)
-        }
-        
-        //console.log(Date.parse(document.getElementsByName("startDate")[0].value))
-        allActivities = []
-        getStravaData(1);
-        getStravaData(2)
-        getStravaData(3)
-        getStravaData(4)
-    }catch (err){
-        alert("Invalid date! " + err)
-    }
 }
 
 //variables for graph

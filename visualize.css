@@ -16,11 +16,10 @@ body{
 
 #applicationMenu{
     width: 20%;
-}
-
-.applicationMenuOption{
-    width: 100%;
-    font-size: 135%;
+    margin-left: -0.2%;
+    position: sticky;
+    align-self: flex-start;
+    top: 0%;
 }
 
 #transition{
@@ -63,7 +62,6 @@ body{
 .infoWrapper{
     display: none;
 }
-
 
 .verticalHolderBelow{
     /*border-top: 2px solid purple;*/
@@ -187,14 +185,24 @@ body{
 
 #flexDateHolder{
     display: flex;
-    width: 50%;
-    margin-left: 10%;
+    margin-left: 0%;
+    width: 100%;
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
+#flexDateHolderLeft{
+    width: 80%;
 }
 
 .labels, .labelsBox{
-    width: 50%;
-    font-size: 100%;
+    width: 25%;
+    font-size: 110%;
     font-family: "Raleway", sans-serif
+}
+
+.labelsBox{
+    width: 75%;
 }
 
 .innerLabel{
@@ -223,7 +231,7 @@ body{
 }
 
 #title{
-    margin: 1% 0 1% 10%;
+    margin: 1% 0 1% 1%;
 }
 
 #settings{
@@ -238,6 +246,26 @@ body{
     top: 50vh;
     left: 50vw;
 
+}
+
+.applicationMenuOption{
+    -webkit-user-select: none;
+    transition: 0.5s;
+    padding: 3% 0% 3% 3%;
+    margin-top: 0;
+    margin-bottom: 0;
+    width: 80%;
+    font-size: 135%;
+}
+
+.applicationMenuOption:hover{
+    width: 100%;
+    background-color: seagreen;
+    color: white;
+    border-top-right-radius: 100px;
+    border-bottom-right-radius: 100px;
+    transition: 0.5s;
+    cursor: pointer;
 }
 
 .graphDiv{

@@ -1,38 +1,41 @@
+//file for all the misc. operations, such as hiding and showing elements of the UI, updating the date, etc...
+
 let loadingBarFrame = 0;
 
 function init(){
     window.location = `http://www.strava.com/oauth/authorize?client_id=107318&response_type=code&redirect_uri=${window.location.href}&approval_prompt=auto&scope=activity:read_all`
 }
 
-// OLD FUNCTION. NOT USED ANYMORE
-/*function getStravaData(page, accessKey) {
-    fetch("https://www.strava.com/api/v3/athlete/activities?access_token=" + accessKey + "&page=" + page + "&per_page=200&after=1672560000" + "&before=" + endDate).then((response) => response.json()).then((jsonData) => {
-        
-        for (var i = 0; i < jsonData.length; i++){
-            if(jsonData[i].type == "Run")
-            allActivities.push({
-                distance: jsonData[i].distance,
-                time: jsonData[i].moving_time,
-                elapsedTime: jsonData[i].elapsed_time,
-                elevation: jsonData[i].total_elevation_gain,
-                pace: jsonData[i].average_speed,
-                name: jsonData[i].name,
-                startDate: jsonData[i].start_date_local,
-                id:  jsonData[i].id,
-                kudos: jsonData[i].kudos_count,
-                maxPace: jsonData[i].max_speed,
-                cadence: jsonData[i].average_cadence
-            });
+function changeDates(){
+    alert(document.getElementsByName('startDate')[0].value)
+    try{
+        if(document.getElementsByName("startDate")[0].value == ""){
+            startDate = 0;
+        }else{
+            startDate = Math.floor(Date.parse(document.getElementsByName("startDate")[0].value) / 1000)
         }
         
-        renderGraph(); //histograms
-        renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
+        if(document.getElementsByName("endDate")[0].value == ""){
+            endDate = Math.floor(Date.now() / 1000)
+        }else{
+            endDate = Math.floor(Date.parse(document.getElementsByName("endDate")[0].value) / 1000)
+        }
         
+        //console.log(Date.parse(document.getElementsByName("startDate")[0].value))
+        allActivities = []
+        allActivitiesRef.forEach(a => {
+            console.log(a.startDate);
+            if (Date.parse(a.startDate)/1000 >= startDate && Date.parse(a.startDate)/1000 <= endDate) {
+                allActivities.push(a);
+            }
+        })
+        renderGraph();
+        renderScatterplot(allActivities, 'distance', 'pace')
         document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
-    })
-}*/
-
-//the following runs every time the page loads.
+    }catch (err){
+        alert("Invalid date! " + err)
+    }
+}
 
 console.log(localStorage)
 
@@ -50,6 +53,7 @@ if (indexOfAuthorization == -1) {
         .then((response) => response.json()).then((data) => {
             data.forEach(d => {
                 allActivities.push(d)
+                allActivitiesRef.push(d);
             })
 
             renderGraph(); //histograms

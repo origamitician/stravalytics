@@ -7,7 +7,6 @@ function init(){
 }
 
 function changeDates(){
-    alert(document.getElementsByName('startDate')[0].value)
     try{
         if(document.getElementsByName("startDate")[0].value == ""){
             startDate = 0;

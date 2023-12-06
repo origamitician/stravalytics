@@ -16,13 +16,13 @@ function getNumberOfColons(str) {
 //variable names that are referenced by the values of the dropdown.
 const variableDisplay = [
     {value: 'distance', display: 'Distance', placeholder: 'Distance', unit: 'mi'}, 
-    {value: 'time', display: 'Moving Time', placeholder: 'h:mm:ss / mm:ss'},
-    {value: 'elapsedTime', display: 'Elapsed Time', placeholder: 'h:mm:ss / mm:ss'},
+    {value: 'time', display: 'Moving Time', placeholder: 'h:mm:ss / mm:ss', unit: 's'},
+    {value: 'elapsedTime', display: 'Elapsed Time', placeholder: 'h:mm:ss / mm:ss', unit: 's'},
     {value: 'uptime', display: 'Uptime', placeholder: '% uptime', unit: "%"},
     {value: 'elevation', display: 'Elevation Gain', placeholder: 'Gain in ft', unit: "ft"},
     {value: 'incline', display: 'Incline', placeholder: '% incline', unit: "%"},
     {value: 'pace', display: 'Pace', placeholder: 'm:ss', unit: "/mi"},
-    {value: 'kudos', display: 'Kudos', placeholder: '# kudos'},
+    {value: 'kudos', display: 'Kudos', placeholder: '# kudos', unit: ""},
     {value: 'maxPace', display: 'Maximum Pace', placeholder: 'm:ss', unit: "/mi"},
     {value: 'cadence', display: 'Cadence', placeholder: 'steps/min', unit: "steps/min"},
     {value: 'stepsPerMile', display: 'Steps / mile', placeholder: 'steps/mi', unit: "steps/mi"},
@@ -82,10 +82,7 @@ function rgbToHex(r, g, b) {
 function show(){
     console.log("alsdfjlkdsjaf;ljsd;lfjsad;lkj")
     console.log(JSON.stringify(refArray[this.id]))
-
-
 }
-
 
 function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     c.clearRect(0, 0, c.width, c.height);
@@ -174,7 +171,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
             } else {
                 fixedArray.push({x: item[prop1], y: item[prop2]})
             }
-            
             
             if(item[prop1] < minX){
                 minX = item[prop1]
@@ -351,7 +347,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         calibCoefficients = calib.equation
     }
 
-    let canvWidth
+    let canvWidth;
     let canvHeight;
     if(myCanvas.getBoundingClientRect().width == 0) {
         canvWidth = window.innerWidth *0.8;
@@ -434,8 +430,22 @@ function showPrediction(property1, property2, id){
     document.getElementById('predictionDiv').style.bottom = parseFloat(breakdown[4]) + 5 + "%"
     document.getElementById('predictionDiv').style.left= parseFloat(breakdown[3]) + 2 + "%"
 
-    document.getElementById('predictionTxtX').innerHTML = getVariableDisplayInfo(property1).display + ": " + parseFloat(breakdown[1]).toFixed(2) + getVariableDisplayInfo(property1).unit
-    document.getElementById('predictionTxtY').innerHTML = getVariableDisplayInfo(property2).display + ": " + parseFloat(breakdown[2]).toFixed(2) + getVariableDisplayInfo(property2).unit
+    if (property1 == "pace" || property1 == "maxPace") {
+        document.getElementById('predictionTxtX').innerHTML = getVariableDisplayInfo(property1).display + ": " + convert(parseInt(breakdown[1])) + "." + parseFloat(breakdown[1]).toString().split(".")[1].substring(0, 2) + getVariableDisplayInfo(property1).unit
+    } else if (property1 == "elapsedTime" || property1 == "time") {
+        document.getElementById('predictionTxtX').innerHTML = getVariableDisplayInfo(property1).display + ": " + convert(parseInt(breakdown[1]));
+    } else {
+        document.getElementById('predictionTxtX').innerHTML = getVariableDisplayInfo(property1).display + ": " + parseFloat(breakdown[1]).toFixed(2) + " " + getVariableDisplayInfo(property1).unit
+    }
+
+    if (property2 == "pace" || property2 == "maxPace") {
+        document.getElementById('predictionTxtY').innerHTML = getVariableDisplayInfo(property2).display + ": " + convert(parseInt(breakdown[2])) + "." + parseFloat(breakdown[1]).toString().split(".")[1].substring(0, 2) + getVariableDisplayInfo(property2).unit
+    } else if (property2 == "elapsedTime" || property2== "time") {
+        document.getElementById('predictionTxtY').innerHTML = getVariableDisplayInfo(property2).display + ": " + convert(parseInt(breakdown[2]));
+    } else {
+        document.getElementById('predictionTxtY').innerHTML = getVariableDisplayInfo(property2).display + ": " + parseFloat(breakdown[2]).toFixed(2) + " " + getVariableDisplayInfo(property2).unit
+    }
+    
 }
 
 function hidePrediction(){

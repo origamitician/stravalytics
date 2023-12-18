@@ -2,7 +2,7 @@ body{
     /*font-family: 'Inter', sans-serif;  */
     font-family: 'Wix Madefor Display', sans-serif; 
     /* font-family: 'Raleway', sans-serif; */
-    font-size: 1.15vw;
+    font-size: 100%;
     overflow-x: hidden;
 }
 
@@ -308,8 +308,6 @@ body{
 .settingsLabelsBox{
     width: 10%;
     font-size: 110%;
-
-    
 }
 
 input::-webkit-outer-spin-button,
@@ -318,30 +316,73 @@ input::-webkit-inner-spin-button {
     margin: 0;
 }
 
-.settingsLabels{
-    font-size: 110%;
-}
-
 #colorPicker, #colorPicker2, .scatterColorPickers{
     background-color: white;
+    margin-right: 5%;
+}
+
+#scatterVariable1, #scatterVariable2, #scatterVariable3{
+    font-size: 120%;
+    outline: none;
+    width: 100%;
+    margin-bottom: 2%;
+}
+
+.scatterInputLabel{
+    font-size: 100%;
+}
+
+.subScatterInputLabels{
+    font-size: 95%;
+    width: 40%;
+    margin-top: auto;
+    margin-bottom: auto;
+    font-weight: bold;
+}
+
+.scatterBoundInput{
+    font-size: 105%;
+    width: 50%;
+    outline: none;
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.subScatterInputLabelsFlex{
+    display: flex;
+    width: 100%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+
+#scatterplotDiv{
+    display: flex;
+    width: 100%;
+}
+
+#scatterSettingsHolder{
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    width: 25%;
 }
 
 #scatterPlot{
-    width: 80%;
-    margin-left: 10%;
+    width: 60%;
+    margin-left: 7.5%;
+    margin-right: 2.5%;
     border-left: 4px solid black;
     border-bottom: 4px solid black;
     position: relative;
-    height: 80vh;
-    margin-top: 5%;
+    height: 65vh;
+    margin-top: 2%;
     padding: 0;
     box-sizing: border-box;
 }
 
-
 .plot{
-    height: 15px;
-    width: 15px;
+    height: 14px;
+    width: 14px;
     position: absolute;
     transform: translate(-50%, -50%);
     border-radius: 50%;
@@ -375,37 +416,6 @@ input::-webkit-inner-spin-button {
     top: 100%;
     font-size: 100%;
     margin-top: 2.5%;
-    
-}
-
-#scatterVariable1, #scatterVariable2, #scatterVariable3{
-    font-size: 90%;
-    outline: none;
-}
-
-.scatterBoundInput{
-    font-size: 120%;
-    width: 20%;
-    outline: none;
-    border-radius: 5px;
-    margin-right: 2%;
-    margin-left: 0.5%;
-}
-
-#scatterSettingsHolder{
-    margin-left: 10%;
-    display: flex;
-}
-
-#scatterSettingsHolderMain{
-    width: 45%;
-    margin-left: 0;
-    border-right: 2px dotted black;
-}
-
-#addTertiaryVariable{
-    margin-left: 2%;
-    width: 45%;
 }
 
 #spectrum{
@@ -496,6 +506,27 @@ input::-webkit-inner-spin-button {
     background-color: white;
     z-index: 999;
 }
+
+
+@media only screen and (max-width: 1280px) {
+    body{
+        font-size: 100%;
+    }
+}
+
+@media only screen and (max-width: 1024px) {
+    body{
+        font-size: 85%;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    body{
+        font-size: 75%;
+    }
+}
+
+
 
 @media only screen and (orientation: portrait){
     body{

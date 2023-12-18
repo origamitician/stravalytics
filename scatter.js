@@ -15,17 +15,17 @@ function getNumberOfColons(str) {
 
 //variable names that are referenced by the values of the dropdown.
 const variableDisplay = [
-    {value: 'distance', display: 'Distance', placeholder: 'Distance', unit: 'mi'}, 
+    {value: 'distance', display: 'Distance', placeholder: 'Distance (mi)', unit: 'mi'}, 
     {value: 'time', display: 'Moving Time', placeholder: 'h:mm:ss / mm:ss', unit: 's'},
     {value: 'elapsedTime', display: 'Elapsed Time', placeholder: 'h:mm:ss / mm:ss', unit: 's'},
-    {value: 'uptime', display: 'Uptime', placeholder: '% uptime', unit: "%"},
-    {value: 'elevation', display: 'Elevation Gain', placeholder: 'Gain in ft', unit: "ft"},
+    {value: 'uptime', display: 'Uptime', placeholder: '% uptime (0-100)', unit: "%"},
+    {value: 'elevation', display: 'Elevation Gain', placeholder: 'Gain (ft)', unit: "ft"},
     {value: 'incline', display: 'Incline', placeholder: '% incline', unit: "%"},
     {value: 'pace', display: 'Pace', placeholder: 'm:ss', unit: "/mi"},
     {value: 'kudos', display: 'Kudos', placeholder: '# kudos', unit: ""},
     {value: 'maxPace', display: 'Maximum Pace', placeholder: 'm:ss', unit: "/mi"},
-    {value: 'cadence', display: 'Cadence', placeholder: 'steps/min', unit: "steps/min"},
-    {value: 'stepsPerMile', display: 'Steps / mile', placeholder: 'steps/mi', unit: "steps/mi"},
+    {value: 'cadence', display: 'Cadence', placeholder: 'steps per min', unit: "steps/min"},
+    {value: 'stepsPerMile', display: 'Steps / mile', placeholder: 'steps per mile', unit: "steps/mi"},
     {value: 'strideLength', display: 'Stride length', placeholder: 'length in ft', unit: "ft"},
     {value: 'startDate', display: 'Date', placeholder: 'mm-dd-yyyy'},
 ]
@@ -455,13 +455,19 @@ function hidePrediction(){
 function updateScatterDrawingsInResponseToVariableChange(callerID) {
     if(callerID === 1) {
         document.getElementsByName('xAxisMax')[0].value = ''
+        document.getElementsByName('xAxisMax')[0].placeholder = getVariableDisplayInfo(document.getElementsByName('variable1')[0].value).placeholder
         document.getElementsByName('xAxisMin')[0].value = ''
+        document.getElementsByName('xAxisMin')[0].placeholder = getVariableDisplayInfo(document.getElementsByName('variable1')[0].value).placeholder
     } else if (callerID === 2) {
         document.getElementsByName('yAxisMin')[0].value = ''
+        document.getElementsByName('yAxisMin')[0].placeholder = getVariableDisplayInfo(document.getElementsByName('variable2')[0].value).placeholder
         document.getElementsByName('yAxisMax')[0].value = ''
+        document.getElementsByName('yAxisMax')[0].placeholder = getVariableDisplayInfo(document.getElementsByName('variable2')[0].value).placeholder
     } else if (callerID === 3) {
         document.getElementsByName('zAxisMin')[0].value = ''
+        document.getElementsByName('zAxisMin')[0].placeholder = getVariableDisplayInfo(document.getElementsByName('variable3')[0].value).placeholder
         document.getElementsByName('zAxisMax')[0].value = ''
+        document.getElementsByName('zAxisMax')[0].placeholder = getVariableDisplayInfo(document.getElementsByName('variable3')[0].value).placeholder
     }
     renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value, document.getElementsByName('variable3')[0].value)
 }

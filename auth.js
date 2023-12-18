@@ -1,5 +1,4 @@
 //file for all the misc. operations, such as hiding and showing elements of the UI, updating the date, etc...
-
 let loadingBarFrame = 0;
 
 function init(){
@@ -66,6 +65,7 @@ if (indexOfAuthorization == -1) {
             document.getElementById('welcomeMsg').style.display = 'block';
             document.getElementById('welcomeMsg').style.display = 'flex';
         })
+        generateRandomData();
     } else {
         // if new user and not logged in.
         if(indexOfRandom == -1){
@@ -99,8 +99,8 @@ if (indexOfAuthorization == -1) {
 }
 
 function generateRandomData(){
-    for (let i = 0; i < 1000; i++){
-        const generatedDistance = (Math.random()*25000) + 1000;
+    for (let i = 0; i < 100; i++){
+        const generatedDistance = (Math.random()*42195) + 1000;
         const generatedPace = Math.random()*3.25 + 2.5
         const elapsedPaceDifferencePercent = Math.random()*35
         const generatedTime = generatedDistance / generatedPace
@@ -119,7 +119,7 @@ function generateRandomData(){
     }
     document.getElementById('applicationBody').style.display = 'block';
     renderGraph(); //histograms
-        renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
+    renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
 }
 
 function updateLoadingBar(){

@@ -1,6 +1,6 @@
 //all variables + bargraph info is here;
 var allActivities = []; // actual, dynamically changing activities list upon filtering.
-const allActivitiesRef = []; // FIXED activities list. All lifetime activities are stored in here so that 
+const allActivitiesRef = []; // FIXED activities list. All lifetime activities are stored in here so that no unneccessary API calls are made.
 var startDate = Math.floor(Date.parse("01-01-2023") / 1000)
 var endDate = Math.floor(Date.now() / 1000);
 let scrub;

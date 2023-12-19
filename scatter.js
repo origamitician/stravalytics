@@ -86,7 +86,6 @@ function show(){
 
 function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     c.clearRect(0, 0, c.width, c.height);
-    console.log(tertiaryProp)
     refArray = [];
     var paras = document.getElementsByClassName('plot');
 
@@ -98,6 +97,8 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     while(paras[0]) {
         paras[0].parentNode.removeChild(paras[0]);
     }
+
+    /* find the upper and lower bounds of the scatterplot. */
 
     let topX
     let bottomX
@@ -130,6 +131,11 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         topY = processString(document.getElementsByName('yAxisMax')[0].value)
     }
 
+    console.log("bottomX is: " + bottomX);
+    console.log("topX is: " + topX);
+    console.log("bottomY is: " + bottomY);
+    console.log("topX is: " + topY);
+
     const array = [];
     arr.forEach(i => {
         const item = {...i};
@@ -148,7 +154,9 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
             item.stepsPerMile = null;
             item.strideLength = null;
         }
-        if(item[prop1] > bottomX && item[prop1] < topX && item[prop2] > bottomY && item[prop2] < topY){
+
+        /* if the plot fits within the confines of the upper and lower bounds, add to scatter plot. TODO add a tolerance of 0.01*/
+        if(item[prop1] >= bottomX && item[prop1] <= topX && item[prop2] >= bottomY && item[prop2] <= topY){
             array.push({...item})
             refArray.push({...item})
         }
@@ -181,6 +189,23 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
                 minY= item[prop2]
             }else if(item[prop2] > maxY){
                 maxY = item[prop2]
+            }
+
+            /* adding the 0.01s to take into account truncating errors */
+            if(prop1 == 'pace' || prop1 == 'elapsedTime' || prop1 == 'time' || prop1 == 'maxPace'){
+                document.getElementsByName('xAxisMin')[0].value=convert(parseFloat(minX) - 0.01).split('.')[0]
+                document.getElementsByName('xAxisMax')[0].value=convert(parseFloat(maxX) + 0.01).split('.')[0]
+            } else {
+                document.getElementsByName('xAxisMin')[0].value=(parseFloat(minX) - 0.01).toFixed(2)
+                document.getElementsByName('xAxisMax')[0].value=(parseFloat(maxX) + 0.01).toFixed(2)
+            }
+            
+            if(prop2 == 'pace' || prop2 == 'elapsedTime' || prop2 == 'time' || prop2 == 'maxPace'){
+                document.getElementsByName('yAxisMin')[0].value=convert(parseFloat(minY) - 0.01).split('.')[0]
+                document.getElementsByName('yAxisMax')[0].value=convert(parseFloat(maxY) + 0.01).split('.')[0]
+            } else {
+                document.getElementsByName('yAxisMin')[0].value=(parseFloat(minY) - 0.01).toFixed(2) 
+                document.getElementsByName('yAxisMax')[0].value=(parseFloat(maxY) + 0.01).toFixed(2)
             }
 
             if(tertiaryProp && item[tertiaryProp]) {
@@ -241,15 +266,17 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
                 plot.style.backgroundColor = gradientClr;
             }
         } else {
-            plot.style.backgroundColor = document.getElementsByName('scatterColor2')[0].value;
+            plot.style.backgroundColor = document.getElementsByName('plotColor')[0].value
         }
         plot.id = i;
         plot.addEventListener('click', show)
+        plot.style.height = document.getElementsByName('plotSize')[0].value + "px";
+        plot.style.width = document.getElementsByName('plotSize')[0].value + "px";
         document.getElementById('scatterPlot').appendChild(plot)
     }
 
-    const verticalIncrement = 8;
-    const horizontalIncrement = 7;
+    const verticalIncrement = document.getElementsByName('incrementsY')[0].value;
+    const horizontalIncrement = document.getElementsByName('incrementsX')[0].value;
 
     for(let i = 0; i < verticalIncrement; i++){
         for(let j = 0; j < horizontalIncrement; j++){
@@ -301,14 +328,13 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     // calculate the best line / curve of fit
 
     // find the best way of regression by finding the greatest r squared values
-    let calibR;
     let maxRSquared = -2;
     let regressionType = null;
     let calib;
     let calibCoefficients;
 
     calib = regression.linear(regressionArray);
-    console.log(calib)
+    //console.log(calib)
     if(calib.r2 >= maxRSquared) {
         regressionType = 'linear';
         maxRSquared = calib.r2;
@@ -316,7 +342,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     }
 
     calib = regression.polynomial(regressionArray, { order: 2 });
-    console.log(calib)
+    //console.log(calib)
     if(calib.r2 >= maxRSquared) {
         regressionType = 'parabolic';
         maxRSquared = calib.r2;
@@ -324,7 +350,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     }
 
     calib = regression.exponential(regressionArray);
-    console.log(calib)
+    //console.log(calib)
     if(calib.r2 >= maxRSquared) {
         regressionType = 'exponential';
         maxRSquared = calib.r2;
@@ -332,7 +358,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     }
 
     calib = regression.logarithmic(regressionArray);
-    console.log(calib)
+    //console.log(calib)
     if(calib.r2 >= maxRSquared) {
         regressionType = 'logarithmic';
         maxRSquared = calib.r2;
@@ -340,7 +366,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     }
 
     calib = regression.power(regressionArray);
-    console.log(calib)
+    //console.log(calib)
     if(calib.r2 >= maxRSquared) {
         regressionType = 'power';
         maxRSquared = calib.r2;
@@ -363,7 +389,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     const scrubbingRate = 201
 
     c.moveTo(0, canvHeight)
-    console.log(regressionType)
+    //console.log(regressionType)
 
     console.log("MaxX: " + maxX + " MinX: " +  minX + " MaxY: " + maxY + " MinY: " + minY)
     for (let i = 0; i < scrubbingRate; i++) {
@@ -392,12 +418,14 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         const left = ((calculatedX - minX) / (maxX - minX))*100
         plot.style.left = left + '%';
         const bot = ((calculatedY - minY) / (maxY- minY))*100 
-        plot.style.bottom = bot -3 + '%';
+        plot.style.bottom = bot + '%';
         
         if(bot <= 100 && bot >= 0) {
             const newID = "prediction_" + calculatedX + '_' + calculatedY + '_' + left.toFixed(2) + '_' + bot.toFixed(2);
             plot.id = newID
-            plot.style.backgroundColor = "orange"
+            plot.style.backgroundColor = document.getElementsByName('curveColor')[0].value
+            plot.style.height = document.getElementsByName('curveSize')[0].value + "px";
+            plot.style.width = document.getElementsByName('curveSize')[0].value + "px";
             plot.addEventListener('mouseover', () => showPrediction(prop1, prop2, newID))
             plot.addEventListener('mouseout', hidePrediction)
             document.getElementById('scatterPlot').appendChild(plot)
@@ -445,7 +473,6 @@ function showPrediction(property1, property2, id){
     } else {
         document.getElementById('predictionTxtY').innerHTML = getVariableDisplayInfo(property2).display + ": " + parseFloat(breakdown[2]).toFixed(2) + " " + getVariableDisplayInfo(property2).unit
     }
-    
 }
 
 function hidePrediction(){
@@ -453,6 +480,13 @@ function hidePrediction(){
 }
 
 function updateScatterDrawingsInResponseToVariableChange(callerID) {
+    document.getElementsByName('xAxisMax')[0].value = ''
+    document.getElementsByName('xAxisMin')[0].value = ''
+    document.getElementsByName('yAxisMax')[0].value = ''
+    document.getElementsByName('yAxisMin')[0].value = ''
+    document.getElementsByName('zAxisMax')[0].value = ''
+    document.getElementsByName('zAxisMin')[0].value = ''
+
     if(callerID === 1) {
         document.getElementsByName('xAxisMax')[0].value = ''
         document.getElementsByName('xAxisMax')[0].placeholder = getVariableDisplayInfo(document.getElementsByName('variable1')[0].value).placeholder

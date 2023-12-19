@@ -334,7 +334,24 @@ input::-webkit-inner-spin-button {
 
 .subScatterInputLabels{
     font-size: 95%;
-    width: 40%;
+    width: 45%;
+    margin-top: auto;
+    margin-bottom: auto;
+    font-weight: bold;
+}
+
+.subScatterInputLabelsBig{
+    font-size: 95%;
+    width: 70%;
+    margin-right: 5%;
+    margin-top: auto;
+    margin-bottom: auto;
+    font-weight: bold;
+}
+
+.subScatterInputLabelsColor{
+    font-size: 95%;
+    width: 30%;
     margin-top: auto;
     margin-bottom: auto;
     font-weight: bold;
@@ -349,11 +366,27 @@ input::-webkit-inner-spin-button {
     margin-bottom: 0;
 }
 
+.scatterBoundInputSmall{
+    font-size: 105%;
+    width: 20%;
+    outline: none;
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 .subScatterInputLabelsFlex{
     display: flex;
     width: 100%;
     margin-top: 1%;
     margin-bottom: 1%;
+}
+
+.scatterColorPickers{
+    width: 15%;
+    margin: 0 5% 0 0;
+    border: none;
+    padding: 0;
 }
 
 #scatterplotDiv{
@@ -381,8 +414,6 @@ input::-webkit-inner-spin-button {
 }
 
 .plot{
-    height: 14px;
-    width: 14px;
     position: absolute;
     transform: translate(-50%, -50%);
     border-radius: 50%;

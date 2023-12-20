@@ -136,7 +136,24 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     console.log("bottomY is: " + bottomY);
     console.log("topX is: " + topY);
 
+    console.log("BEFORE FILTER");
+    console.log(arr);
     const array = [];
+
+    let toleranceX;
+    let toleranceY;
+    if(prop1 == 'pace' || prop1 == 'elapsedTime' || prop1 == 'time' || prop1 == 'maxPace'){
+        toleranceX = 1; // to the nearest second
+    } else {
+        toleranceY = 0.1; //to the nearest 0.01 unit
+    }
+
+    if(prop2 == 'pace' || prop2 == 'elapsedTime' || prop2 == 'time' || prop2 == 'maxPace'){
+        toleranceY = 1; // to the nearest second
+    } else {
+        toleranceY = 0.1; //to the nearest 0.01 unit
+    }
+
     arr.forEach(i => {
         const item = {...i};
         item.distance /= 1609
@@ -156,11 +173,19 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         }
 
         /* if the plot fits within the confines of the upper and lower bounds, add to scatter plot. TODO add a tolerance of 0.01*/
-        if(item[prop1] >= bottomX && item[prop1] <= topX && item[prop2] >= bottomY && item[prop2] <= topY){
+
+        //if it meets the bounds set by the user, as well as tolerances for rounding, add.
+        if((item[prop1] >= bottomX || Math.abs(item[prop1] - bottomX) <= toleranceX) && 
+        (item[prop1] <= topX || Math.abs(item[prop1] - topX) <= toleranceX) && 
+        (item[prop2] >= bottomY || Math.abs(item[prop2] - bottomY) <= toleranceY) && 
+        (item[prop2] <= topY || Math.abs(item[prop2] - topY) <= toleranceY)){
             array.push({...item})
             refArray.push({...item})
         }
     })
+
+    console.log("AFTER FILTER");
+    console.log(array);
 
     //console.log("running!")
     let minX = 9223372036854775807;
@@ -193,19 +218,19 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
 
             /* adding the 0.01s to take into account truncating errors */
             if(prop1 == 'pace' || prop1 == 'elapsedTime' || prop1 == 'time' || prop1 == 'maxPace'){
-                document.getElementsByName('xAxisMin')[0].value=convert(parseFloat(minX) - 0.01).split('.')[0]
-                document.getElementsByName('xAxisMax')[0].value=convert(parseFloat(maxX) + 0.01).split('.')[0]
+                document.getElementsByName('xAxisMin')[0].value=convert(parseFloat(minX)).split('.')[0]
+                document.getElementsByName('xAxisMax')[0].value=convert(parseFloat(maxX)).split('.')[0]
             } else {
-                document.getElementsByName('xAxisMin')[0].value=(parseFloat(minX) - 0.01).toFixed(2)
-                document.getElementsByName('xAxisMax')[0].value=(parseFloat(maxX) + 0.01).toFixed(2)
+                document.getElementsByName('xAxisMin')[0].value=(parseFloat(minX)).toFixed(2)
+                document.getElementsByName('xAxisMax')[0].value=(parseFloat(maxX)).toFixed(2)
             }
             
             if(prop2 == 'pace' || prop2 == 'elapsedTime' || prop2 == 'time' || prop2 == 'maxPace'){
-                document.getElementsByName('yAxisMin')[0].value=convert(parseFloat(minY) - 0.01).split('.')[0]
-                document.getElementsByName('yAxisMax')[0].value=convert(parseFloat(maxY) + 0.01).split('.')[0]
+                document.getElementsByName('yAxisMin')[0].value=convert(parseFloat(minY)).split('.')[0]
+                document.getElementsByName('yAxisMax')[0].value=convert(parseFloat(maxY)).split('.')[0]
             } else {
-                document.getElementsByName('yAxisMin')[0].value=(parseFloat(minY) - 0.01).toFixed(2) 
-                document.getElementsByName('yAxisMax')[0].value=(parseFloat(maxY) + 0.01).toFixed(2)
+                document.getElementsByName('yAxisMin')[0].value=(parseFloat(minY)).toFixed(2) 
+                document.getElementsByName('yAxisMax')[0].value=(parseFloat(maxY)).toFixed(2)
             }
 
             if(tertiaryProp && item[tertiaryProp]) {

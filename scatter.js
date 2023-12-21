@@ -145,13 +145,13 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     if(prop1 == 'pace' || prop1 == 'elapsedTime' || prop1 == 'time' || prop1 == 'maxPace'){
         toleranceX = 1; // to the nearest second
     } else {
-        toleranceY = 0.1; //to the nearest 0.01 unit
+        toleranceX = 0.01; //to the nearest 0.01 unit
     }
 
     if(prop2 == 'pace' || prop2 == 'elapsedTime' || prop2 == 'time' || prop2 == 'maxPace'){
         toleranceY = 1; // to the nearest second
     } else {
-        toleranceY = 0.1; //to the nearest 0.01 unit
+        toleranceY = 0.01; //to the nearest 0.01 unit
     }
 
     arr.forEach(i => {
@@ -173,7 +173,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         }
 
         /* if the plot fits within the confines of the upper and lower bounds, add to scatter plot. TODO add a tolerance of 0.01*/
-
+        console.log("testing object with X: " + item[prop1] + " and Y: " + item[prop2] + " against X bound (" + bottomX + ", " + topX + ") w/ tolerance " + toleranceX + " against Y bound (" + bottomY + ", " + topY + ") w/ tolerance " + toleranceY)
         //if it meets the bounds set by the user, as well as tolerances for rounding, add.
         if((item[prop1] >= bottomX || Math.abs(item[prop1] - bottomX) <= toleranceX) && 
         (item[prop1] <= topX || Math.abs(item[prop1] - topX) <= toleranceX) && 
@@ -216,23 +216,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
                 maxY = item[prop2]
             }
 
-            /* adding the 0.01s to take into account truncating errors */
-            if(prop1 == 'pace' || prop1 == 'elapsedTime' || prop1 == 'time' || prop1 == 'maxPace'){
-                document.getElementsByName('xAxisMin')[0].value=convert(parseFloat(minX)).split('.')[0]
-                document.getElementsByName('xAxisMax')[0].value=convert(parseFloat(maxX)).split('.')[0]
-            } else {
-                document.getElementsByName('xAxisMin')[0].value=(parseFloat(minX)).toFixed(2)
-                document.getElementsByName('xAxisMax')[0].value=(parseFloat(maxX)).toFixed(2)
-            }
-            
-            if(prop2 == 'pace' || prop2 == 'elapsedTime' || prop2 == 'time' || prop2 == 'maxPace'){
-                document.getElementsByName('yAxisMin')[0].value=convert(parseFloat(minY)).split('.')[0]
-                document.getElementsByName('yAxisMax')[0].value=convert(parseFloat(maxY)).split('.')[0]
-            } else {
-                document.getElementsByName('yAxisMin')[0].value=(parseFloat(minY)).toFixed(2) 
-                document.getElementsByName('yAxisMax')[0].value=(parseFloat(maxY)).toFixed(2)
-            }
-
             if(tertiaryProp && item[tertiaryProp]) {
                 if(item[tertiaryProp] < minZ){
                     minZ= item[tertiaryProp]
@@ -252,6 +235,47 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
             }
         }
     })
+
+    /* autocomplete if fields are blank */
+    if(prop1 == 'pace' || prop1 == 'elapsedTime' || prop1 == 'time' || prop1 == 'maxPace'){
+        if (document.getElementsByName('xAxisMin')[0].value == "") {
+            document.getElementsByName('xAxisMin')[0].value=convert(parseFloat(minX)).split('.')[0]
+            bottomX = minX;
+        }
+        if (document.getElementsByName('xAxisMax')[0].value == "") {
+            document.getElementsByName('xAxisMax')[0].value=convert(parseFloat(maxX)).split('.')[0]
+            topX = maxX;
+        }
+    } else {
+        if (document.getElementsByName('xAxisMin')[0].value == "") {
+            document.getElementsByName('xAxisMin')[0].value=(parseFloat(minX)).toFixed(2)
+            bottomX = minX;
+        }
+        if (document.getElementsByName('xAxisMax')[0].value == "") {
+            document.getElementsByName('xAxisMax')[0].value=(parseFloat(maxX)).toFixed(2)
+            topX = maxX;
+        }
+    }
+    
+    if(prop2 == 'pace' || prop2 == 'elapsedTime' || prop2 == 'time' || prop2 == 'maxPace'){
+        if (document.getElementsByName('yAxisMin')[0].value == "") {
+            document.getElementsByName('yAxisMin')[0].value=convert(parseFloat(minY)).split('.')[0]
+            bottomY = minY;
+        }
+        if (document.getElementsByName('yAxisMax')[0].value == "") {
+            document.getElementsByName('yAxisMax')[0].value=convert(parseFloat(maxY)).split('.')[0]
+            topY = maxY;
+        }
+    } else {
+        if (document.getElementsByName('yAxisMin')[0].value == "") {
+            document.getElementsByName('yAxisMin')[0].value=(parseFloat(minY)).toFixed(2) 
+            bottomY = minY;
+        }
+        if (document.getElementsByName('yAxisMax')[0].value == "") {
+            document.getElementsByName('yAxisMax')[0].value=(parseFloat(maxY)).toFixed(2)
+            topY = maxY;
+        }
+    }
 
     if(tertiaryProp){
         document.getElementById('spectrum').style.display = 'block';
@@ -319,7 +343,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
                 let yDisplay = document.createElement('p');
                 yDisplay.className = 'yScatterDisplay';
                 if(prop2 == 'pace' || prop2 == 'elapsedTime' || prop2 == 'time' || prop2 == 'maxPace'){
-                    
                     yDisplay.innerHTML = convert(maxY - i*(((maxY - minY) / verticalIncrement))).split('.')[0]
                 } else if (prop2 == 'startDate'){
                     const convertedDate = (maxY - i*(((maxY - minY) / verticalIncrement)))*1000

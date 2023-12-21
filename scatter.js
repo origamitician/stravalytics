@@ -52,7 +52,7 @@ function processString(val){
             + parseFloat(val.substring(breakPoint+1, secondBreakPoint))*60 
             + parseFloat(val.substring(secondBreakPoint+1)) 
         }
-    } else if (val.includes("-")) {
+    } else if (val.includes("-") && val.substring(0, 1) != "-") {
         resultantString = Date.parse(val) / 1000
         console.log(resultantString)
     } else {
@@ -277,6 +277,17 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         }
     }
 
+    // convert everything into a float
+    bottomX = parseFloat(bottomX);
+    topX = parseFloat(topX);
+    bottomY = parseFloat(bottomY);
+    topY = parseFloat(topY);
+
+    console.log("bottomX is: " + bottomX + " and type is: " + typeof bottomX);
+    console.log("topX is: " + topX + " and type is: " + typeof topX);
+    console.log("bottomY is: " + bottomY + " and type is: " + typeof topY);
+    console.log("topX is: " + topY + " and type is: " + typeof bottomY);
+    
     if(tertiaryProp){
         document.getElementById('spectrum').style.display = 'block';
         document.getElementById('spectrum').style.background = 'linear-gradient(to right, ' + document.getElementsByName('scatterColor1')[0].value + ', ' + document.getElementsByName('scatterColor2')[0].value + ')'
@@ -297,8 +308,8 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         regressionArray.push([fixedArray[i].x, fixedArray[i].y])
         var plot = document.createElement('p');
         plot.className = 'plot';
-        plot.style.left = ((fixedArray[i].x - minX) / (maxX - minX))*100 + '%';
-        plot.style.bottom = ((fixedArray[i].y - minY) / (maxY- minY))*100 -3 + '%';
+        plot.style.left = ((fixedArray[i].x - bottomX) / (topX - bottomX))*100 + '%';
+        plot.style.bottom = ((fixedArray[i].y - bottomY) / (topY- bottomY))*100 -3 + '%';
         if(tertiaryProp) {
             // if user selects a tertiary prop
             if(fixedArray[i].z < bottomZ) {
@@ -343,12 +354,12 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
                 let yDisplay = document.createElement('p');
                 yDisplay.className = 'yScatterDisplay';
                 if(prop2 == 'pace' || prop2 == 'elapsedTime' || prop2 == 'time' || prop2 == 'maxPace'){
-                    yDisplay.innerHTML = convert(maxY - i*(((maxY - minY) / verticalIncrement))).split('.')[0]
+                    yDisplay.innerHTML = convert(topY - i*(((topY - bottomY) / verticalIncrement))).split('.')[0]
                 } else if (prop2 == 'startDate'){
-                    const convertedDate = (maxY - i*(((maxY - minY) / verticalIncrement)))*1000
+                    const convertedDate = (topY - i*(((topY - bottomY) / verticalIncrement)))*1000
                     yDisplay.innerHTML = new Date(convertedDate).toLocaleString('en-US').split(', ')[0]
                 } else {
-                    yDisplay.innerHTML = (maxY - i*(((maxY - minY) / verticalIncrement))).toFixed(1)
+                    yDisplay.innerHTML = (topY - i*(((topY - bottomY) / verticalIncrement))).toFixed(2)
                 }
                 
                 grid.append(yDisplay)
@@ -359,12 +370,12 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
                 let xDisplay = document.createElement('p');
                 xDisplay.className = 'xScatterDisplay';
                 if(prop1 == 'pace' || prop1 == 'elapsedTime' || prop1 == 'time' || prop1 == 'maxPace'){
-                    xDisplay.innerHTML = convert(minX + (j+1)*(((maxX - minX) / horizontalIncrement))).split('.')[0]
+                    xDisplay.innerHTML = convert(bottomX + (j+1)*(((topX - bottomX) / horizontalIncrement))).split('.')[0]
                 }else if (prop1 == 'startDate'){
-                    const convertedDate = (minX + (j+1)*(((maxX - minX) / horizontalIncrement)))*1000
+                    const convertedDate = (bottomX + (j+1)*(((topX - bottomX) / horizontalIncrement)))*1000
                     xDisplay.innerHTML = new Date(convertedDate).toLocaleString('en-US').split(', ')[0]
                 }else{
-                   xDisplay.innerHTML = (minX + (j+1)*(((maxX - minX) / horizontalIncrement))).toFixed(1)
+                    xDisplay.innerHTML = (bottomX + (j+1)*(((topX - bottomX) / horizontalIncrement))).toFixed(2);
                 }
                 
                 grid.append(xDisplay)
@@ -441,7 +452,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
 
     console.log("MaxX: " + maxX + " MinX: " +  minX + " MaxY: " + maxY + " MinY: " + minY)
     for (let i = 0; i < scrubbingRate; i++) {
-        const calculatedX = i * ((maxX - minX) / scrubbingRate) + minX
+        const calculatedX = i * ((topX - bottomX) / scrubbingRate) + bottomX
         let calculatedY;
         if(regressionType == 'linear') {
             calculatedY = calibCoefficients[0] * (calculatedX) + calibCoefficients[1]
@@ -463,9 +474,9 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
 
         plot = document.createElement('p');
         plot.className = 'plot';
-        const left = ((calculatedX - minX) / (maxX - minX))*100
+        const left = ((calculatedX - bottomX) / (topX - bottomX))*100
         plot.style.left = left + '%';
-        const bot = ((calculatedY - minY) / (maxY- minY))*100 
+        const bot = ((calculatedY - bottomY) / (topY- bottomY))*100 
         plot.style.bottom = bot + '%';
         
         if(bot <= 100 && bot >= 0) {
@@ -528,12 +539,12 @@ function hidePrediction(){
 }
 
 function updateScatterDrawingsInResponseToVariableChange(callerID) {
-    document.getElementsByName('xAxisMax')[0].value = ''
+    /*document.getElementsByName('xAxisMax')[0].value = ''
     document.getElementsByName('xAxisMin')[0].value = ''
     document.getElementsByName('yAxisMax')[0].value = ''
     document.getElementsByName('yAxisMin')[0].value = ''
     document.getElementsByName('zAxisMax')[0].value = ''
-    document.getElementsByName('zAxisMin')[0].value = ''
+    document.getElementsByName('zAxisMin')[0].value = ''*/
 
     if(callerID === 1) {
         document.getElementsByName('xAxisMax')[0].value = ''

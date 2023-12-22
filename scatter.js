@@ -390,7 +390,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     let maxRSquared = -2;
     let regressionType = null;
     let calib;
-    let calibCoefficients;
+    let calibCoefficients = [];
 
     calib = regression.linear(regressionArray);
     //console.log(calib)
@@ -432,7 +432,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         calibCoefficients = calib.equation
     }
 
-    let canvWidth;
     let canvHeight;
     if(myCanvas.getBoundingClientRect().width == 0) {
         canvWidth = window.innerWidth *0.8;
@@ -448,7 +447,34 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     const scrubbingRate = 201
 
     c.moveTo(0, canvHeight)
-    //console.log(regressionType)
+    console.log("Regression type is: " + regressionType)
+
+    const coefficientArray = []; // to house negative coefficents, if needed
+    for (let i = 0; i < calibCoefficients.length; i++) {
+        if(calibCoefficients[i] < 0 || i == 0) {
+            coefficientArray[i] = calibCoefficients[i].toFixed(2)
+        } else {
+            // never put a "+" before the first term.
+            coefficientArray[i] = "+" + calibCoefficients[i].toFixed(2)
+        }
+    }
+
+    console.log(coefficientArray);
+
+    const equation = document.getElementById("curveEquation")
+    if(regressionType == 'linear') {
+        equation.innerHTML = "y=" + coefficientArray[0]  + "x" + coefficientArray[1]
+    }else if (regressionType == 'parabolic') {
+        equation.innerHTML =  "y=" + coefficientArray[0] + "x<sup>2</sup>" + coefficientArray[1] + "x" + coefficientArray[2]
+    } else if (regressionType == 'cubic') {
+        equation.innerHTML =  "y=" + coefficientArray[0] + "x<sup>3</sup>" + coefficientArray[1] + "x<sup>2</sup>+" + coefficientArray[2] + "x" + coefficientArray[3]
+    } else if (regressionType == 'exponential') {
+        equation.innerHTML = "y=" + coefficientArray[0] + "e<sup>" + coefficientArray[1] + "x</sup>"
+    } else if (regressionType == 'logarithmic') {
+        equation.innerHTML = "y=" + coefficientArray[0] + coefficientArray[1] + "log(x)"
+    } else if (regressionType == 'power') {
+        equation.innerHTML = "y=" + coefficientArray[0] + "x<sup>" + coefficientArray[1] + "</sup>"
+    }
 
     console.log("MaxX: " + maxX + " MinX: " +  minX + " MaxY: " + maxY + " MinY: " + minY)
     for (let i = 0; i < scrubbingRate; i++) {
@@ -489,20 +515,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
             plot.addEventListener('mouseout', hidePrediction)
             document.getElementById('scatterPlot').appendChild(plot)
         }
-        
-        // c.fillRect(canvWidth * (i / scrubbingRate), (1 - (calculatedY - minY) / (maxY - minY))*canvHeight, 5, 5)
-
-        // c.lineTo((canvWidth * (i / scrubbingRate)), (1 - (calculatedY - minY) / (maxY - minY))*canvHeight)
-    //     c.beginPath()
-    //     c.moveTo(0, canvHeight)
-    //     c.lineTo(500, 0)
-    //     c.lineWidth = 4;
-    // c.strokeStyle = "orange";
     }
-    // c.lineWidth = 4;
-    // c.strokeStyle = "orange";
-    // c.stroke();
-    // c.closePath();
 }
 
 function updateScatterDrawings() {

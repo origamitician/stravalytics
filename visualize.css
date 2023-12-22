@@ -394,6 +394,15 @@ input::-webkit-inner-spin-button {
     width: 100%;
 }
 
+#curveText{
+    font-size: 150%;
+    color: orange;
+}
+
+#curveEquation{
+    font-family: 'Roboto Mono', monospace;
+}
+
 #scatterSettingsHolder{
     margin-left: 2.5%;
     margin-right: 2.5%;

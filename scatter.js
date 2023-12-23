@@ -16,8 +16,8 @@ function getNumberOfColons(str) {
 //variable names that are referenced by the values of the dropdown.
 const variableDisplay = [
     {value: 'distance', display: 'Distance', placeholder: 'Distance (mi)', unit: 'mi'}, 
-    {value: 'time', display: 'Moving Time', placeholder: 'h:mm:ss / mm:ss', unit: 's'},
-    {value: 'elapsedTime', display: 'Elapsed Time', placeholder: 'h:mm:ss / mm:ss', unit: 's'},
+    {value: 'time', display: 'Moving Time', placeholder: 'h:mm:ss / mm:ss', unit: ''},
+    {value: 'elapsedTime', display: 'Elapsed Time', placeholder: 'h:mm:ss / mm:ss', unit: ''},
     {value: 'uptime', display: 'Uptime', placeholder: '% uptime (0-100)', unit: "%"},
     {value: 'elevation', display: 'Elevation Gain', placeholder: 'Gain (ft)', unit: "ft"},
     {value: 'incline', display: 'Incline', placeholder: '% incline', unit: "%"},
@@ -187,6 +187,16 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     console.log("AFTER FILTER");
     console.log(array);
 
+    // enable placeholders when the initial scatterplot is drawn.
+    const var1Info = getVariableDisplayInfo(document.getElementsByName('variable1')[0].value)
+    const var2Info = getVariableDisplayInfo(document.getElementsByName('variable2')[0].value)
+    document.getElementsByName('xInput')[0].placeholder = var1Info.placeholder
+    document.getElementsByName('yInput')[0].placeholder = var2Info.placeholder
+    document.getElementsByClassName('xPredictionVarName')[0].innerHTML = var1Info.display.toLowerCase() + "(x)";
+    document.getElementsByClassName('xPredictionVarName')[1].innerHTML = var1Info.display.toLowerCase();
+    document.getElementsByClassName('yPredictionVarName')[0].innerHTML = var2Info.display.toLowerCase() + "(y)";
+    document.getElementsByClassName('yPredictionVarName')[1].innerHTML = var2Info.display.toLowerCase();
+
     //console.log("running!")
     let minX = 9223372036854775807;
     let minY = 9223372036854775807;
@@ -304,6 +314,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         document.getElementById('spectrum').style.display = 'none';
     }
 
+    // draw the plots.
     for(var i = 0; i < fixedArray.length; i++){
         regressionArray.push([fixedArray[i].x, fixedArray[i].y])
         var plot = document.createElement('p');
@@ -338,6 +349,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     const verticalIncrement = document.getElementsByName('incrementsY')[0].value;
     const horizontalIncrement = document.getElementsByName('incrementsX')[0].value;
 
+    // draw the grid.
     for(let i = 0; i < verticalIncrement; i++){
         for(let j = 0; j < horizontalIncrement; j++){
             let grid = document.createElement('div');
@@ -479,23 +491,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     console.log("MaxX: " + maxX + " MinX: " +  minX + " MaxY: " + maxY + " MinY: " + minY)
     for (let i = 0; i < scrubbingRate; i++) {
         const calculatedX = i * ((topX - bottomX) / scrubbingRate) + bottomX
-        let calculatedY;
-        if(regressionType == 'linear') {
-            calculatedY = calibCoefficients[0] * (calculatedX) + calibCoefficients[1]
-        } else if (regressionType == 'parabolic') {
-            calculatedY = calibCoefficients[0] * (calculatedX ** 2) + calibCoefficients[1] * calculatedX + calibCoefficients[2]
-        } else if (regressionType == 'cubic') {
-            calculatedY = calibCoefficients[0] * (calculatedX ** 3) + calibCoefficients[1] * (calculatedX ** 2) + calibCoefficients[2] + (calculatedX) + calibCoefficients[3];
-        } else if (regressionType == 'exponential') {
-            calculatedY = calibCoefficients[0] * (Math.E ** (calculatedX * calibCoefficients[1]))
-        } else if (regressionType == 'logarithmic') {
-            calculatedY = calibCoefficients[0] + calibCoefficients[1]*Math.log(calculatedX);
-        } else if (regressionType == 'power') {
-            calculatedY = calibCoefficients[0] * (calculatedX ** calibCoefficients[1]);
-        }
-        
-        // console.log(calculatedX + ' ' + calculatedY)
-        // console.log('moving line to: ' + (canvWidth * (i / scrubbingRate)) + ' ' + (1 - (calculatedY - minY) / (maxY - minY))*canvHeight)
+        const calculatedY = calculatePrediction(calculatedX, regressionType, calibCoefficients);
         c.fillStyle = 'orange';
 
         plot = document.createElement('p');
@@ -522,6 +518,42 @@ function updateScatterDrawings() {
     renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value, document.getElementsByName('variable3')[0].value)
 }
 
+function calculatePrediction(calculatedX, regressionType, equation) {
+    let calculatedY;
+    if(regressionType == 'linear') {
+        calculatedY = equation[0] * (calculatedX) + equation[1]
+    } else if (regressionType == 'parabolic') {
+        calculatedY = equation[0] * (calculatedX ** 2) + equation[1] * calculatedX + equation[2]
+    } else if (regressionType == 'cubic') {
+        calculatedY = equation[0] * (calculatedX ** 3) + equation[1] * (calculatedX ** 2) + equation[2] + (calculatedX) + equation[3];
+    } else if (regressionType == 'exponential') {
+        calculatedY = equation[0] * (Math.E ** (calculatedX * equation[1]))
+    } else if (regressionType == 'logarithmic') {
+        calculatedY = equation[0] + equation[1]*Math.log(calculatedX);
+    } else if (regressionType == 'power') {
+        calculatedY = equation[0] * (calculatedX ** equation[1]);
+    }
+
+    return calculatedY
+}
+
+function processPredictionIntoReadableForm(prop, val, unit) {
+    // prop = property of the value (e.g. elapsed time); 
+    // val = value to be processed; 
+    // unit = if it should include units or not.
+    let processedVal;
+    console.log(prop);
+    if (prop == "pace" || prop == "maxPace") {
+        processedVal = convert(parseInt(val)) + "." + parseFloat(val).toString().split(".")[1].substring(0, 2) + unit
+    } else if (prop == "elapsedTime" || prop == "time") {
+        processedVal = convert(parseInt(val));
+    } else {
+        processedVal = parseFloat(val).toFixed(2) + " " + unit;
+    }
+
+    return processedVal;
+}
+
 function showPrediction(property1, property2, id){
     const breakdown = id.split('_')
     // id is in the form of prediction_<xvalue>_<yvalue>_<xPosOnCanvas>_<yPosOnCanvas>
@@ -530,21 +562,8 @@ function showPrediction(property1, property2, id){
     document.getElementById('predictionDiv').style.bottom = parseFloat(breakdown[4]) + 5 + "%"
     document.getElementById('predictionDiv').style.left= parseFloat(breakdown[3]) + 2 + "%"
 
-    if (property1 == "pace" || property1 == "maxPace") {
-        document.getElementById('predictionTxtX').innerHTML = getVariableDisplayInfo(property1).display + ": " + convert(parseInt(breakdown[1])) + "." + parseFloat(breakdown[1]).toString().split(".")[1].substring(0, 2) + getVariableDisplayInfo(property1).unit
-    } else if (property1 == "elapsedTime" || property1 == "time") {
-        document.getElementById('predictionTxtX').innerHTML = getVariableDisplayInfo(property1).display + ": " + convert(parseInt(breakdown[1]));
-    } else {
-        document.getElementById('predictionTxtX').innerHTML = getVariableDisplayInfo(property1).display + ": " + parseFloat(breakdown[1]).toFixed(2) + " " + getVariableDisplayInfo(property1).unit
-    }
-
-    if (property2 == "pace" || property2 == "maxPace") {
-        document.getElementById('predictionTxtY').innerHTML = getVariableDisplayInfo(property2).display + ": " + convert(parseInt(breakdown[2])) + "." + parseFloat(breakdown[1]).toString().split(".")[1].substring(0, 2) + getVariableDisplayInfo(property2).unit
-    } else if (property2 == "elapsedTime" || property2== "time") {
-        document.getElementById('predictionTxtY').innerHTML = getVariableDisplayInfo(property2).display + ": " + convert(parseInt(breakdown[2]));
-    } else {
-        document.getElementById('predictionTxtY').innerHTML = getVariableDisplayInfo(property2).display + ": " + parseFloat(breakdown[2]).toFixed(2) + " " + getVariableDisplayInfo(property2).unit
-    }
+    document.getElementById('predictionTxtX').innerHTML = getVariableDisplayInfo(property1).display + ": " + processPredictionIntoReadableForm(property1, breakdown[1], getVariableDisplayInfo(property1).unit);
+    document.getElementById('predictionTxtY').innerHTML = getVariableDisplayInfo(property2).display + ": " + processPredictionIntoReadableForm(property2, breakdown[2], getVariableDisplayInfo(property2).unit);
 }
 
 function hidePrediction(){
@@ -560,15 +579,23 @@ function updateScatterDrawingsInResponseToVariableChange(callerID) {
     document.getElementsByName('zAxisMin')[0].value = ''*/
 
     if(callerID === 1) {
+        const elem = getVariableDisplayInfo(document.getElementsByName('variable1')[0].value)
         document.getElementsByName('xAxisMax')[0].value = ''
-        document.getElementsByName('xAxisMax')[0].placeholder = getVariableDisplayInfo(document.getElementsByName('variable1')[0].value).placeholder
+        document.getElementsByName('xAxisMax')[0].placeholder = elem.placeholder
         document.getElementsByName('xAxisMin')[0].value = ''
-        document.getElementsByName('xAxisMin')[0].placeholder = getVariableDisplayInfo(document.getElementsByName('variable1')[0].value).placeholder
+        document.getElementsByName('xAxisMin')[0].placeholder = elem.placeholder
+        document.getElementsByName('xInput')[0].placeholder = elem.placeholder
+        document.getElementsByClassName('xPredictionVarName')[0].innerHTML = elem.display.toLowerCase() + "(x)";
+        document.getElementsByClassName('xPredictionVarName')[1].innerHTML = elem.display.toLowerCase();
     } else if (callerID === 2) {
+        const elem = getVariableDisplayInfo(document.getElementsByName('variable2')[0].value)
         document.getElementsByName('yAxisMin')[0].value = ''
-        document.getElementsByName('yAxisMin')[0].placeholder = getVariableDisplayInfo(document.getElementsByName('variable2')[0].value).placeholder
+        document.getElementsByName('yAxisMin')[0].placeholder = elem.placeholder
         document.getElementsByName('yAxisMax')[0].value = ''
-        document.getElementsByName('yAxisMax')[0].placeholder = getVariableDisplayInfo(document.getElementsByName('variable2')[0].value).placeholder
+        document.getElementsByName('yAxisMax')[0].placeholder = elem.placeholder
+        document.getElementsByName('yInput')[0].placeholder = elem.placeholder
+        document.getElementsByClassName('yPredictionVarName')[0].innerHTML = elem.display.toLowerCase() + "(y)";
+        document.getElementsByClassName('yPredictionVarName')[1].innerHTML = elem.display.toLowerCase();
     } else if (callerID === 3) {
         document.getElementsByName('zAxisMin')[0].value = ''
         document.getElementsByName('zAxisMin')[0].placeholder = getVariableDisplayInfo(document.getElementsByName('variable3')[0].value).placeholder

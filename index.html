@@ -179,7 +179,19 @@
                         <p id = 'spectrumLowerBound'></p>
                         <p id = 'spectrumUpperBound'></p>
                     </div>
+                    <hr width="50%">
                     <p id = "curveText">Curve of best fit: <span id = "curveEquation"></span></p>
+                    <div style="width: 100%; font-size: 125%;">
+                        <p id = "">Enter <b class = "xPredictionVarName" style = "color: orange;"></b> to predict <b class = "yPredictionVarName" style = "color: orange;"></b> based on best fit.</p>
+                        <div class = 'subScatterInputLabelsFlex'>   
+                            <label for="xInput" class = 'subScatterInputLabels'>Input <span class = "xPredictionVarName"></span></label>
+                            <input type="text" name="xInput" class = "scatterBoundInput">
+                        </div>
+                        <div class = 'subScatterInputLabelsFlex'>   
+                            <label for="yInput" class = 'subScatterInputLabels'>Predicted <span class = "yPredictionVarName"></span></label>
+                            <input type="text" name="yInput" class = "scatterBoundInput">
+                        </div>
+                    </div>
                 </div>
 
                 <!--settings-->

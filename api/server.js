@@ -97,9 +97,9 @@ app.get('/api/activities/:accountID', (req, res) => {
                     //make sure this is an array of Promise objects.
                     Promise.all([
                         getIndividualPaginatedData(1, key), 
-                        getIndividualPaginatedData(2, key), 
+                        /*getIndividualPaginatedData(2, key), 
                         getIndividualPaginatedData(3, key), 
-                    getIndividualPaginatedData(4, key)]).then(() => {
+                    getIndividualPaginatedData(4, key)*/]).then(() => {
                             res.send(allActivities)
                         })
                 })
@@ -111,6 +111,7 @@ app.get('/api/activities/:accountID', (req, res) => {
 })
 
 function getIndividualPaginatedData(page, accessKey) {
+    console.log("https://www.strava.com/api/v3/athlete/activities?access_token=" + accessKey + "&page=" + page + "&per_page=200&after=0" +  "&before=" + Math.round(Date.now()/1000));
     return new Promise ((resolve, reject) => {
         fetch("https://www.strava.com/api/v3/athlete/activities?access_token=" + accessKey + "&page=" + page + "&per_page=200&after=0" +  "&before=" + Math.round(Date.now()/1000)).then((response) => response.json()).then((jsonData) => {  
             for (var i = 0; i < jsonData.length; i++){

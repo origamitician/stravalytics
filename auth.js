@@ -119,6 +119,7 @@ function generateRandomData(){
     }
     document.getElementById('applicationBody').style.display = 'block';
     renderGraph(); //histograms
+
     renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
 }
 

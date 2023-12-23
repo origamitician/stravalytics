@@ -1,6 +1,9 @@
 const myCanvas = document.getElementById("scatterCanv");
 const c = myCanvas.getContext("2d");
 
+// is a global variable because functions outside of renderScatterPlot need access to it.
+let regressionType = null;
+let calibCoefficients = [];
 let refArray = [];
 
 function getNumberOfColons(str) {
@@ -400,9 +403,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
 
     // find the best way of regression by finding the greatest r squared values
     let maxRSquared = -2;
-    let regressionType = null;
     let calib;
-    let calibCoefficients = [];
 
     calib = regression.linear(regressionArray);
     //console.log(calib)
@@ -544,17 +545,24 @@ function processPredictionIntoReadableForm(prop, val, unit) {
     let processedVal;
     console.log(prop);
     if (prop == "pace" || prop == "maxPace") {
-        processedVal = convert(parseInt(val)) + "." + parseFloat(val).toString().split(".")[1].substring(0, 2) + unit
+        processedVal = convert(parseInt(val)) + "." + parseFloat(val).toString().split(".")[1].substring(0, 2);
+        if (unit) {
+            processedVal += unit;
+        }
     } else if (prop == "elapsedTime" || prop == "time") {
         processedVal = convert(parseInt(val));
     } else {
-        processedVal = parseFloat(val).toFixed(2) + " " + unit;
+        processedVal = parseFloat(val).toFixed(2);
+        if (unit) {
+            processedVal += (" " + unit);
+        }
     }
 
     return processedVal;
 }
 
-function showPrediction(property1, property2, id){
+// when the curve of best fit is hovered.
+function showPrediction(property1, property2, id){ 
     const breakdown = id.split('_')
     // id is in the form of prediction_<xvalue>_<yvalue>_<xPosOnCanvas>_<yPosOnCanvas>
 
@@ -564,6 +572,15 @@ function showPrediction(property1, property2, id){
 
     document.getElementById('predictionTxtX').innerHTML = getVariableDisplayInfo(property1).display + ": " + processPredictionIntoReadableForm(property1, breakdown[1], getVariableDisplayInfo(property1).unit);
     document.getElementById('predictionTxtY').innerHTML = getVariableDisplayInfo(property2).display + ": " + processPredictionIntoReadableForm(property2, breakdown[2], getVariableDisplayInfo(property2).unit);
+}
+
+// when the user inputs into the x axis prediction field in an attempt to predict the y axis.
+function showInputPrediction() {
+    const processedXInput = parseFloat(processString(document.getElementsByName('xInput')[0].value));
+    const yOutput = calculatePrediction(processedXInput, regressionType, calibCoefficients);
+    const processedYOutput = processPredictionIntoReadableForm (document.getElementsByName('variable2')[0].value, yOutput); // no units added
+
+    document.getElementsByName("yInput")[0].value = processedYOutput;
 }
 
 function hidePrediction(){

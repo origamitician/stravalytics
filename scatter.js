@@ -88,6 +88,8 @@ function show(){
 }
 
 function renderScatterplot(arr, prop1, prop2, tertiaryProp){
+    document.getElementsByName("xInput")[0].value = "";
+    document.getElementsByName("yInput")[0].value = "";
     c.clearRect(0, 0, c.width, c.height);
     refArray = [];
     var paras = document.getElementsByClassName('plot');
@@ -196,9 +198,20 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     document.getElementsByName('xInput')[0].placeholder = var1Info.placeholder
     document.getElementsByName('yInput')[0].placeholder = var2Info.placeholder
     document.getElementsByClassName('xPredictionVarName')[0].innerHTML = var1Info.display.toLowerCase() + "(x)";
-    document.getElementsByClassName('xPredictionVarName')[1].innerHTML = var1Info.display.toLowerCase();
+    let unprocessed1Info= var1Info.display.toLowerCase()
+
+    if (var1Info.unit) {
+        unprocessed1Info += (" (" + var1Info.unit + ")")
+    }
+
+    document.getElementsByClassName('xPredictionVarName')[1].innerHTML = unprocessed1Info
+
     document.getElementsByClassName('yPredictionVarName')[0].innerHTML = var2Info.display.toLowerCase() + "(y)";
-    document.getElementsByClassName('yPredictionVarName')[1].innerHTML = var2Info.display.toLowerCase();
+    let unprocessed2Info= var2Info.display.toLowerCase()
+    if (var2Info.unit) {
+        unprocessed2Info += (" (" + var2Info.unit + ")")
+    }
+    document.getElementsByClassName('yPredictionVarName')[1].innerHTML = unprocessed2Info;
 
     //console.log("running!")
     let minX = 9223372036854775807;
@@ -603,7 +616,13 @@ function updateScatterDrawingsInResponseToVariableChange(callerID) {
         document.getElementsByName('xAxisMin')[0].placeholder = elem.placeholder
         document.getElementsByName('xInput')[0].placeholder = elem.placeholder
         document.getElementsByClassName('xPredictionVarName')[0].innerHTML = elem.display.toLowerCase() + "(x)";
-        document.getElementsByClassName('xPredictionVarName')[1].innerHTML = elem.display.toLowerCase();
+
+        let unprocessed1Info= elem.display.toLowerCase()
+        if (elem.unit) {
+            unprocessed1Info += (" (" + elem.unit + ")")
+        }
+        document.getElementsByClassName('xPredictionVarName')[1].innerHTML = unprocessed1Info;
+
     } else if (callerID === 2) {
         const elem = getVariableDisplayInfo(document.getElementsByName('variable2')[0].value)
         document.getElementsByName('yAxisMin')[0].value = ''
@@ -612,7 +631,13 @@ function updateScatterDrawingsInResponseToVariableChange(callerID) {
         document.getElementsByName('yAxisMax')[0].placeholder = elem.placeholder
         document.getElementsByName('yInput')[0].placeholder = elem.placeholder
         document.getElementsByClassName('yPredictionVarName')[0].innerHTML = elem.display.toLowerCase() + "(y)";
-        document.getElementsByClassName('yPredictionVarName')[1].innerHTML = elem.display.toLowerCase();
+
+        let unprocessed2Info= elem.display.toLowerCase()
+        if (elem.unit) {
+            unprocessed2Info += (" (" + elem.unit + ")")
+        }
+        document.getElementsByClassName('yPredictionVarName')[1].innerHTML = unprocessed2Info;
+
     } else if (callerID === 3) {
         document.getElementsByName('zAxisMin')[0].value = ''
         document.getElementsByName('zAxisMin')[0].placeholder = getVariableDisplayInfo(document.getElementsByName('variable3')[0].value).placeholder

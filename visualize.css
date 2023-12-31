@@ -328,8 +328,38 @@ input::-webkit-inner-spin-button {
     margin-bottom: 2%;
 }
 
-.scatterInputLabel{
+.scatterInputLabelsFlex{
+    display: flex;
+    width: 100%;
+    border: 1px solid black;
+    position: relative;
+    font-size: 125%;
+}
+
+.scatterInputLabels{
     font-size: 100%;
+    width: 80%;
+    border: 1px solid darkgreen;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.scatterArrowHolder{
+    width: 20%;
+    border: 1px solid red;
+    margin-top: 0;
+    margin-bottom: 0;
+    position: relative;
+}
+
+.scatterArrow{
+    font-size: 125%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    border: 1px solid blue;
 }
 
 .subScatterInputLabels{
@@ -448,6 +478,7 @@ input::-webkit-inner-spin-button {
     top: 0%;
     right: 110%;
 }
+
 
 .xScatterDisplay{
     position: absolute;

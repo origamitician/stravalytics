@@ -196,8 +196,14 @@
 
                 <!--settings-->
                 <div id = 'scatterSettingsHolder'>
-                    <div id = 'scatterSettingsHolderXaxis' class = 'scatterSettingsHolderSection'>
+                    <div class = 'scatterInputLabelsFlex'>
                         <h2 class = 'scatterInputLabels'>X-Axis: &nbsp;&nbsp;</h2>
+                        <div class = 'scatterArrowHolder'>
+                            <h2 class = 'scatterArrow'>&gt;</h2>
+                        </div>
+                    </div>
+                    
+                    <div id = 'scatterSettingsHolderXaxis' class = 'scatterSettingsHolderSection'>
                         <select name="variable1" id="scatterVariable1" onChange = "updateScatterDrawingsInResponseToVariableChange(1)">
                             <option value="distance" selected>Distance</option>
                             <option value="time">Moving Time</option>
@@ -223,8 +229,13 @@
                         </div>
                     </div>
                     <br>
+                    <div class = 'scatterInputLabelsFlex'>
+                        <h2 class = 'scatterInputLabels'>Y-Axis: &nbsp;&nbsp;</h2>
+                        <div class = 'scatterArrowHolder'>
+                            <h2 class = 'scatterArrow'>&gt;</h2>
+                        </div>
+                    </div>
                     <div id = 'scatterSettingsHolderYaxis' class = 'scatterSettingsHolderSection'>
-                        <h2 class = 'scatterInputLabels'>Y-Axis:</h2>
                         <select name="variable2" id="scatterVariable2" onChange = "updateScatterDrawingsInResponseToVariableChange(2)">
                             <option value="distance">Distance</option>
                             <option value="time">Moving Time</option>
@@ -250,9 +261,13 @@
                         </div>
                     </div>
                     <br>
+                    <div class = 'scatterInputLabelsFlex'>
+                        <h2 class = 'scatterInputLabels'>Tertiary Variable &nbsp;&nbsp;</h2>
+                        <div class = 'scatterArrowHolder'>
+                            <h2 class = 'scatterArrow'>&gt;</h2>
+                        </div>
+                    </div>
                     <div id = 'scatterSettingsHolderTertiary' class = 'scatterSettingsHolderSection'>
-                        <h2 class = 'scatterInputLabels'>Tertiary Variable:</h2>
-                        
                         <select name="variable3" id="scatterVariable3" onChange = "updateScatterDrawingsInResponseToVariableChange(3)">
                             <option value="" selected>None</option>
                             <option value="distance">Distance</option>
@@ -281,8 +296,13 @@
                         </div>                
                     </div>
                     <br>
-                    <div id = 'scatterSettingsHolderCurve' class = 'scatterSettingsHolderSection'>
+                    <div class = 'scatterInputLabelsFlex'>
                         <h2 class = 'scatterInputLabels'>Curve of Best Fit</h2>
+                        <div class = 'scatterArrowHolder'>
+                            <h2 class = 'scatterArrow'>&gt;</h2>
+                        </div>
+                    </div>
+                    <div id = 'scatterSettingsHolderCurve' class = 'scatterSettingsHolderSection'>
                         <div class = 'subScatterInputLabelsFlex'>
                             <label for="curveColor" class = 'subScatterInputLabelsBig'>Curve Color</label>
                             <input type="color" name = "curveColor" value = "#00ff7b" class = 'scatterColorPickers'  onChange = "updateScatterDrawings()" >
@@ -293,8 +313,13 @@
                         </div>
                     </div>
                     <br>
+                    <div class = 'scatterInputLabelsFlex'>
+                        <h2 class = 'scatterInputLabels'>Other Graph Options</h2>
+                        <div class = 'scatterArrowHolder'>
+                            <h2 class = 'scatterArrow'>&gt;</h2>
+                        </div>
+                    </div>
                     <div id = 'scatterSettingsHolderPlot' class = 'scatterSettingsHolderSection'>
-                        <h2 class = 'scatterInputLabels'>Other graph options</h2>
                         <div class = 'subScatterInputLabelsFlex'>
                             <label for="plotColor" class = 'subScatterInputLabelsBig'>Plot Color</label>
                             <input type="color" name = "plotColor" value = "#0008ff" class = 'scatterColorPickers'  onChange = "updateScatterDrawings()" >

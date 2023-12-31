@@ -97,9 +97,9 @@ app.get('/api/activities/:accountID', (req, res) => {
                     //make sure this is an array of Promise objects.
                     Promise.all([
                         getIndividualPaginatedData(1, key), 
-                        /* getIndividualPaginatedData(2, key), 
+                        /*getIndividualPaginatedData(2, key), 
                         getIndividualPaginatedData(3, key), 
-                    getIndividualPaginatedData(4, key) */]).then(() => {
+                    getIndividualPaginatedData(4, key)*/]).then(() => {
                             res.send(allActivities)
                         })
                 })
@@ -115,20 +115,21 @@ function getIndividualPaginatedData(page, accessKey) {
     return new Promise ((resolve, reject) => {
         fetch("https://www.strava.com/api/v3/athlete/activities?access_token=" + accessKey + "&page=" + page + "&per_page=200&after=0" +  "&before=" + Math.round(Date.now()/1000)).then((response) => response.json()).then((jsonData) => {  
             for (var i = 0; i < jsonData.length; i++){
-                if(jsonData[i].type == "Run")
-                allActivities.push({
-                    distance: jsonData[i].distance,
-                    time: jsonData[i].moving_time,
-                    elapsedTime: jsonData[i].elapsed_time,
-                    elevation: jsonData[i].total_elevation_gain,
-                    pace: jsonData[i].average_speed,
-                    name: jsonData[i].name,
-                    startDate: jsonData[i].start_date_local,
-                    id:  jsonData[i].id,
-                    kudos: jsonData[i].kudos_count,
-                    maxPace: jsonData[i].max_speed,
-                    cadence: jsonData[i].average_cadence
-                });
+                if(jsonData[i].type == "Run"){
+                    allActivities.push({
+                        distance: jsonData[i].distance,
+                        time: jsonData[i].moving_time,
+                        elapsedTime: jsonData[i].elapsed_time,
+                        elevation: jsonData[i].total_elevation_gain,
+                        pace: jsonData[i].average_speed,
+                        name: jsonData[i].name,
+                        startDate: jsonData[i].start_date_local,
+                        id:  jsonData[i].id,
+                        kudos: jsonData[i].kudos_count,
+                        maxPace: jsonData[i].max_speed,
+                        cadence: jsonData[i].average_cadence
+                    });
+                }
             }
             resolve("success")
         })

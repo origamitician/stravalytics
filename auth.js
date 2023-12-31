@@ -28,7 +28,7 @@ function changeDates(){
             }
         })
         renderGraph();
-        renderScatterplot(allActivities, 'distance', 'pace')
+        renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value)
         document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
     }catch (err){
         alert("Invalid date! " + err)

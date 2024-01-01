@@ -57,7 +57,7 @@ function processString(val){
         }
     } else if (val.includes("-") && val.substring(0, 1) != "-") {
         resultantString = Date.parse(val) / 1000
-        console.log(resultantString)
+        // console.log(resultantString)
     } else {
         resultantString = val
     }
@@ -309,10 +309,10 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     bottomY = parseFloat(bottomY);
     topY = parseFloat(topY);
 
-    console.log("bottomX is: " + bottomX + " and type is: " + typeof bottomX);
+    /*console.log("bottomX is: " + bottomX + " and type is: " + typeof bottomX);
     console.log("topX is: " + topX + " and type is: " + typeof topX);
     console.log("bottomY is: " + bottomY + " and type is: " + typeof topY);
-    console.log("topX is: " + topY + " and type is: " + typeof bottomY);
+    console.log("topX is: " + topY + " and type is: " + typeof bottomY);*/
     
     if(tertiaryProp){
         document.getElementById('spectrum').style.display = 'block';

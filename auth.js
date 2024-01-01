@@ -1,6 +1,9 @@
 //file for all the misc. operations, such as hiding and showing elements of the UI, updating the date, etc...
-let loadingBarFrame = 0;
+var allActivities = []; // actual, dynamically changing activities list upon filtering.
+const allActivitiesRef = []; // FIXED activities list. All lifetime activities are stored in here so that no unneccessary API calls are made.
 
+let loadingBarFrame = 0;
+document.getElementById("applicationMenu").style.display = "none";
 function init(){
     window.location = `http://www.strava.com/oauth/authorize?client_id=107318&response_type=code&redirect_uri=${window.location.href}&approval_prompt=auto&scope=activity:read_all`
 }
@@ -53,7 +56,7 @@ if (indexOfAuthorization == -1) {
                 allActivities.push(d)
                 allActivitiesRef.push(d);
             })
-
+            document.getElementById("applicationMenu").style.display = "block";
             renderGraph(); //histograms
             renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
             
@@ -65,7 +68,7 @@ if (indexOfAuthorization == -1) {
             document.getElementById('welcomeMsg').style.display = 'block';
             document.getElementById('welcomeMsg').style.display = 'flex';
         })
-        generateRandomData();
+        
     } else {
         // if new user and not logged in.
         if(indexOfRandom == -1){
@@ -74,7 +77,12 @@ if (indexOfAuthorization == -1) {
             document.getElementById('transition').style.display = 'none';
         }else{
             // if user wants to generate random data
-            setTimeout (generateRandomData, 100)
+            document.getElementById("applicationMenu").style.display = "block";
+            document.getElementById('transition').style.display = 'none';
+            document.getElementById('welcomeText').innerHTML = 'Viewing randomly generated data!'
+            document.getElementById('notLoggedInBody').style.display = 'none';
+            document.getElementById('applicationBody').style.display = 'block';
+            generateRandomData();
         }
     }
 } else {
@@ -88,34 +96,44 @@ if (indexOfAuthorization == -1) {
     document.getElementById('statusMsg').innerHTML = 'Redirecting...'
     fetch('/api/token/' + accessCode)
     .then((res)=> res.json()).then(json => {
-        console.log(json)
         localStorage.setItem('isLoggedIn', 'true')
         localStorage.setItem('accountID', json.accountID)
         localStorage.setItem('stravaName', json.stravaName)
         clearInterval(loadingBarInterval)
-        window.location = '/'
+        window.location = '/' 
     })
     .catch(err => {console.log(err)})
 }
 
 function generateRandomData(){
-    for (let i = 0; i < 100; i++){
-        const generatedDistance = (Math.random()*42195) + 1000;
-        const generatedPace = Math.random()*3.25 + 2.5
-        const elapsedPaceDifferencePercent = Math.random()*35
+    allActivities = [];
+    for (let i = 0; i < 300; i++){
+        const generatedDistance = (Math.random()*25000) + 1000;
+        const generatedPace = (Math.random()*1.75 + 2.5) * ((Math.log(35000 - generatedDistance) / Math.log(100)) - 1)
+        const elapsedPaceDifferencePercent = Math.random()*45
         const generatedTime = generatedDistance / generatedPace
-        allActivities.push({
+        const generatedYear = Math.floor(Math.random()*4 + 2020);
+        const generatedMonth = Math.floor(Math.random()*12 + 1);
+        const generatedDay = Math.floor(Math.random()*28 + 1);
+        const generatedHour = Math.floor(Math.random()*15 + 5);
+        const generatedMin = Math.floor(Math.random()*60);
+        const generatedSec = Math.floor(Math.random()*60);
+        const generatedEntry = {
             distance: generatedDistance,
             pace: generatedPace,
             time: generatedTime,
+            cadence: 77 + Number((Math.random()*15).toFixed(1)),
             elapsedTime: generatedTime * (1+elapsedPaceDifferencePercent/100),
-            elevation: Math.random()*158,
+            elevation: Math.random()*200,
             kudos: Math.round(Math.random()*15),
             maxPace: generatedPace * (1 + ((Math.random() * 50) / 100)),
             id: -1,
-            startDate: "2021-07-21T16:20:13Z",
+            /*startDate: "2021-07-21T16:20:13Z",*/
+            startDate: generatedYear + "-" + generatedMonth + "-" + generatedDay + "T" + generatedHour + ":" + generatedMin + ":" + generatedSec + "Z",
             name: "Run " + i
-        })
+        }
+        allActivities.push(generatedEntry);
+        allActivitiesRef.push(generatedEntry);
     }
     document.getElementById('applicationBody').style.display = 'block';
     renderGraph(); //histograms

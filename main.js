@@ -1,12 +1,10 @@
 //all variables + bargraph info is here;
-var allActivities = []; // actual, dynamically changing activities list upon filtering.
-const allActivitiesRef = []; // FIXED activities list. All lifetime activities are stored in here so that no unneccessary API calls are made.
+
 var startDate = Math.floor(Date.parse("01-01-2023") / 1000)
 var endDate = Math.floor(Date.now() / 1000);
 let scrub;
 
 if (window.innerWidth > window.innerHeight) {
-
     // landscape mode
     scrub = {
         pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", color2: "#32a893", unit: "seconds/mi"},
@@ -85,11 +83,8 @@ function revertToDefaultStatistics(array){
     }
 }
 
-
-
 function updateDefaultStatistics(array, index, inputObject){
     //update these regardless of index
-    
     array[index].count++;
     array[index].total_elevation_gain+=inputObject.elevation *3.28;
     array[index].total_miles+=inputObject.distance / 1609;
@@ -114,13 +109,7 @@ function updateDefaultStatistics(array, index, inputObject){
     }
 }
 
-/*function showMoreStats(arr, index, type){
-    console.log("Graph index is: " + index + " and type is: " + type)
-}*/
-
-
 function showMoreStats(){
-
     //process - get index and graph type from the id that was clicked.
     var processed = this.id.split("-");
     for(let i = 0; i <  document.getElementById(processed[1]).getElementsByClassName("verticalHolder").length; i++){
@@ -322,7 +311,8 @@ function getNumberOfBars(distribution, objectName){
 }
 
 function establishIncrements(item, value, scrubProperty, distributionToUpdate){
-    //item is one individual object returned from the Strava API.
+    // item is one individual object returned from the Strava API.
+    // value is object's value in question
     if(value >= scrub[scrubProperty].right || value <= scrub[scrubProperty].left){
         //if left outlier is out
         if((scrub[scrubProperty].rightOutlier && value >= scrub[scrubProperty].right) || (!scrub[scrubProperty].rightOutlier && value == scrub[scrubProperty].right)){
@@ -344,7 +334,6 @@ function establishIncrements(item, value, scrubProperty, distributionToUpdate){
 }
 
 function renderGraph(){
-
     totalMileage=0;
     totalElevGain=0;
     totalPace=0;
@@ -370,7 +359,7 @@ function renderGraph(){
 
     //console.log(JSON.stringify(dist_distribution[0]))
     allActivities.forEach(e => {
-        //console.log(e);
+        //sorts everything.
         establishIncrements(e, e.distance/1609, "distance", dist_distribution)
         establishIncrements(e, 1609/e.pace, "pace", pace_distribution)
         establishIncrements(e, e.elevation*3.28, "elevation", elev_distribution)
@@ -381,6 +370,8 @@ function renderGraph(){
     renderTypeGraph(pace_distribution, "pace_distribution", scrub.pace.color, scrub.pace.color2);
     renderTypeGraph(elev_distribution, "elev_distribution", scrub.elevation.color, scrub.elevation.color2);
     renderTypeGraph(elapsed_distribution, "time_distribution", scrub.uptime.color, scrub.uptime.color2);
+
+    console.log(dist_distribution)
 }
 //render
 
@@ -485,7 +476,7 @@ function realtimeUpdateRight(){
     document.getElementById("rightOutlier").innerHTML = "Include values more than " + document.getElementsByName("rightOutlier")[0].value + " " + scrub[currentField].unit + "?"
 }
 
-function renderTypeGraph(array, type, color, color2){
+function renderTypeGraph(array, type, color, color2, sortBy){
     totalMileage=0;
     totalElevGain=0;
     totalPace=0;

@@ -32,7 +32,7 @@
             <button onclick="init()" id = 'loginbtn'>Connect with Strava!</button>
            
         </div>
-        <p id = 'noStravaAccount'>No Strava account? <br> <span id = 'viewSampleData' onclick="generateRandomData()">View sample data instead.</span></p>
+        <p id = 'noStravaAccount'>No Strava account? <br> <a id = 'viewSampleData' href="?random=true">View sample data instead.</a></p>
         <div id = 'footer'>&lt;/&gt; (Coded) by <a href="https://github.com/origamitician">Micaiah C.</a></div>
     </div>
 
@@ -343,8 +343,11 @@
         </div>
     </div>
 </body>
-<script src="auth.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/regression/2.0.1/regression.js" integrity="sha512-PHHRPMxJK1xGYLQPv9FoDbCF2X23Ao1lMAD52oLY9TBW033s4zwIXl5JQBGlfI2iOx3W1qP3LAS/MMv5Ttj0aQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="main.js"></script>
 <script src="scatter.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/regression/2.0.1/regression.js" integrity="sha512-PHHRPMxJK1xGYLQPv9FoDbCF2X23Ao1lMAD52oLY9TBW033s4zwIXl5JQBGlfI2iOx3W1qP3LAS/MMv5Ttj0aQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="auth.js"></script>
+
+
+
 </html>

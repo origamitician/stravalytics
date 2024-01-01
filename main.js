@@ -475,6 +475,23 @@ function realtimeUpdateRight(){
     document.getElementById("rightOutlier").innerHTML = "Include values more than " + document.getElementsByName("rightOutlier")[0].value + " " + scrub[currentField].unit + "?"
 }
 
+function showPercentiles(){
+    const idBreakdown = this.id.split("-");
+    const displayInQuestion = document.getElementById("percentileMarkersDisplay-" + idBreakdown[1])
+    displayInQuestion.style.display = "block";
+    /*if (displayInQuestion.style.display == "block") {
+        displayInQuestion.style.display = "none";
+    } else {
+        displayInQuestion.style.display = "block";
+    }*/
+}
+
+function hidePercentiles() {
+    const idBreakdown = this.id.split("-");
+    const displayInQuestion = document.getElementById("percentileMarkersDisplay-" + idBreakdown[1])
+    displayInQuestion.style.display = "none";
+}
+
 function renderTypeGraph(array, type, color, color2, sortBy){
     if(document.getElementById(type + "_breakdown").getElementsByClassName("percentileSpectrum")[0]) {
         document.getElementById(type + "_breakdown").getElementsByClassName("percentileSpectrum")[0].remove();
@@ -518,7 +535,7 @@ function renderTypeGraph(array, type, color, color2, sortBy){
     document.getElementById(type + "_breakdown").appendChild (percentageSpectrum);
 
     /* place visual percentiles */
-    const percentilesOfInterest = [10, 25, 50, 75, 90];
+    const percentilesOfInterest = [7, 20, 50, 80, 93];
     
     // set the minimum and maximum values
     let minValue = scrub[sortBy].left
@@ -546,14 +563,25 @@ function renderTypeGraph(array, type, color, color2, sortBy){
 
         const percentageHoverHitbox = document.createElement('div');
         percentageHoverHitbox.className = 'percentileMarkersHover';
+        percentageHoverHitbox.id = 'percentileMarkersHover-' + type + "_" + i;
         percentageHoverHitbox.innerHTML = percentilesOfInterest[i];
-        percentageHoverHitbox.style.height = (window.innerHeight*0.05)*0.7 + "px";
-        percentageHoverHitbox.style.width = (window.innerHeight*0.05)*0.7 + "px";
+        percentageHoverHitbox.style.height = (window.innerHeight*0.07)*0.8 + "px";
+        percentageHoverHitbox.style.width = (window.innerHeight*0.07)*0.8 + "px";
         percentageHoverHitbox.style.left = calculatedPosition + "%";
+        percentageHoverHitbox.addEventListener("mouseover", showPercentiles);
+        percentageHoverHitbox.addEventListener("mouseout", hidePercentiles);
         document.getElementById(type + "_spectrum").appendChild (percentageHoverHitbox);
+
+        const r = (clr1.r + (clr2.r - clr1.r) * (calculatedPosition / 100))
+        const g = (clr1.g + (clr2.g - clr1.g) * (calculatedPosition / 100))
+        const b = (clr1.b + (clr2.b - clr1.b) * (calculatedPosition / 100))
+        const percentileDisplayClr = 'rgb(' + r + ', ' + g + ', ' + b + ')';
 
         const percentageDisplay = document.createElement('div');
         percentageDisplay.className = 'percentileMarkersDisplay';
+        percentageDisplay.id = 'percentileMarkersDisplay-' + type + "_" + i;
+        percentageDisplay.style.color = percentileDisplayClr;
+        percentageDisplay.style.border = "2px solid " + percentileDisplayClr;
         percentageDisplay.innerHTML = (allActivities[Math.floor(len*(percentilesOfInterest[i]/100))][sortBy]).toFixed(2) + "<br>(" + percentilesOfInterest[i] + "th %ile)";
         percentageDisplay.style.left = calculatedPosition + "%";
 
@@ -561,7 +589,6 @@ function renderTypeGraph(array, type, color, color2, sortBy){
 
     }
 
-    
     if(array != undefined){
         //console.log("array is: " + array)
         let greatest = -1;

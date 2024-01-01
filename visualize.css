@@ -313,7 +313,7 @@ body{
 .percentileSpectrum{
     position: relative;
     width: 100%;
-    height: 5vh;
+    height: 7vh;
     border: 1px solid black;
 }
 
@@ -324,11 +324,16 @@ body{
 
 .percentileMarkersDisplay {
     position: absolute;
-    font-size: 75%;
+    font-size: 100%;
     text-align: center;
-    border: 1px solid black;
+    padding: 0.5% 1% 0.5% 1%;
     transform: translate(-50%, 0%);
-    top: 100%;
+    top: 125%;
+    display: none;
+    z-index: 999;
+    background-color: white;
+    -webkit-user-select: none;
+    font-weight: bold;
 }
 
 .percentileMarkersHover {
@@ -342,6 +347,13 @@ body{
     border-radius: 50%;
     padding-top: auto;
     padding-bottom: auto;
+    
+
+}
+
+.percentileMarkersHover:hover {
+    border: 1px solid gold;
+    cursor: pointer;
 }
 
 input::-webkit-outer-spin-button,

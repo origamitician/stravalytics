@@ -65,7 +65,6 @@ function convert(seconds){
     }
 }
 
-
 function revertToDefaultStatistics(array){
     for(var i = 0; i < array.length; i++){
         array[i].count = 0
@@ -86,26 +85,26 @@ function revertToDefaultStatistics(array){
 function updateDefaultStatistics(array, index, inputObject){
     //update these regardless of index
     array[index].count++;
-    array[index].total_elevation_gain+=inputObject.elevation *3.28;
-    array[index].total_miles+=inputObject.distance / 1609;
+    array[index].total_elevation_gain+=inputObject.elevation
+    array[index].total_miles+=inputObject.distance;
     array[index].total_time+=inputObject.time;
     array[index].total_elapsed_time+=inputObject.elapsedTime;
     array[index].list_of_activities.push(inputObject);
 
-    if(inputObject.elevation *3.28 > array[index].most_elevation_gain){
-        array[index].most_elevation_gain = inputObject.elevation *3.28;
+    if(inputObject.elevation > array[index].most_elevation_gain){
+        array[index].most_elevation_gain = inputObject.elevation;
     }
 
-    if (inputObject.elevation *3.28 < array[index].least_elevation_gain){
-        array[index].least_elevation_gain = inputObject.elevation *3.28;
+    if (inputObject.elevation < array[index].least_elevation_gain){
+        array[index].least_elevation_gain = inputObject.elevation;
     }
 
-    if(inputObject.distance / 1609 > array[index].most_miles){
-        array[index].most_miles = inputObject.distance / 1609
+    if(inputObject.distance> array[index].most_miles){
+        array[index].most_miles = inputObject.distance
     }
 
-    if(inputObject.distance / 1609 < array[index].least_miles){
-        array[index].least_miles = inputObject.distance / 1609
+    if(inputObject.distance < array[index].least_miles){
+        array[index].least_miles = inputObject.distance
     }
 }
 
@@ -238,7 +237,7 @@ function showStatsOnHTML(array, location, id, color){
             span.innerHTML = "Distance"
             document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
         }else{
-            span.innerHTML = (array[id].list_of_activities[i].distance / 1609).toFixed(3) + "mi"
+            span.innerHTML = (array[id].list_of_activities[i].distance).toFixed(3) + "mi"
             document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
         }
 
@@ -256,7 +255,7 @@ function showStatsOnHTML(array, location, id, color){
             if(array[id].list_of_activities[i].pace == 0){
                 span.innerHTML = "[INVALID]"
             }else{
-                let convertedTime = (1609 / array[id].list_of_activities[i].pace).toString().split(".")
+                let convertedTime = (array[id].list_of_activities[i].pace).toString().split(".")
                 span.innerHTML = convert(convertedTime[0]) + "." + convertedTime[1].toString().substring(0, 2);
             }
             
@@ -289,7 +288,7 @@ function showStatsOnHTML(array, location, id, color){
             span.innerHTML = "Elev. gain"
             document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
         }else{
-            span.innerHTML = (array[id].list_of_activities[i].elevation*3.28).toFixed(2) + "ft"
+            span.innerHTML = (array[id].list_of_activities[i].elevation).toFixed(2) + "ft"
             document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
         }
     }
@@ -360,10 +359,10 @@ function renderGraph(){
     //console.log(JSON.stringify(dist_distribution[0]))
     allActivities.forEach(e => {
         //sorts everything.
-        establishIncrements(e, e.distance/1609, "distance", dist_distribution)
-        establishIncrements(e, 1609/e.pace, "pace", pace_distribution)
-        establishIncrements(e, e.elevation*3.28, "elevation", elev_distribution)
-        establishIncrements(e, (e.time / e.elapsedTime)*100, "uptime", elapsed_distribution)
+        establishIncrements(e, e.distance, "distance", dist_distribution)
+        establishIncrements(e, e.pace, "pace", pace_distribution)
+        establishIncrements(e, e.elevation, "elevation", elev_distribution)
+        establishIncrements(e, e.uptime, "uptime", elapsed_distribution)
     })
 
     renderTypeGraph(dist_distribution, "dist_distribution", scrub.distance.color, scrub.distance.color2);

@@ -161,21 +161,21 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
 
     arr.forEach(i => {
         const item = {...i};
-        item.distance /= 1609
+        /*item.distance /= 1609
         item.elevation *= 3.28;
         item.incline = parseFloat(((item.elevation / (item.distance * 5280))*100).toFixed(2))
         item.pace = 1609 / item.pace;
         item.cadence = 2 * item.cadence
         item.uptime = parseFloat(((item.time / item.elapsedTime)*100).toFixed(2))
-        item.maxPace = 1609 / item.maxPace;
+        item.maxPace = 1609 / item.maxPace;*/
         item.startDate = Date.parse(item.startDate) / 1000
-        if (item.cadence) {
+        /*if (item.cadence) {
             item.stepsPerMile = item.cadence * (item.pace / 60) 
             item.strideLength = 5280 / item.stepsPerMile
         } else {
             item.stepsPerMile = null;
             item.strideLength = null;
-        }
+        }*/
 
         /* if the plot fits within the confines of the upper and lower bounds, add to scatter plot. TODO add a tolerance of 0.01*/
         console.log("testing object with X: " + item[prop1] + " and Y: " + item[prop2] + " against X bound (" + bottomX + ", " + topX + ") w/ tolerance " + toleranceX + " against Y bound (" + bottomY + ", " + topY + ") w/ tolerance " + toleranceY)

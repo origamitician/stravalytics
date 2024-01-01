@@ -7,18 +7,18 @@ let scrub;
 if (window.innerWidth > window.innerHeight) {
     // landscape mode
     scrub = {
-        pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", color2: "#32a893", unit: "seconds/mi"},
-        uptime: {left: 60, right: 100, increment: 2, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", color2: "#db25a2", unit: "%"},
-        distance: {left: 0, right: 15, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", color2: '#221980', unit: "miles"},
-        elevation: {left: 10, right: 510, increment: 25, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", color2: '#b8a44d', unit: "feet"},
+        pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", color2: "#6e2aad", unit: "seconds/mi"},
+        uptime: {left: 60, right: 100, increment: 2, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", color2: "#2aad76", unit: "%"},
+        distance: {left: 0, right: 15, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", color2: '#ad2a3e', unit: "miles"},
+        elevation: {left: 10, right: 510, increment: 25, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", color2: '#b80000', unit: "feet"},
     }
 } else {
     // portrait mode
     scrub = {
-        pace: {left: 260, right: 600, increment: 34, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", color2: "#32a893", unit: "seconds/mi"},
-        uptime: {left: 60, right: 100, increment: 4, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", color2: "#db25a2", unit: "%"},
-        distance: {left: 0, right: 15, increment: 1.5, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", color2: '#221980', unit: "miles"},
-        elevation: {left: 10, right: 510, increment: 50, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", color2: '#b8a44d', unit: "feet"},
+        pace: {left: 260, right: 600, increment: 34, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", color2: "#6e2aad", unit: "seconds/mi"},
+        uptime: {left: 60, right: 100, increment: 4, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", color2: "#2aad76", unit: "%"},
+        distance: {left: 0, right: 15, increment: 1.5, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", color2: '#ad2a3e', unit: "miles"},
+        elevation: {left: 10, right: 510, increment: 50, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", color2: '#b80000', unit: "feet"},
     }
 }
 
@@ -357,18 +357,18 @@ function renderGraph(){
     }
 
     //console.log(JSON.stringify(dist_distribution[0]))
-    allActivities.forEach(e => {
+    /*allActivities.forEach(e => {
         //sorts everything.
         establishIncrements(e, e.distance, "distance", dist_distribution)
         establishIncrements(e, e.pace, "pace", pace_distribution)
         establishIncrements(e, e.elevation, "elevation", elev_distribution)
         establishIncrements(e, e.uptime, "uptime", elapsed_distribution)
-    })
+    })*/
 
-    renderTypeGraph(dist_distribution, "dist_distribution", scrub.distance.color, scrub.distance.color2);
-    renderTypeGraph(pace_distribution, "pace_distribution", scrub.pace.color, scrub.pace.color2);
-    renderTypeGraph(elev_distribution, "elev_distribution", scrub.elevation.color, scrub.elevation.color2);
-    renderTypeGraph(elapsed_distribution, "time_distribution", scrub.uptime.color, scrub.uptime.color2);
+    renderTypeGraph(dist_distribution, "dist_distribution", scrub.distance.color, scrub.distance.color2, "distance");
+    renderTypeGraph(pace_distribution, "pace_distribution", scrub.pace.color, scrub.pace.color2, "pace");
+    renderTypeGraph(elev_distribution, "elev_distribution", scrub.elevation.color, scrub.elevation.color2, "elevation");
+    renderTypeGraph(elapsed_distribution, "time_distribution", scrub.uptime.color, scrub.uptime.color2, "uptime");
 
     console.log(dist_distribution)
 }
@@ -476,6 +476,10 @@ function realtimeUpdateRight(){
 }
 
 function renderTypeGraph(array, type, color, color2, sortBy){
+    if(document.getElementById(type + "_breakdown").getElementsByClassName("percentileSpectrum")[0]) {
+        document.getElementById(type + "_breakdown").getElementsByClassName("percentileSpectrum")[0].remove();
+    }
+    
     totalMileage=0;
     totalElevGain=0;
     totalPace=0;
@@ -488,6 +492,76 @@ function renderTypeGraph(array, type, color, color2, sortBy){
     //array is the array that is getting iterated over
     //type is the destination where the graph is getting added
     //color is the bar color
+    //sortBy is the property in question
+
+    // sort allActivities by property in question
+    for (let i = 1; i < allActivities.length; i++) {
+        let currentElement = allActivities[i];
+        let lastIndex = i - 1;
+    
+        while (lastIndex >= 0 && allActivities[lastIndex][sortBy] > currentElement[sortBy]) {
+            allActivities[lastIndex + 1] = allActivities[lastIndex];
+            lastIndex--;
+        }
+        allActivities[lastIndex + 1] = currentElement;
+    }
+    
+    allActivities.forEach(e => {
+        establishIncrements(e, e[sortBy], sortBy, array)
+    })
+
+    /* create the spectrum */
+    const percentageSpectrum = document.createElement('div');
+    percentageSpectrum.style.background = 'linear-gradient(to right, ' + color + ', ' + color2 + ')'
+    percentageSpectrum.className = "percentileSpectrum"
+    percentageSpectrum.id = type + "_spectrum"
+    document.getElementById(type + "_breakdown").appendChild (percentageSpectrum);
+
+    /* place visual percentiles */
+    const percentilesOfInterest = [10, 25, 50, 75, 90];
+    
+    // set the minimum and maximum values
+    let minValue = scrub[sortBy].left
+    let maxValue = scrub[sortBy].right
+    if (scrub[sortBy].leftOutlier) {
+        minValue = scrub[sortBy].left - scrub[sortBy].increment;
+    }
+
+    if (scrub[sortBy].rightOutlier) {
+        maxValue = scrub[sortBy].right + scrub[sortBy].increment;
+    }
+
+    const len = allActivities.length;
+    for (let i = 0; i < percentilesOfInterest.length; i++) {
+        const calculatedPosition = ((allActivities[Math.floor(len*(percentilesOfInterest[i]/100))][sortBy] - minValue) / (maxValue - minValue)) * 100
+        const percentageInfo = document.createElement('div');
+        /*percentageInfo.innerHTML = percentilesOfInterest[i] + "%: " + allActivities[Math.floor(len*(percentilesOfInterest[i]/100))][sortBy] */
+        percentageInfo.style.border = "2px solid white";
+        percentageInfo.className = "percentileMarkers"
+        percentageInfo.style.height = "100%";
+        percentageInfo.style.width = 0;
+        percentageInfo.style.position = "absolute";
+        percentageInfo.style.left = calculatedPosition + "%";
+        document.getElementById(type + "_spectrum").appendChild (percentageInfo);
+
+        const percentageHoverHitbox = document.createElement('div');
+        percentageHoverHitbox.className = 'percentileMarkersHover';
+        percentageHoverHitbox.innerHTML = percentilesOfInterest[i];
+        percentageHoverHitbox.style.height = (window.innerHeight*0.05)*0.7 + "px";
+        percentageHoverHitbox.style.width = (window.innerHeight*0.05)*0.7 + "px";
+        percentageHoverHitbox.style.left = calculatedPosition + "%";
+        document.getElementById(type + "_spectrum").appendChild (percentageHoverHitbox);
+
+        const percentageDisplay = document.createElement('div');
+        percentageDisplay.className = 'percentileMarkersDisplay';
+        percentageDisplay.innerHTML = (allActivities[Math.floor(len*(percentilesOfInterest[i]/100))][sortBy]).toFixed(2) + "<br>(" + percentilesOfInterest[i] + "th %ile)";
+        percentageDisplay.style.left = calculatedPosition + "%";
+
+        document.getElementById(type + "_spectrum").appendChild (percentageDisplay);
+
+    }
+
+    
     if(array != undefined){
         //console.log("array is: " + array)
         let greatest = -1;

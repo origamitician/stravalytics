@@ -61,6 +61,7 @@ if (indexOfAuthorization == -1) {
                 item.cadence = 2 * item.cadence
                 item.uptime = parseFloat(((item.time / item.elapsedTime)*100).toFixed(2))
                 item.maxPace = 1609 / item.maxPace;
+                /*item.startDate = Date.parse(item.startDate) / 1000*/
                 if (item.cadence) {
                     item.stepsPerMile = item.cadence * (item.pace / 60) 
                     item.strideLength = 5280 / item.stepsPerMile
@@ -70,8 +71,6 @@ if (indexOfAuthorization == -1) {
                 }
                 allActivities.push(item)
                 allActivitiesRef.push(item);
-                console.log("========== ALL ACTIVITIES ==========");
-                console.log(allActivities);
             })
             document.getElementById("applicationMenu").style.display = "block";
             renderGraph(); //histograms
@@ -125,8 +124,10 @@ if (indexOfAuthorization == -1) {
 function generateRandomData(){
     allActivities = [];
     for (let i = 0; i < 300; i++){
-        const generatedDistance = (Math.random()*25000) + 1000;
-        const generatedPace = (Math.random()*1.75 + 2.5) * ((Math.log(35000 - generatedDistance) / Math.log(100)) - 1)
+        const generatedDistance = ((Math.random()*25000) + 1000)/1609;
+        console.log("Dist: " + generatedDistance);
+        const generatedPace = (Math.random()*1.75 + 2.5) * (Math.log(30 - generatedDistance) / Math.log(20))
+        console.log("Pace: " + generatedPace);
         const elapsedPaceDifferencePercent = Math.random()*45
         const generatedTime = generatedDistance / generatedPace
         const generatedYear = Math.floor(Math.random()*4 + 2020);

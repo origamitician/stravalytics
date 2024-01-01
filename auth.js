@@ -53,8 +53,25 @@ if (indexOfAuthorization == -1) {
         fetch('/api/activities/' + localStorage.getItem('accountID'))
         .then((response) => response.json()).then((data) => {
             data.forEach(d => {
-                allActivities.push(d)
-                allActivitiesRef.push(d);
+                let item = {...d}
+                item.distance /= 1609
+                item.elevation *= 3.28;
+                item.incline = parseFloat(((item.elevation / (item.distance * 5280))*100).toFixed(2))
+                item.pace = 1609 / item.pace;
+                item.cadence = 2 * item.cadence
+                item.uptime = parseFloat(((item.time / item.elapsedTime)*100).toFixed(2))
+                item.maxPace = 1609 / item.maxPace;
+                if (item.cadence) {
+                    item.stepsPerMile = item.cadence * (item.pace / 60) 
+                    item.strideLength = 5280 / item.stepsPerMile
+                } else {
+                    item.stepsPerMile = null;
+                    item.strideLength = null;
+                }
+                allActivities.push(item)
+                allActivitiesRef.push(item);
+                console.log("========== ALL ACTIVITIES ==========");
+                console.log(allActivities);
             })
             document.getElementById("applicationMenu").style.display = "block";
             renderGraph(); //histograms

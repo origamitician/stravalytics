@@ -61,6 +61,7 @@ if (indexOfAuthorization == -1) {
                 item.cadence = 2 * item.cadence
                 item.uptime = parseFloat(((item.time / item.elapsedTime)*100).toFixed(2))
                 item.maxPace = 1609 / item.maxPace;
+                item.parsedNumericalDate = Date.parse(item.startDate) / 1000;
                 /*item.startDate = Date.parse(item.startDate) / 1000*/
                 if (item.cadence) {
                     item.stepsPerMile = item.cadence * (item.pace / 60) 
@@ -73,9 +74,10 @@ if (indexOfAuthorization == -1) {
                 allActivitiesRef.push(item);
             })
             document.getElementById("applicationMenu").style.display = "block";
+            createSummaryPage();
             renderGraph(); //histograms
             renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
-            
+
             document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
             document.getElementById('applicationBody').style.display = 'block';
             clearInterval(loadingBarInterval)

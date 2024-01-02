@@ -12,8 +12,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="visualize.css">
-    <link rel="stylesheet" href="notloggedin.css">
+    <link rel="stylesheet" href="css/visualize.css">
+    <link rel="stylesheet" href="css/notloggedin.css">
     <title>Document</title>
 </head>
 <body>
@@ -70,6 +70,13 @@
         </div>
         <div id = 'applicationBody'>
             <p id = "displayNumRuns"></p>
+            <div id = "summaryDiv">
+                <div id = "summaryTotalMiles">
+                    <p>
+
+                    </p>
+                </div>
+            </div>
             <div class = "graphDiv">
                 <Button class = "incrementBtn" onClick = "showIncrementMenu('pace')">Edit Increments</Button>
                 <h1 class = "graphHeader">Pace (min / mi)</h1>
@@ -348,9 +355,11 @@
     </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/regression/2.0.1/regression.js" integrity="sha512-PHHRPMxJK1xGYLQPv9FoDbCF2X23Ao1lMAD52oLY9TBW033s4zwIXl5JQBGlfI2iOx3W1qP3LAS/MMv5Ttj0aQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="main.js"></script>
-<script src="scatter.js"></script>
-<script src="auth.js"></script>
+<script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-base.min.js"></script>
+<script src="js/summary.js"></script>
+<script src="js/main.js"></script>
+<script src="js/scatter.js"></script>
+<script src="js/auth.js"></script>
 
 
 

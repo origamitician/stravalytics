@@ -7,18 +7,18 @@ let scrub;
 if (window.innerWidth > window.innerHeight) {
     // landscape mode
     scrub = {
-        pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", color2: "#6e2aad", unit: "seconds/mi"},
-        uptime: {left: 60, right: 100, increment: 2, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", color2: "#2aad76", unit: "%"},
-        distance: {left: 0, right: 15, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", color2: '#ad2a3e', unit: "miles"},
-        elevation: {left: 10, right: 510, increment: 25, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", color2: '#b80000', unit: "feet"},
+        pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", color2: "#6e2aad", unit: "seconds/mi", abbrUnit: "/mi"},
+        uptime: {left: 60, right: 100, increment: 2, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", color2: "#2aad76", unit: "%", abbrUnit: "%"},
+        distance: {left: 0, right: 15, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", color2: '#ad2a3e', unit: "miles", abbrUnit: "mi"},
+        elevation: {left: 10, right: 510, increment: 25, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", color2: '#b80000', unit: "feet", abbrUnit: "ft"},
     }
 } else {
     // portrait mode
     scrub = {
-        pace: {left: 260, right: 600, increment: 34, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", color2: "#6e2aad", unit: "seconds/mi"},
-        uptime: {left: 60, right: 100, increment: 4, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", color2: "#2aad76", unit: "%"},
-        distance: {left: 0, right: 15, increment: 1.5, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", color2: '#ad2a3e', unit: "miles"},
-        elevation: {left: 10, right: 510, increment: 50, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", color2: '#b80000', unit: "feet"},
+        pace: {left: 260, right: 600, increment: 34, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", color2: "#6e2aad", unit: "seconds/mi", abbrUnit: "/mi"},
+        uptime: {left: 60, right: 100, increment: 4, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", color2: "#2aad76", unit: "%", abbrUnit: "%"},
+        distance: {left: 0, right: 15, increment: 1.5, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", color2: '#ad2a3e', unit: "miles", abbrUnit: "mi"},
+        elevation: {left: 10, right: 510, increment: 50, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", color2: '#b80000', unit: "feet", abbrUnit: "ft"},
     }
 }
 
@@ -535,7 +535,7 @@ function renderTypeGraph(array, type, color, color2, sortBy){
     document.getElementById(type + "_breakdown").appendChild (percentageSpectrum);
 
     /* place visual percentiles */
-    const percentilesOfInterest = [7, 20, 50, 80, 93];
+    const percentilesOfInterest = [5, 25, 50, 75, 95];
     
     // set the minimum and maximum values
     let minValue = scrub[sortBy].left
@@ -550,27 +550,37 @@ function renderTypeGraph(array, type, color, color2, sortBy){
 
     const len = allActivities.length;
     for (let i = 0; i < percentilesOfInterest.length; i++) {
-        const calculatedPosition = ((allActivities[Math.floor(len*(percentilesOfInterest[i]/100))][sortBy] - minValue) / (maxValue - minValue)) * 100
+        let calculatedPosition = ((allActivities[Math.floor(len*(percentilesOfInterest[i]/100))][sortBy] - minValue) / (maxValue - minValue)) * 100
+        if (calculatedPosition < 0) {
+            calculatedPosition = 0;
+        }
+        if (calculatedPosition > 100) {
+            calculatedPosition = 100;
+        }
         const percentageInfo = document.createElement('div');
         /*percentageInfo.innerHTML = percentilesOfInterest[i] + "%: " + allActivities[Math.floor(len*(percentilesOfInterest[i]/100))][sortBy] */
-        percentageInfo.style.border = "2px solid white";
         percentageInfo.className = "percentileMarkers"
         percentageInfo.style.height = "100%";
-        percentageInfo.style.width = 0;
+        percentageInfo.style.width = "0.35%";
+        percentageInfo.style.backgroundColor = "white"
         percentageInfo.style.position = "absolute";
         percentageInfo.style.left = calculatedPosition + "%";
         document.getElementById(type + "_spectrum").appendChild (percentageInfo);
 
         const percentageHoverHitbox = document.createElement('div');
-        percentageHoverHitbox.className = 'percentileMarkersHover';
+        percentageHoverHitbox.className = 'percentileMarkersHoverFlex';
         percentageHoverHitbox.id = 'percentileMarkersHover-' + type + "_" + i;
-        percentageHoverHitbox.innerHTML = percentilesOfInterest[i];
         percentageHoverHitbox.style.height = (window.innerHeight*0.07)*0.8 + "px";
         percentageHoverHitbox.style.width = (window.innerHeight*0.07)*0.8 + "px";
         percentageHoverHitbox.style.left = calculatedPosition + "%";
         percentageHoverHitbox.addEventListener("mouseover", showPercentiles);
         percentageHoverHitbox.addEventListener("mouseout", hidePercentiles);
         document.getElementById(type + "_spectrum").appendChild (percentageHoverHitbox);
+
+        const percentageHoverHitboxText = document.createElement("p");
+        percentageHoverHitboxText.className = 'percentileMarkersHoverText';
+        percentageHoverHitboxText.innerHTML = percentilesOfInterest[i] + "%";
+        document.getElementById('percentileMarkersHover-' + type + "_" + i).appendChild (percentageHoverHitboxText);
 
         const r = (clr1.r + (clr2.r - clr1.r) * (calculatedPosition / 100))
         const g = (clr1.g + (clr2.g - clr1.g) * (calculatedPosition / 100))
@@ -582,7 +592,13 @@ function renderTypeGraph(array, type, color, color2, sortBy){
         percentageDisplay.id = 'percentileMarkersDisplay-' + type + "_" + i;
         percentageDisplay.style.color = percentileDisplayClr;
         percentageDisplay.style.border = "2px solid " + percentileDisplayClr;
-        percentageDisplay.innerHTML = (allActivities[Math.floor(len*(percentilesOfInterest[i]/100))][sortBy]).toFixed(2) + "<br>(" + percentilesOfInterest[i] + "th %ile)";
+        let percentileValue = (allActivities[Math.floor(len*(percentilesOfInterest[i]/100))][sortBy]).toFixed(2);
+        if (type == "pace_distribution") {
+            // percentileValue = parseFloat(convert(percentileValue)).toFixed(2);
+            const temp = convert(percentileValue).split(".")
+            percentileValue = temp[0] + "." + temp[1].substring(0, 2);
+        }
+        percentageDisplay.innerHTML = percentileValue + " " + scrub[sortBy].abbrUnit + "<br>(" + percentilesOfInterest[i] + "th percentile)";
         percentageDisplay.style.left = calculatedPosition + "%";
 
         document.getElementById(type + "_spectrum").appendChild (percentageDisplay);

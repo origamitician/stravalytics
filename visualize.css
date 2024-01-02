@@ -319,7 +319,8 @@ body{
 
 .percentileMarkers {
     position: absolute;
-    transform: translate (-50%, -50%);
+    transform: translate(-50%, -50%);
+    top: 50%;
 }
 
 .percentileMarkersDisplay {
@@ -332,28 +333,38 @@ body{
     display: none;
     z-index: 999;
     background-color: white;
+    
     -webkit-user-select: none;
     font-weight: bold;
 }
 
-.percentileMarkersHover {
+.percentileMarkersHoverFlex {
     position: absolute;
-    font-size: 100%;
     text-align: center;
-    transform: translate(-50%, -50%);
-    top: 50%;
+    transform: translate(-50%, -100%);
+    top: 100%;
     background-color: white;
     color: black;
     border-radius: 50%;
     padding-top: auto;
     padding-bottom: auto;
-    
-
+    display: flex;
+    justify-content: center;
+    transition: 0.5s;
 }
 
-.percentileMarkersHover:hover {
-    border: 1px solid gold;
+.percentileMarkersHoverFlex:hover {
     cursor: pointer;
+    font-weight: bold;
+    border-radius: 0;
+    transition: 0.5s;
+}
+
+.percentileMarkersHoverText {
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: 90%;
+    text-align: center;
 }
 
 input::-webkit-outer-spin-button,

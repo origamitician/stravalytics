@@ -178,7 +178,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         }*/
 
         /* if the plot fits within the confines of the upper and lower bounds, add to scatter plot. TODO add a tolerance of 0.01*/
-        console.log("testing object with X: " + item[prop1] + " and Y: " + item[prop2] + " against X bound (" + bottomX + ", " + topX + ") w/ tolerance " + toleranceX + " against Y bound (" + bottomY + ", " + topY + ") w/ tolerance " + toleranceY)
+        // console.log("testing object with X: " + item[prop1] + " and Y: " + item[prop2] + " against X bound (" + bottomX + ", " + topX + ") w/ tolerance " + toleranceX + " against Y bound (" + bottomY + ", " + topY + ") w/ tolerance " + toleranceY)
         //if it meets the bounds set by the user, as well as tolerances for rounding, add.
         if((item[prop1] >= bottomX || Math.abs(item[prop1] - bottomX) <= toleranceX) && 
         (item[prop1] <= topX || Math.abs(item[prop1] - topX) <= toleranceX) && 

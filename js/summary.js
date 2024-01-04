@@ -1,6 +1,9 @@
 function createSummaryPage() {
     // this function generates an object per date.
+    createCumulativeGraph("distance", "distSummary", "Total Miles");
     createCumulativeGraph("kudos", "kudosSummary", "Total Kudos");
+    createCumulativeGraph("elevation", "elevSummary", "Total Elevation");
+    createCumulativeGraph("time", "timeSummary", "Time Active");
 }
 
 function createCumulativeGraph(property, divName, subText) {
@@ -60,14 +63,24 @@ function createCumulativeGraph(property, divName, subText) {
     }
 
     const totalText = document.createElement("p");
-    totalText.innerHTML = cum.toFixed(2);
-    totalText.className = "totalText";
+    if (property == "time") {
+        totalText.innerHTML = convert(Math.trunc(cum));
+    } else {
+        totalText.innerHTML = cum.toFixed(2);
+    }
+    
+    totalText.className = "summaryTotalText";
     document.getElementById(divName + "-info").appendChild(totalText);
     
     const sub = document.createElement("p");
     sub.innerHTML = subText
-    sub.className = "subText";
+    sub.className = "summarySubText";
     document.getElementById(divName + "-info").appendChild(sub);
+
+    const graphDiv = document.createElement("div");
+    graphDiv.className = "indivSummaryDivGraphHolder";
+    graphDiv.id = divName + "-graphHolder"
+    document.getElementById(divName).appendChild(graphDiv);
 
     // create the graph
     // create a data set
@@ -78,6 +91,8 @@ function createCumulativeGraph(property, divName, subText) {
   
     // create a line chart
     var chart = anychart.line();
+    chart.yAxis().enabled(false);
+    chart.background().fill("transparent");
   
     // create the series and name them
     var firstSeries = chart.spline(firstSeriesData);
@@ -87,9 +102,7 @@ function createCumulativeGraph(property, divName, subText) {
     .format("Total miles: {%value}");
     
     // specify where to display the chart
-    chart.container(divName);
-
-    chart.crosshair().enabled(true).yLabel(false).yStroke(null);
+    chart.container(divName + "-graphHolder");
     
     // draw the resulting chart
     chart.draw();

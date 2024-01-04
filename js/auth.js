@@ -125,10 +125,10 @@ if (indexOfAuthorization == -1) {
 
 function generateRandomData(){
     allActivities = [];
-    for (let i = 0; i < 300; i++){
+    for (let i = 0; i < 1300; i++){
         const generatedDistance = ((Math.random()*25000) + 1000)/1609;
         console.log("Dist: " + generatedDistance);
-        const generatedPace = 1609 / ((Math.random()*1.75 + 2.5) * (Math.log(30 - generatedDistance) / Math.log(20)))
+        const generatedPace = 1609 / ((Math.random()*2+ 2.65) * (Math.log(30 - generatedDistance) / Math.log(20)))
         console.log("Pace: " + generatedPace);
         const elapsedPaceDifferencePercent = Math.random()*45
         const generatedTime = generatedDistance * generatedPace
@@ -167,7 +167,7 @@ function generateRandomData(){
             elapsedTime: generatedTime * (1+elapsedPaceDifferencePercent/100),
             uptime: 1 / (1+elapsedPaceDifferencePercent/100) * 100,
             elevation: Math.random()*200,
-            kudos: Math.round(Math.random()*15),
+            kudos: Math.round(Math.random()*20 + 4),
             maxPace: generatedPace * (1 + ((Math.random() * 50) / 100)),
             id: -1,
             /*startDate: "2021-07-21T16:20:13Z",*/

@@ -128,34 +128,58 @@ function generateRandomData(){
     for (let i = 0; i < 300; i++){
         const generatedDistance = ((Math.random()*25000) + 1000)/1609;
         console.log("Dist: " + generatedDistance);
-        const generatedPace = (Math.random()*1.75 + 2.5) * (Math.log(30 - generatedDistance) / Math.log(20))
+        const generatedPace = 1609 / ((Math.random()*1.75 + 2.5) * (Math.log(30 - generatedDistance) / Math.log(20)))
         console.log("Pace: " + generatedPace);
         const elapsedPaceDifferencePercent = Math.random()*45
-        const generatedTime = generatedDistance / generatedPace
+        const generatedTime = generatedDistance * generatedPace
         const generatedYear = Math.floor(Math.random()*4 + 2020);
-        const generatedMonth = Math.floor(Math.random()*12 + 1);
-        const generatedDay = Math.floor(Math.random()*28 + 1);
-        const generatedHour = Math.floor(Math.random()*15 + 5);
-        const generatedMin = Math.floor(Math.random()*60);
-        const generatedSec = Math.floor(Math.random()*60);
+        let generatedMonth = Math.floor(Math.random()*12 + 1);
+        let generatedDay = Math.floor(Math.random()*28 + 1);
+        let generatedHour = Math.floor(Math.random()*15 + 5);
+        let generatedMin = Math.floor(Math.random()*60);
+        let generatedSec = Math.floor(Math.random()*60);
+        if (generatedMonth < 10) {
+            generatedMonth = "0" + generatedMonth;
+        }
+
+        if (generatedDay < 10) {
+            generatedDay = "0" + generatedDay;
+        }
+
+        if (generatedHour < 10) {
+            generatedHour = "0" + generatedHour;
+        }
+
+        if (generatedMin < 10) {
+            generatedMin = "0" + generatedMin;
+        }
+
+        if (generatedSec < 10) {
+            generatedSec = "0" + generatedSec;
+        }
+
+        const properDateFormat = generatedYear + "-" + generatedMonth + "-" + generatedDay + "T" + generatedHour + ":" + generatedMin + ":" + generatedSec + "Z"
         const generatedEntry = {
             distance: generatedDistance,
             pace: generatedPace,
             time: generatedTime,
             cadence: 77 + Number((Math.random()*15).toFixed(1)),
             elapsedTime: generatedTime * (1+elapsedPaceDifferencePercent/100),
+            uptime: 1 / (1+elapsedPaceDifferencePercent/100) * 100,
             elevation: Math.random()*200,
             kudos: Math.round(Math.random()*15),
             maxPace: generatedPace * (1 + ((Math.random() * 50) / 100)),
             id: -1,
             /*startDate: "2021-07-21T16:20:13Z",*/
-            startDate: generatedYear + "-" + generatedMonth + "-" + generatedDay + "T" + generatedHour + ":" + generatedMin + ":" + generatedSec + "Z",
+            startDate: properDateFormat,
+            parsedNumericalDate: Date.parse(properDateFormat) / 1000,
             name: "Run " + i
         }
         allActivities.push(generatedEntry);
         allActivitiesRef.push(generatedEntry);
     }
     document.getElementById('applicationBody').style.display = 'block';
+    createSummaryPage();
     renderGraph(); //histograms
 
     renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot

@@ -1,5 +1,21 @@
 function createSummaryPage() {
     // this function generates an object per date.
+    createCumulativeGraph("kudos", "kudosSummary", "Total Kudos");
+}
+
+function createCumulativeGraph(property, divName, subText) {
+
+    // create skeleton
+    const summaryDiv = document.createElement("div");
+    summaryDiv.className = "indivSummaryDiv";
+    summaryDiv.id = divName;
+    document.getElementById("summaryDiv").appendChild(summaryDiv);
+
+    const infoDiv = document.createElement("div");
+    infoDiv.className = "indivSummaryDivInfo";
+    infoDiv.id = divName + "-info"
+    document.getElementById(divName).appendChild(infoDiv);
+
     const allActivitiesByDay = [];
     const chartData = [];
 
@@ -15,6 +31,7 @@ function createSummaryPage() {
         allActivities[lastIndex + 1] = currentElement;
     }
 
+    // process data
     let currIndex = 0;
     let cum = 0;
     for (let start = allActivities[0].parsedNumericalDate; start < Date.now() / 1000; start+=86400) {
@@ -26,8 +43,8 @@ function createSummaryPage() {
         let total = 0;
         while (activityDateObj.split("-")[0] == refDateObj.getFullYear() && activityDateObj.split("-")[1] - 1 == refDateObj.getMonth() && activityDateObj.split("-")[2] == refDateObj.getDate() && currIndex <= allActivities.length) {
             
-            total += allActivities[currIndex].distance;
-            cum += allActivities[currIndex].distance;
+            total += allActivities[currIndex][property]
+            cum += allActivities[currIndex][property]
             console.log("Added " + activityDateObj + " to list")
             if (currIndex < allActivities.length - 1) {
                 currIndex++;
@@ -42,6 +59,17 @@ function createSummaryPage() {
         chartData.push([refDateString, cum.toFixed(2)])
     }
 
+    const totalText = document.createElement("p");
+    totalText.innerHTML = cum.toFixed(2);
+    totalText.className = "totalText";
+    document.getElementById(divName + "-info").appendChild(totalText);
+    
+    const sub = document.createElement("p");
+    sub.innerHTML = subText
+    sub.className = "subText";
+    document.getElementById(divName + "-info").appendChild(sub);
+
+    // create the graph
     // create a data set
     var dataSet = anychart.data.set(chartData);
   
@@ -59,7 +87,7 @@ function createSummaryPage() {
     .format("Total miles: {%value}");
     
     // specify where to display the chart
-    chart.container("totalMilesChart");
+    chart.container(divName);
 
     chart.crosshair().enabled(true).yLabel(false).yStroke(null);
     

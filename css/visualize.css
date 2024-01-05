@@ -20,6 +20,11 @@ body{
     position: sticky;
     align-self: flex-start;
     top: 0%;
+    display: block;
+}
+
+#mobileApplicationMenu {
+    display: none;
 }
 
 #transition{
@@ -658,6 +663,54 @@ input::-webkit-inner-spin-button {
     body{
         overflow-x: hidden;
         font-size: 100%;
+    }
+
+    #mobileApplicationMenu {
+        display: block;
+        display: flex;
+        background-color: orange;
+        top: 0;
+        position: sticky;
+        width: 105%;
+        margin-left: -2.5%;
+        margin-right: -2.5%;
+        margin-top: -1.5%;
+        z-index: 1000;
+    }
+
+    #mobileTitle {
+        font-weight: bold;
+        width: 60%;
+        color: white;
+        margin: 1% 0 1% 5%;
+        font-size: 7vw;
+    }
+
+    #mobileMenu {
+        width: 20%;
+        margin-left: 10%;
+        font-size: 5vw;
+        margin-top: auto;
+        margin-bottom: auto;
+        padding: 0.5% 1% 0.5% 1%;
+        color: white;
+        border: 1px solid white;
+        text-align: center;
+    }
+
+    #applicationBody {
+        width: 95%;
+        margin-left: 2.5%;
+        margin-right: 2.5%;
+    }
+
+    #applicationMenu {
+        display: none;
+        width: 100%;
+    }
+
+    #applicationMain {
+        display: block;
     }
 
     .graphDiv{

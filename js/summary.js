@@ -1,12 +1,23 @@
 function createSummaryPage() {
     // this function generates an object per date.
+    var toDelete = document.getElementsByClassName('indivSummaryDiv');
+
+    while(toDelete[0]) {
+        toDelete[0].parentNode.removeChild(toDelete[0]);
+    }
+
     createCumulativeGraph("distance", "distSummary", "Total Miles");
+    createCumulativeGraph("distance", "movingDistSummary", "Miles in past 30 days", 30);
     createCumulativeGraph("kudos", "kudosSummary", "Total Kudos");
+    createCumulativeGraph("kudos", "movingKudosSummary", "Kudos in past 30 days", 30);
     createCumulativeGraph("elevation", "elevSummary", "Total Elevation");
+    createCumulativeGraph("elevation", "movingElevSummary", "Elevation in past 30 days", 30);
     createCumulativeGraph("time", "timeSummary", "Time Active");
+    createCumulativeGraph("time", "movingTimeSummary", "Time active in past 30 days", 30);
 }
 
-function createCumulativeGraph(property, divName, subText) {
+function createCumulativeGraph(property, divName, subText, numberOfDays) {
+    // numberOfDays is an optional parameter. 90 = 90 day moving totals.
 
     // create skeleton
     const summaryDiv = document.createElement("div");
@@ -38,17 +49,14 @@ function createCumulativeGraph(property, divName, subText) {
     let currIndex = 0;
     let cum = 0;
     for (let start = allActivities[0].parsedNumericalDate; start < Date.now() / 1000; start+=86400) {
-        console.log("==============================");
         let refDateObj = new Date(start * 1000);
-        console.log("reference date is: " + refDateObj);
         let activityDateObj = allActivities[currIndex].startDate.split("T")[0];
         
-        let total = 0;
+        let currentVal = 0; //only gets the total in one day, resets the next day.
         while (activityDateObj.split("-")[0] == refDateObj.getFullYear() && activityDateObj.split("-")[1] - 1 == refDateObj.getMonth() && activityDateObj.split("-")[2] == refDateObj.getDate() && currIndex <= allActivities.length) {
             
-            total += allActivities[currIndex][property]
+            currentVal += allActivities[currIndex][property]
             cum += allActivities[currIndex][property]
-            console.log("Added " + activityDateObj + " to list")
             if (currIndex < allActivities.length - 1) {
                 currIndex++;
                 activityDateObj = allActivities[currIndex].startDate.split("T")[0];
@@ -57,14 +65,21 @@ function createCumulativeGraph(property, divName, subText) {
                 break;
             }
         }
-        allActivitiesByDay.push({date: refDateObj, distance: total, cumulative: cum})
+        allActivitiesByDay.push({date: refDateObj, distance: currentVal, cumulative: cum})
         const refDateString = (refDateObj.getMonth()+1) + "-" + refDateObj.getDate() + "-" + refDateObj.getFullYear()
-        chartData.push([refDateString, cum.toFixed(2)])
+        
+        if(numberOfDays && chartData.length >= numberOfDays) {
+            console.log("Subtracting cum by " + chartData[chartData.length - numberOfDays][1])
+            cum -= chartData[chartData.length - numberOfDays][2]
+            console.log(cum);
+        }
+        chartData.push([refDateString, cum.toFixed(2), currentVal])
+        
     }
 
     const totalText = document.createElement("p");
     if (property == "time") {
-        totalText.innerHTML = convert(Math.trunc(cum));
+        totalText.innerHTML = /*convertToDays(Math.trunc(cum))*/ convert(Math.trunc(cum));
     } else {
         totalText.innerHTML = cum.toFixed(2);
     }
@@ -106,4 +121,22 @@ function createCumulativeGraph(property, divName, subText) {
     
     // draw the resulting chart
     chart.draw();
+}
+
+function convertToDays(seconds) {
+    let resultantString = "";
+    if (seconds >= 86400) {
+        resultantString += Math.floor(seconds / 86400) + "d "
+        resultantString += convertToDays (seconds % 86400);
+    } else if (seconds >= 3600) {
+        resultantString += Math.floor(seconds / 3600) + "hr "
+        resultantString += convertToDays (seconds % 3600);
+    } else if (seconds >= 60) {
+        resultantString += Math.floor(seconds / 60) + "min "
+        resultantString += convertToDays (seconds % 60);
+    } else {
+        resultantString += seconds + "s";
+    }
+
+    return resultantString;
 }

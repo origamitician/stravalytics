@@ -3,9 +3,18 @@ var allActivities = []; // actual, dynamically changing activities list upon fil
 const allActivitiesRef = []; // FIXED activities list. All lifetime activities are stored in here so that no unneccessary API calls are made.
 
 let loadingBarFrame = 0;
-document.getElementById("applicationMenu").style.display = "none";
+document.getElementById("applicationBody").style.display = "none";
 function init(){
     window.location = `http://www.strava.com/oauth/authorize?client_id=107318&response_type=code&redirect_uri=${window.location.href}&approval_prompt=auto&scope=activity:read_all`
+}
+
+function showMobileMenu () {
+    const displayInQuestion = document.getElementById("applicationMenu");
+    if (displayInQuestion.style.display == "block") {
+        displayInQuestion.style.display = "none";
+    } else {
+        displayInQuestion.style.display = "block";
+    }
 }
 
 function changeDates(){
@@ -30,6 +39,7 @@ function changeDates(){
                 allActivities.push(a);
             }
         })
+        createSummaryPage();
         renderGraph();
         renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value)
         document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
@@ -73,7 +83,8 @@ if (indexOfAuthorization == -1) {
                 allActivities.push(item)
                 allActivitiesRef.push(item);
             })
-            document.getElementById("applicationMenu").style.display = "block";
+            document.getElementById("applicationBody").style.display = "block";
+            
             createSummaryPage();
             renderGraph(); //histograms
             renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
@@ -95,11 +106,10 @@ if (indexOfAuthorization == -1) {
             document.getElementById('transition').style.display = 'none';
         }else{
             // if user wants to generate random data
-            document.getElementById("applicationMenu").style.display = "block";
+            document.getElementById("applicationBody").style.display = "block";
             document.getElementById('transition').style.display = 'none';
             document.getElementById('welcomeText').innerHTML = 'Viewing randomly generated data!'
             document.getElementById('notLoggedInBody').style.display = 'none';
-            document.getElementById('applicationBody').style.display = 'block';
             generateRandomData();
         }
     }
@@ -125,11 +135,11 @@ if (indexOfAuthorization == -1) {
 
 function generateRandomData(){
     allActivities = [];
-    for (let i = 0; i < 1300; i++){
+    for (let i = 0; i < 400; i++){
         const generatedDistance = ((Math.random()*25000) + 1000)/1609;
-        console.log("Dist: " + generatedDistance);
+        // console.log("Dist: " + generatedDistance);
         const generatedPace = 1609 / ((Math.random()*2+ 2.65) * (Math.log(30 - generatedDistance) / Math.log(20)))
-        console.log("Pace: " + generatedPace);
+        // console.log("Pace: " + generatedPace);
         const elapsedPaceDifferencePercent = Math.random()*45
         const generatedTime = generatedDistance * generatedPace
         const generatedYear = Math.floor(Math.random()*4 + 2020);
@@ -166,7 +176,8 @@ function generateRandomData(){
             cadence: 77 + Number((Math.random()*15).toFixed(1)),
             elapsedTime: generatedTime * (1+elapsedPaceDifferencePercent/100),
             uptime: 1 / (1+elapsedPaceDifferencePercent/100) * 100,
-            elevation: Math.random()*200,
+            elevation: Math.random()*540,
+            
             kudos: Math.round(Math.random()*20 + 4),
             maxPace: generatedPace * (1 + ((Math.random() * 50) / 100)),
             id: -1,

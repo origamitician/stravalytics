@@ -11,8 +11,9 @@
     position: absolute;
     top: 5%;
     left: 5%;
+    width: 60%;
     /* border: 1px solid black; */
-    z-index: 999;
+    z-index: 997;
 }
 
 .indivSummaryDivGraphHolder {
@@ -25,7 +26,7 @@
 }
 
 .summaryTotalText {
-    font-size: 400%;
+    font-size: 350%;
     font-weight: bold;
     padding: 0;
     margin: 0;
@@ -33,6 +34,8 @@
 
 .summarySubText {
     font-size: 150%;
+    margin-top: 2%;
+    margin-bottom: 0;
 }
 
 #summaryDiv {
@@ -44,6 +47,29 @@
     .indivSummaryDiv {
         width: 100%;
         height: 25vh;
+        border: none;
+        border-bottom: 1px dotted black;
+    }
+
+    .summaryTotalText {
+        font-size: 9vw;
+    }
+
+    .summarySubText{
+        font-size: 3vw;
+    }
+
+    .indivSummaryDivGraphHolder {
+        position: absolute;
+        bottom: 2%;
+        right: 2%;
+        width: 60%;
+        z-index: 998;
+        height: 70%;
+    }
+    
+    .indivSummaryDivInfo{
+        left: 0;
     }
     
 }

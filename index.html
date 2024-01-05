@@ -83,7 +83,11 @@
         <div id = 'applicationBody'>
             <p id = "displayNumRuns"></p>
             <div id = "summaryDiv">
-
+                <p id = 'summaryDayInput'>Show up to <input type="number" name = "numberOfDays" id = "numberOfDaysInput" placeholder="Enter a number" value="30" onchange="createSummaryPage()"> days prior</p>
+                <!--<div class = "innerLabel">
+                    <label for="numberOfDays" class = "labels">Number </label>
+                    
+                </div>-->
             </div>
             <div class = "graphDiv">
                 <Button class = "incrementBtn" onClick = "showIncrementMenu('pace')">Edit Increments</Button>

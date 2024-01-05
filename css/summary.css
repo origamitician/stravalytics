@@ -1,3 +1,9 @@
+#summaryDiv {
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
 .indivSummaryDiv {
     width: 50%;
     border: 2px solid black;
@@ -38,10 +44,23 @@
     margin-bottom: 0;
 }
 
-#summaryDiv {
-    
+#summaryDayInput{
+    font-size: 135%;
+    text-align: right;
 }
 
+#numberOfDaysInput {
+    font-size: 100%;
+    margin-left: 0.5%;
+    margin-right: 0.5%;
+    font-family: 'Wix Madefor Display', sans-serif; 
+    width: 7%;
+    font-weight: bold;
+}
+
+.summaryDiffText {
+    width: 50%;
+}
 
 @media only screen and (orientation: portrait){
     .indivSummaryDiv {
@@ -56,7 +75,7 @@
     }
 
     .summarySubText{
-        font-size: 3vw;
+        font-size: 3.5vw;
     }
 
     .indivSummaryDivGraphHolder {
@@ -70,6 +89,10 @@
     
     .indivSummaryDivInfo{
         left: 0;
+    }
+
+    .summaryDiffText {
+        font-size: 3vw;
     }
     
 }

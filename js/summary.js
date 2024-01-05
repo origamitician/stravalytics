@@ -5,7 +5,7 @@ function createSummaryPage() {
     var toDelete = document.getElementsByClassName('indivSummaryDiv');
     const dayHistory = Math.abs(Math.trunc(document.getElementsByName('numberOfDays')[0].value));
     if (dayHistory >= allActivities.length) {
-        dayHistory = allAcitivities.length - 1;
+        dayHistory = allActivities.length - 1;
     }
     while(toDelete[0]) {
         toDelete[0].parentNode.removeChild(toDelete[0]);

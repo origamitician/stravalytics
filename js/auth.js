@@ -17,6 +17,15 @@ function showMobileMenu () {
     }
 }
 
+function showLagMenu () {
+    const displayInQuestion = document.getElementById("lagDiv");
+    if (displayInQuestion.style.display == "block") {
+        displayInQuestion.style.display = "none";
+    } else {
+        displayInQuestion.style.display = "block";
+    }
+}
+
 function changeDates(){
     try{
         if(document.getElementsByName("startDate")[0].value == ""){

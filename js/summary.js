@@ -2,6 +2,7 @@ const unitsThatCanBeTotaled = ["kudos", "distance", "elevation", "time", "elapse
 
 function createSummaryPage() {
     // this function generates an object per date.
+    const current = Date.now();
     var toDelete = document.getElementsByClassName('indivSummaryDiv');
     const dayHistory = Math.abs(Math.trunc(document.getElementsByName('numberOfDays')[0].value));
     if (dayHistory >= allActivities.length) {
@@ -10,6 +11,9 @@ function createSummaryPage() {
     while(toDelete[0]) {
         toDelete[0].parentNode.removeChild(toDelete[0]);
     }
+
+    let now = Date.now();
+    console.log ((now - current) / 1000 + "seconds have elapsed to delete.")
 
     createCumulativeGraph("distance", "distSummary", "Total Miles");
     createCumulativeGraph("distance", "movingDistSummary", "Miles in past " + dayHistory + " days", dayHistory);
@@ -32,6 +36,10 @@ function createSummaryPage() {
     createCumulativeGraph("time", "avgMovingTimeSummary", "Avg time per day, past " + dayHistory + " d", dayHistory, true);
     createCumulativeGraph("pace", "avgMovingPaceSummary", "Avg pace per day, past " + dayHistory + " d", dayHistory, true);
     createCumulativeGraph("incline", "avgMovingInclineSummary", "Avg incline per day, past " + dayHistory + " d", dayHistory, true);
+
+    let rendered = Date.now();
+    document.getElementById("debugDuration").innerHTML = "Deletion time: " + (now - current) / 1000 + "s; Drawing time: " + (rendered - now) / 1000 + "s";
+
 }
 
 function createCumulativeGraph(property, divName, subText, numberOfDays, average) {
@@ -68,7 +76,7 @@ function createCumulativeGraph(property, divName, subText, numberOfDays, average
     let currIndex = 0;
     let cum = 0;
     let daysActive = 0;
-    for (let start = allActivities[0].parsedNumericalDate; start < Date.now() / 1000; start+=86400) {
+    for (let start = allActivities[0].parsedNumericalDate; /*start < Date.parse(document.getElementsByName("endDate")[0].value) / 1000*/ start < Date.now() / 1000; start+=86400) {
         let refDateObj = new Date(start * 1000);
         let activityDateObj = allActivities[currIndex].startDate.split("T")[0];
         
@@ -112,8 +120,6 @@ function createCumulativeGraph(property, divName, subText, numberOfDays, average
             }
         }
 
-        console.log("Days active is: " + daysActive)
-
         if (average) {
             if (daysActive == 0) {
                 chartData.push([refDateString, 0, currentVal])
@@ -124,8 +130,6 @@ function createCumulativeGraph(property, divName, subText, numberOfDays, average
             chartData.push([refDateString, cum.toFixed(2), currentVal])
         }
     }
-
-    console.log(chartData);
 
     const totalText = document.createElement("p");
     if (property == "time" || property == "pace") {
@@ -140,7 +144,6 @@ function createCumulativeGraph(property, divName, subText, numberOfDays, average
         } else {
             totalText.innerHTML = cum.toFixed(2);
         }
-        
     }
     
     totalText.className = "summaryTotalText";
@@ -168,7 +171,6 @@ function createCumulativeGraph(property, divName, subText, numberOfDays, average
             percentage = ((cum - prev) / prev) * 100
         }
         
-
         if (property == "time" || property == "pace") {
             prev = convert(Math.trunc(prev));
         }
@@ -185,9 +187,20 @@ function createCumulativeGraph(property, divName, subText, numberOfDays, average
         document.getElementById(divName + "-info").appendChild(diff);
     }
 
+    // trim the chart data into only ~100 entries to reduce lag.
+    // const trimBy = Math.ceil(chartData.length / 200);
+    trimBy = numberOfDays;
+    // console.log(trimBy);
+    const trimmedChart = [];
+    for (let i = chartData.length - 1; i >= 0; i -= trimBy) {
+        trimmedChart.unshift([chartData[i][0], chartData[i][1]])
+    }
+    trimmedChart.unshift([chartData[0][0], chartData[0][1]])
+    // console.log(trimmedChart)
+    
     // create the graph
     // create a data set
-    var dataSet = anychart.data.set(chartData);
+    var dataSet = anychart.data.set(trimmedChart);
   
     // map the data for all series
     var firstSeriesData = dataSet.mapAs({x: 0, value: 1});
@@ -213,9 +226,10 @@ function createCumulativeGraph(property, divName, subText, numberOfDays, average
         firstSeries.name("")
         .stroke('5 #f49595')
         .tooltip()
-        .format("{%value}");
+        .format(function (e){
+            return convert(this.value)
+        });
     }
-    
     
     // specify where to display the chart
     chart.container(divName + "-graphHolder");

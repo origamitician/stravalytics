@@ -6,7 +6,6 @@
 
 .indivSummaryDiv {
     width: 50%;
-    border: 2px solid black;
     position: relative;
     height: 40vh;
     display: inline-block;
@@ -45,7 +44,7 @@
 }
 
 #summaryDayInput{
-    font-size: 135%;
+    font-size: 125%;
     text-align: right;
 }
 
@@ -61,6 +60,37 @@
 .summaryDiffText {
     width: 50%;
 }
+
+.lagOptionText {
+    font-size: 100%;
+}
+
+.lagOption {
+    border: 0px;
+    width: 5%;
+    height: 1.15em;
+}
+
+#lagDiv {
+    width: 60%;
+    display: none;
+    margin-top: 0;
+    margin-bottom: 3%;
+}
+
+#lagBtn {
+    width: 30%;
+    text-align: center;
+    margin-bottom: 3%;
+    font-size: 150%;
+}
+
+#graphDetailText {
+    font-size: 150%;
+    margin-top: 0;
+    text-decoration: underline;
+}
+
 
 @media only screen and (orientation: portrait){
     .indivSummaryDiv {

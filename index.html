@@ -84,6 +84,34 @@
             <p id = "displayNumRuns"></p>
             <div id = "summaryDiv">
                 <p id = 'summaryDayInput'>Show up to <input type="number" name = "numberOfDays" id = "numberOfDaysInput" placeholder="Enter a number" value="30" onchange="createSummaryPage()"> days prior</p>
+                <div>
+                    <button onclick="showLagMenu()" id="lagBtn">Graphs Lagging?</button>
+                </div>
+                <div id = 'lagDiv'>
+                    <p id = "debugDuration"></p>
+                    <p id = "graphDetailText">Adjust graph quality</p>
+                    <form action="">
+                    <input type="radio" class = "lagOption" name="lagOption" id = "very_high" value="9999" onChange = "applyLagOptions()">
+                    <label for="very_high" class = "lagOptionText">Very High<b style = "color: red" > (Warning, turns into a lag machine, especially with a high number of activities!)</b></label><br>
+
+                    <input type="radio" class = "lagOption" name="lagOption" id = "high" value="200" onChange = "applyLagOptions()" selected >
+                    <label for="high" class = "lagOptionText">High (150)</label selected><br>
+
+                    <input type="radio" class = "lagOption" name="lagOption" id = "mid" value="100" onChange = "applyLagOptions()">
+                    <label for="mid" class = "lagOptionText">Medium (100)</label><br>
+
+                    <input type="radio" class = "lagOption" name="lagOption"  id = "low" value="50" onChange = "applyLagOptions()">
+                    <label for="low" class = "lagOptionText">Low (50)</label><br>
+
+                    <input type="radio" class = "lagOption" name="lagOption"  id = "depend" value="100" onChange = "applyLagOptions()">
+                    <label for="depend" class = "lagOptionText">Dependent on # day moving average (fast if high, slow if low)</label><br>
+
+                    <input type="radio" class = "lagOption" name="custom" id = "custom" value="250" onChange = "applyLagOptions()">
+                    <label for="custom" class = "lagOptionText">Custom <input type="number" value = "250" onChange = "applyLagOptions()"></label><br>
+                    </form>
+                    
+                </div>
+                
                 <!--<div class = "innerLabel">
                     <label for="numberOfDays" class = "labels">Number </label>
                     

@@ -49,7 +49,14 @@ var elapsed_distribution = [];
 
 //helper function to convert seconds to m:ss
 
-function convert(seconds){
+function convert(seconds, decimalPlaces){
+    let numOfDecimals;
+    if (!decimalPlaces) {
+        numOfDecimals = 0;
+    } else {
+        numOfDecimals = decimalPlaces;
+    }
+
     if(seconds >= 3600){
         if(seconds % 3600 >= 600) {
             return Math.floor(seconds / 3600) + ":" +convert(seconds % 3600)
@@ -59,9 +66,9 @@ function convert(seconds){
         
     }
     if(seconds % 60 >= 10){
-        return Math.floor(seconds / 60) + ":" + (seconds % 60);
+        return Math.floor(seconds / 60) + ":" + (seconds % 60).toFixed(numOfDecimals);
     }else{
-        return Math.floor(seconds / 60) + ":0" + (seconds % 60);
+        return Math.floor(seconds / 60) + ":0" + (seconds % 60).toFixed(numOfDecimals);
     }
 }
 
@@ -148,8 +155,8 @@ function disableStats(){
 }
 
 function showStatsOnHTML(array, location, id, color){
-    var convertedMileTime = convert(array[id].total_time / array[id].total_miles).split(".")
-    var convertedKmTime = convert((array[id].total_time / array[id].total_miles) / 1.609).split('.')
+    var convertedMileTime = convert(array[id].total_time / array[id].total_miles)
+    var convertedKmTime = convert((array[id].total_time / array[id].total_miles) / 1.609)
     //console.log(convertedMileTime)
     //console.log(convertedKmTime);
     try{
@@ -255,8 +262,8 @@ function showStatsOnHTML(array, location, id, color){
             if(array[id].list_of_activities[i].pace == 0){
                 span.innerHTML = "[INVALID]"
             }else{
-                let convertedTime = (array[id].list_of_activities[i].pace).toString().split(".")
-                span.innerHTML = convert(convertedTime[0]) + "." + convertedTime[1].toString().substring(0, 2);
+                let convertedTime = (array[id].list_of_activities[i].pace)
+                span.innerHTML = convert(convertedTime, 2)
             }
             
             document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
@@ -595,8 +602,7 @@ function renderTypeGraph(array, type, color, color2, sortBy){
         let percentileValue = (allActivities[Math.floor(len*(percentilesOfInterest[i]/100))][sortBy]).toFixed(2);
         if (type == "pace_distribution") {
             // percentileValue = parseFloat(convert(percentileValue)).toFixed(2);
-            const temp = convert(percentileValue).split(".")
-            percentileValue = temp[0] + "." + temp[1].substring(0, 2);
+            percentileValue = convert(percentileValue, 2);
         }
         percentageDisplay.innerHTML = percentileValue + " " + scrub[sortBy].abbrUnit + "<br>(" + percentilesOfInterest[i] + "th percentile)";
         percentageDisplay.style.left = calculatedPosition + "%";
@@ -685,8 +691,8 @@ function renderTypeGraph(array, type, color, color2, sortBy){
         }
 
         try{
-            let calculatedMile = convert(totalMovingTime / totalMileage).split(".");
-            let calculatedKm = convert((totalMovingTime / totalMileage) / 1.609).split(".")
+            let calculatedMile = convert(totalMovingTime / totalMileage, 2).split(".");
+            let calculatedKm = convert((totalMovingTime / totalMileage) / 1.609, 2).split(".")
             document.getElementById("pace_distribution_overview").innerHTML = "Average pace: " + calculatedMile[0] + "." + calculatedMile[1].substring(0, 2) +"/mi (" + calculatedKm[0] + "." + calculatedKm[1].substring(0, 2) + "/km) <br> " + (3600 / (totalMovingTime / totalMileage)).toFixed(3) + "mi/h (" + (3600 / ((totalMovingTime / totalMileage) / 1.609)).toFixed(3) + "km/h)"
 
             document.getElementById("elev_distribution_overview").innerHTML = "Total elevation: " + (totalElevGain.toFixed(2)) + " ft (" + (totalElevGain / 3.28).toFixed(2) + " m) <br> Avg per run: " + ((totalElevGain/allActivities.length).toFixed(2)) + " ft (" + ((totalElevGain/allActivities.length) / 3.28).toFixed(2) + "m)"

@@ -265,11 +265,11 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     /* autocomplete if fields are blank */
     if(prop1 == 'pace' || prop1 == 'elapsedTime' || prop1 == 'time' || prop1 == 'maxPace'){
         if (document.getElementsByName('xAxisMin')[0].value == "") {
-            document.getElementsByName('xAxisMin')[0].value=convert(parseFloat(minX)).split('.')[0]
+            document.getElementsByName('xAxisMin')[0].value=convert(parseFloat(minX))
             bottomX = minX;
         }
         if (document.getElementsByName('xAxisMax')[0].value == "") {
-            document.getElementsByName('xAxisMax')[0].value=convert(parseFloat(maxX)).split('.')[0]
+            document.getElementsByName('xAxisMax')[0].value=convert(parseFloat(maxX))
             topX = maxX;
         }
     } else {
@@ -285,11 +285,11 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     
     if(prop2 == 'pace' || prop2 == 'elapsedTime' || prop2 == 'time' || prop2 == 'maxPace'){
         if (document.getElementsByName('yAxisMin')[0].value == "") {
-            document.getElementsByName('yAxisMin')[0].value=convert(parseFloat(minY)).split('.')[0]
+            document.getElementsByName('yAxisMin')[0].value=convert(parseFloat(minY))
             bottomY = minY;
         }
         if (document.getElementsByName('yAxisMax')[0].value == "") {
-            document.getElementsByName('yAxisMax')[0].value=convert(parseFloat(maxY)).split('.')[0]
+            document.getElementsByName('yAxisMax')[0].value=convert(parseFloat(maxY))
             topY = maxY;
         }
     } else {
@@ -319,8 +319,8 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         document.getElementById('spectrum').style.background = 'linear-gradient(to right, ' + document.getElementsByName('scatterColor1')[0].value + ', ' + document.getElementsByName('scatterColor2')[0].value + ')'
         if(tertiaryProp == 'pace' || tertiaryProp == 'elapsedTime' || tertiaryProp == 'time' || tertiaryProp == 'maxPace'){
             // yDisplay.innerHTML = convert(maxY - i*(((maxY - minY) / verticalIncrement))).split('.')[0]
-            document.getElementById('spectrumLowerBound').innerHTML = convert(parseFloat(bottomZ)).split('.')[0]
-            document.getElementById('spectrumUpperBound').innerHTML = convert(parseFloat(topZ)).split('.')[0]
+            document.getElementById('spectrumLowerBound').innerHTML = convert(parseFloat(bottomZ))
+            document.getElementById('spectrumUpperBound').innerHTML = convert(parseFloat(topZ))
         } else {
             document.getElementById('spectrumLowerBound').innerHTML = parseFloat(bottomZ).toFixed(2)
             document.getElementById('spectrumUpperBound').innerHTML = parseFloat(topZ).toFixed(2)
@@ -382,7 +382,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
                 let yDisplay = document.createElement('p');
                 yDisplay.className = 'yScatterDisplay';
                 if(prop2 == 'pace' || prop2 == 'elapsedTime' || prop2 == 'time' || prop2 == 'maxPace'){
-                    yDisplay.innerHTML = convert(topY - i*(((topY - bottomY) / verticalIncrement))).split('.')[0]
+                    yDisplay.innerHTML = convert(topY - i*(((topY - bottomY) / verticalIncrement)))
                 } else if (prop2 == 'startDate'){
                     const convertedDate = (topY - i*(((topY - bottomY) / verticalIncrement)))*1000
                     yDisplay.innerHTML = new Date(convertedDate).toLocaleString('en-US').split(', ')[0]
@@ -398,7 +398,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
                 let xDisplay = document.createElement('p');
                 xDisplay.className = 'xScatterDisplay';
                 if(prop1 == 'pace' || prop1 == 'elapsedTime' || prop1 == 'time' || prop1 == 'maxPace'){
-                    xDisplay.innerHTML = convert(bottomX + (j+1)*(((topX - bottomX) / horizontalIncrement))).split('.')[0]
+                    xDisplay.innerHTML = convert(bottomX + (j+1)*(((topX - bottomX) / horizontalIncrement)))
                 }else if (prop1 == 'startDate'){
                     const convertedDate = (bottomX + (j+1)*(((topX - bottomX) / horizontalIncrement)))*1000
                     xDisplay.innerHTML = new Date(convertedDate).toLocaleString('en-US').split(', ')[0]
@@ -558,12 +558,12 @@ function processPredictionIntoReadableForm(prop, val, unit) {
     let processedVal;
     console.log(prop);
     if (prop == "pace" || prop == "maxPace") {
-        processedVal = convert(parseInt(val)) + "." + parseFloat(val).toString().split(".")[1].substring(0, 2);
+        processedVal = convert(parseFloat(val), 2)
         if (unit) {
             processedVal += unit;
         }
     } else if (prop == "elapsedTime" || prop == "time") {
-        processedVal = convert(parseInt(val));
+        processedVal = convert(parseFloat(val));
     } else {
         processedVal = parseFloat(val).toFixed(2);
         if (unit) {

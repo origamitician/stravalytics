@@ -1,6 +1,7 @@
 const unitsThatCanBeTotaled = ["kudos", "distance", "elevation", "time", "elapsedTime"]
+let graphDetail;
 
-function createSummaryPage() {
+async function createSummaryPage() {
     // this function generates an object per date.
     const current = Date.now();
     var toDelete = document.getElementsByClassName('indivSummaryDiv');
@@ -15,6 +16,17 @@ function createSummaryPage() {
     let now = Date.now();
     console.log ((now - current) / 1000 + "seconds have elapsed to delete.")
 
+    // -- deleted all elements, figuring out graph detail -- //
+
+    var ele = document.getElementsByName('lagOption');
+    for (i = 0; i < ele.length; i++) {
+        if (ele[i].checked){
+            graphDetail = ele[i].value
+        }
+    }
+
+    // -- found out graph detail - creating new elements -- //
+
     createCumulativeGraph("distance", "distSummary", "Total Miles");
     createCumulativeGraph("distance", "movingDistSummary", "Miles in past " + dayHistory + " days", dayHistory);
     createCumulativeGraph("kudos", "kudosSummary", "Total Kudos");
@@ -24,18 +36,18 @@ function createSummaryPage() {
     createCumulativeGraph("time", "timeSummary", "Time Active");
     createCumulativeGraph("time", "movingTimeSummary", "Active time in past " + dayHistory + " days", dayHistory);
 
-    const hr = document.createElement("hr");
+    /*const hr = document.createElement("hr");
     hr.style.marginTop = "5%";
     hr.style.marginBottom = "5%";
-    document.getElementById("summaryDiv").appendChild (hr);
+    document.getElementById("summaryDiv").appendChild (hr);*/
 
-    createCumulativeGraph("distance", "avgMovingDistSummary", "Avg miles per day, past " + dayHistory + " d", dayHistory, true);
+    /*createCumulativeGraph("distance", "avgMovingDistSummary", "Avg miles per day, past " + dayHistory + " d", dayHistory, true);
     createCumulativeGraph("elevation", "avgMovingElevSummary", "Avg elev gain per day, past " + dayHistory + " days", dayHistory, true);
     createCumulativeGraph("kudos", "avgMovingKudosSummary", "Avg kudos per day, past " + dayHistory + " d", dayHistory, true);
     createCumulativeGraph("uptime", "avgMovingUptimeSummary", "Avg uptime per day, past " + dayHistory + " d", dayHistory, true);
     createCumulativeGraph("time", "avgMovingTimeSummary", "Avg time per day, past " + dayHistory + " d", dayHistory, true);
     createCumulativeGraph("pace", "avgMovingPaceSummary", "Avg pace per day, past " + dayHistory + " d", dayHistory, true);
-    createCumulativeGraph("incline", "avgMovingInclineSummary", "Avg incline per day, past " + dayHistory + " d", dayHistory, true);
+    createCumulativeGraph("incline", "avgMovingInclineSummary", "Avg incline per day, past " + dayHistory + " d", dayHistory, true);*/
 
     let rendered = Date.now();
     document.getElementById("debugDuration").innerHTML = "Deletion time: " + (now - current) / 1000 + "s; Drawing time: " + (rendered - now) / 1000 + "s";
@@ -180,7 +192,7 @@ function createCumulativeGraph(property, divName, subText, numberOfDays, average
             diff.style.color = "green";
         } else {
             diff.innerHTML = "▼ Down <b>" + percentage.toFixed(2) + "%</b> from " + prev
-            diff.style.color = "red";
+            diff.style.color = "blue";
         }
         
         diff.className = "summaryDiffText";
@@ -188,15 +200,21 @@ function createCumulativeGraph(property, divName, subText, numberOfDays, average
     }
 
     // trim the chart data into only ~100 entries to reduce lag.
-    // const trimBy = Math.ceil(chartData.length / 200);
-    trimBy = numberOfDays;
-    // console.log(trimBy);
+
+    console.log("Graph Detail is: " + graphDetail);
+    const trimBy = Math.ceil(chartData.length / graphDetail)
     const trimmedChart = [];
     for (let i = chartData.length - 1; i >= 0; i -= trimBy) {
         trimmedChart.unshift([chartData[i][0], chartData[i][1]])
     }
     trimmedChart.unshift([chartData[0][0], chartData[0][1]])
     // console.log(trimmedChart)
+
+    if (!numberOfDays) {
+        console.log(chartData);
+        console.log("----");
+        console.log(trimmedChart);
+    }
     
     // create the graph
     // create a data set
@@ -213,22 +231,42 @@ function createCumulativeGraph(property, divName, subText, numberOfDays, average
     // create the series and name them
     var firstSeries = chart.spline(firstSeriesData);
     if (!numberOfDays) {
-        firstSeries.name("")
-        .stroke('5 #4284f5')
-        .tooltip()
-        .format("{%value}");
+        const gr = firstSeries.name("").stroke('5 #ff950a').tooltip()
+        if (property == "time") {
+            gr.format(function (e){
+                return convert(this.value)
+            });
+        } else {
+            gr.format("{%value}");
+        }
+        
     } else if (numberOfDays && percentage > 0){
-        firstSeries.name("")
-        .stroke('5 #42f557')
-        .tooltip()
-        .format("{%value}");
+        const gr = firstSeries.name("").stroke('5 #0af570').tooltip()
+        if (property == "time") {
+            gr.format(function (e){
+                return convert(this.value)
+            });
+        } else if (property == "pace") {
+            gr.format(function (e){
+                return convert(this.value, 2)
+            });
+        } else {
+            gr.format("{%value}");
+        }
+        
     } else {
-        firstSeries.name("")
-        .stroke('5 #f49595')
-        .tooltip()
-        .format(function (e){
-            return convert(this.value)
-        });
+        const gr = firstSeries.name("").stroke('5 #0a95ff').tooltip()
+        if (property == "time") {
+            gr.format(function (e){
+                return convert(this.value)
+            });
+        } else if (property == "pace") {
+            gr.format(function (e){
+                return convert(this.value, 2)
+            });
+        } else {
+            gr.format("{%value}");
+        }
     }
     
     // specify where to display the chart

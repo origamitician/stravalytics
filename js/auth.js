@@ -26,6 +26,10 @@ function showLagMenu () {
     }
 }
 
+function applyLagOptions () {
+    createSummaryPage();
+}
+
 function changeDates(){
     try{
         if(document.getElementsByName("startDate")[0].value == ""){

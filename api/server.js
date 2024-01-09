@@ -98,8 +98,8 @@ app.get('/api/activities/:accountID', (req, res) => {
                     Promise.all([
                         getIndividualPaginatedData(1, key), 
                         getIndividualPaginatedData(2, key), 
-                        /*getIndividualPaginatedData(3, key), 
-                    getIndividualPaginatedData(4, key)*/]).then(() => {
+                        getIndividualPaginatedData(3, key), 
+                    getIndividualPaginatedData(4, key)]).then(() => {
                             res.send(allActivities)
                         })
                 })

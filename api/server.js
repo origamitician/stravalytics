@@ -24,7 +24,7 @@ mongoose.connect(process.env.MONGO_URI, () => {
     })
 })
 
-mongoose.set('strictQuery', true);
+// mongoose.set('strictQuery', true);
  
 app.get('/api/token/:authCode', (req, res) => {
 

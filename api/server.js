@@ -17,13 +17,6 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../', 'index.html'))
 })
 
-mongoose.connect(process.env.MONGO_URI, () => {
-    const port = 3000
-    app.listen(port, () => {
-        console.log("Server is running on port: " + port);
-    })
-})
-
 // mongoose.set('strictQuery', true);
  
 app.get('/api/token/:authCode', (req, res) => {
@@ -141,4 +134,12 @@ const refreshTokenDoc = new mongoose.Schema({
 })
 
 const RefreshTokens = mongoose.model("tokens", refreshTokenDoc);
+
+mongoose.connect(process.env.MONGO_URI, () => {
+    const port = 3000
+    app.listen(port, () => {
+        console.log("Server is running on port: " + port);
+    })
+})
+
 

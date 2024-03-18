@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/visualize.css">
     <link rel="stylesheet" href="css/notloggedin.css">
     <link rel="stylesheet" href="css/summary.css">
@@ -83,7 +84,34 @@
         <div id = 'applicationBody'>
             <p id = "displayNumRuns"></p>
             <div id = "summaryDiv">
-                <p id = 'summaryDayInput'>Show up to <input type="number" name = "numberOfDays" id = "numberOfDaysInput" placeholder="Enter a number" value="30" onchange="createSummaryPage()"> days prior</p>
+                <p id = "summaryDivWelcomeMsg"></p>
+                <p id = "quickGraphs">Quick Statistics</p>
+                <div id = 'quickStatistics'>
+                    <div class = 'statisticHolder'>
+                        <p className = 'quickStatisticText'><b className = 'quickStatisticHighlight'></b> Average Pace</p>
+                    </div>
+                    <div class = 'statisticHolder'>
+                        <p className = 'quickStatisticText'><b className = 'quickStatisticHighlight'></b> Average Time Active</p>
+                    </div>
+                </div>
+                <div id = 'yearStatistics' class = 'ymwDivHolder'>
+                    <div class = 'summaryStatHeader'>
+                        <h1>This Year</h1>
+                    </div>
+                </div>
+
+                <div id = 'monthStatistics' class = 'ymwDivHolder'>
+                    <div class = 'summaryStatHeader'>
+                        <h1>This Month</h1>
+                    </div>
+                </div>
+
+                <div id = 'weekStatistics' class = 'ymwDivHolder'>
+                    <div class = 'summaryStatHeader'>
+                        <h1>This Week</h1>
+                    </div>
+                </div>
+                <!--<p id = 'summaryDayInput'>Show up to <input type="number" name = "numberOfDays" id = "numberOfDaysInput" placeholder="Enter a number" value="30" onchange="createSummaryPage()"> days prior</p>
                 <div>
                     <button onclick="showLagMenu()" id="lagBtn">Graphs Lagging?</button>
                 </div>
@@ -110,8 +138,10 @@
                     <label for="custom" class = "lagOptionText">Custom <input type="number" value = "250" onChange = "applyLagOptions()"></label><br>
                     </form>
                     
-                </div>
-                
+                </div>-->
+
+                <p className = "summaryDivHeading">Cumulative trends</p>
+                <p className = "summaryDivSubHeading">To view these graphs in more detail, please head to the "Trends" section.</p>
                 <!--<div class = "innerLabel">
                     <label for="numberOfDays" class = "labels">Number </label>
                     
@@ -396,6 +426,7 @@
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/regression/2.0.1/regression.js" integrity="sha512-PHHRPMxJK1xGYLQPv9FoDbCF2X23Ao1lMAD52oLY9TBW033s4zwIXl5JQBGlfI2iOx3W1qP3LAS/MMv5Ttj0aQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-base.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="js/summary.js"></script>
 <script src="js/histograms.js"></script>
 <script src="js/scatter.js"></script>

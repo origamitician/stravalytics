@@ -31,7 +31,7 @@ function applyLagOptions () {
 }
 
 function changeDates(){
-    try{
+    /*try{*/
         if(document.getElementsByName("startDate")[0].value == ""){
             startDate = 0;
         }else{
@@ -56,9 +56,9 @@ function changeDates(){
         renderGraph();
         renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value)
         document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
-    }catch (err){
+    /* } /*catch (err){
         alert("Invalid date! " + err)
-    }
+    } */
 }
 
 console.log(localStorage)

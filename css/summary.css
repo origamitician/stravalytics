@@ -4,6 +4,10 @@
     margin-right: 5%;
 }
 
+#summaryDivWelcomeMsg {
+    text-align: center;
+    font-size: 250%;
+}
 .indivSummaryDiv {
     width: 50%;
     position: relative;
@@ -91,6 +95,40 @@
     text-decoration: underline;
 }
 
+.ymwDivHolder {
+    width: 33%;
+    display: inline-block;
+    border: 1px solid black;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0.5% 2% 0.5% 2%;
+}
+
+.quickStatisticHighlight b {
+    display: inline-block;
+    margin-left: 5%;
+    color: green;
+    width: 35%;
+    text-align: right;
+}
+
+.quickStatisticHighlight span {
+    display: inline-block;
+    width: 60%;
+}
+
+.quickStatisticHighlight {
+    font-size: 120%;
+}
+
+.quickStatisticComparison {
+    width: 100%;
+    font-size: 90%;
+    margin-top: 0;
+    margin-bottom: 1%;
+    text-align: right;
+}
+
 
 @media only screen and (orientation: portrait){
     .indivSummaryDiv {
@@ -125,4 +163,7 @@
         font-size: 3vw;
     }
     
+    .ymwDivHolder {
+        width: 100%;
+    }
 }

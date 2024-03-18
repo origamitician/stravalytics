@@ -22,6 +22,7 @@ app.get('/', (req, res) => {
 app.get('/api/token/:authCode', (req, res) => {
 
     // runs when the user is redirected from the authorization page.
+    // template: http://localhost:3000/?state=&code=bdd55c5743cea421e334fef3f168cd5372ffa433&scope=read,activity:read_all
     fetch(`https://www.strava.com/api/v3/oauth/token?client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&code=${req.params.authCode}&grant_type=authorization_code`, {
         method: 'POST',
         headers: {
@@ -92,7 +93,8 @@ app.get('/api/activities/:accountID', (req, res) => {
                         getIndividualPaginatedData(1, key), 
                         getIndividualPaginatedData(2, key), 
                         getIndividualPaginatedData(3, key), 
-                    getIndividualPaginatedData(4, key)]).then(() => {
+                        getIndividualPaginatedData(4, key),
+                    getIndividualPaginatedData(5, key)]).then(() => {
                             res.send(allActivities)
                         })
                 })

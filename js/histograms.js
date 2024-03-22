@@ -155,12 +155,12 @@ function disableStats(){
 }
 
 function showStatsOnHTML(array, location, id, color){
-    var convertedMileTime = convert(array[id].total_time / array[id].total_miles)
-    var convertedKmTime = convert((array[id].total_time / array[id].total_miles) / 1.609)
+    var convertedMileTime = convert(array[id].total_time / array[id].total_miles, 2)
+    var convertedKmTime = convert((array[id].total_time / array[id].total_miles) / 1.609, 2)
     //console.log(convertedMileTime)
     //console.log(convertedKmTime);
     try{
-        document.getElementById(location + "_info").innerHTML = "<b> Average pace: </b>" + convertedMileTime[0] + "." + convertedMileTime[1].substring(0, 2) + "/mi (" + convertedKmTime[0] + "." + convertedKmTime[1].substring(0, 2) + "/km) <br><br>" +
+        document.getElementById(location + "_info").innerHTML = "<b> Average pace: </b>" + convertedMileTime + "/mi (" + convertedKmTime +  "/km) <br><br>" +
 
         "<b> Average distance: </b>" + (array[id].total_miles / array[id].count).toFixed(3) + " mi <br> (shortest " + array[id].least_miles.toFixed(3) + " mi; longest " + array[id].most_miles.toFixed(3) + " mi) <br><br>" + 
 

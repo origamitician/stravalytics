@@ -8,7 +8,7 @@ function createSummaryPage() {
 
 function createQuickStats() {
     const statisticsToIterate = [
-        {display: "Days Active", property: null, unit: ''}, 
+        {display: "Days Active", property: null, unit: ' days'}, 
         {display: "Miles", property: "distance", unit: 'mi'},
         {display: "Elevation", property: "elevation", unit: 'ft'},
         {display: "Active Time", property: "time", unit: ''},
@@ -17,6 +17,7 @@ function createQuickStats() {
     ]
 
     const IDsToAddStatisticsTo = ['yearStatistics', 'monthStatistics', 'weekStatistics']
+    const numberOfDaysPerMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 31 /*for extra */];
 
     IDsToAddStatisticsTo.forEach(id => {
         for (let i = 0; i < statisticsToIterate.length; i++) {
@@ -31,79 +32,101 @@ function createQuickStats() {
 
             // create and compute the numbers
             
+            let byDays;
             if (statisticsToIterate[i].property){
-                const byDays = processAllActivitiesByDayAndProperty(allActivities, statisticsToIterate[i].property);
-                const dateArray = byDays.data.map(e => e[0]);
-                let filterIndex, startPrevious, endPrevious, startDateDisplay, endDateDisplay;
-
-                if (id === "yearStatistics" ) {
-                    filterIndex = dateArray.indexOf('1-1-' + new Date().getFullYear());
-                    startPrevious = dateArray.indexOf('1-1-' + (new Date().getFullYear() - 1));
-                    endPrevious = dateArray.indexOf((new Date().getMonth() + 1) + "-" + new Date().getDate() + "-" + (new Date().getFullYear() - 1))
-
-                    startDateDisplay = '1/1/' + (new Date().getFullYear() - 1)
-                    endDateDisplay = (new Date().getMonth() + 1) + "/" + new Date().getDate() + "/" + (new Date().getFullYear() - 1)
-
-                } else if (id === "monthStatistics") {
-                    filterIndex = dateArray.indexOf((new Date().getMonth() + 1) + "-1-" + new Date().getFullYear())
-                    let month = new Date().getMonth();
-                    let year = new Date().getFullYear();
-                    if (month === 0) {
-                        // if the current month is january, then previous month is december of last year.
-                        month = 11;
-                        year = new Date().getFullYear() - 1;
-                    }
-                    startPrevious = dateArray.indexOf((month)  + '-1-' + year);
-                    endPrevious = dateArray.indexOf((month) + '-' + new Date().getDate() + '-' + year);
-
-                    startDateDisplay = month + '/1/' + year;
-                    endDateDisplay = month + '/' + new Date().getDate() + '/' + year;
-
-                } else if (id === "weekStatistics") {
-                    const prevSunday = new Date(Date.now() - (86400000*new Date().getDay()))
-                    filterIndex = dateArray.indexOf((prevSunday.getMonth() + 1)  + "-" + prevSunday.getDate() + "-" + prevSunday.getFullYear())
-
-                    const twoSundaysAgo = new Date(Date.now() - (86400000*new Date().getDay()) - 604800000)
-                    startPrevious = dateArray.indexOf((twoSundaysAgo.getMonth() + 1)  + "-" + twoSundaysAgo.getDate() + "-" + twoSundaysAgo.getFullYear())
-                    startDateDisplay = (twoSundaysAgo.getMonth() + 1)  + "/" + twoSundaysAgo.getDate() + "/" + twoSundaysAgo.getFullYear()
-
-                    const aWeekAgo = new Date(Date.now() - 604800000);
-                    endPrevious = dateArray.indexOf((aWeekAgo.getMonth() + 1)  + "-" + aWeekAgo.getDate() + "-" + aWeekAgo.getFullYear())
-                    endDateDisplay = (aWeekAgo.getMonth() + 1)  + "/" + aWeekAgo.getDate() + "/" + aWeekAgo.getFullYear()
-                }
-                
-                let rawCurrentTotal = totalFromDate(byDays.data, filterIndex);
-                let total;
-                if (statisticsToIterate[i].property == "time") {
-                    total = convert(rawCurrentTotal)
-                } else {
-                    total = rawCurrentTotal;
-                }
-                
-                innerStatisticText.getElementsByTagName('b')[0].innerHTML = total + statisticsToIterate[i].unit ;
-                console.log("Total distance this year so far is: " + totalFromDate(byDays.data, filterIndex))
-                // note that byDays.data is in the form of [<date>, <cumulative>, <statistic that day>]
-
-                // also compute the previous timeframe's cumulatives and create the statistic comparison div
-                const sub = document.createElement('p');
-                sub.className = 'quickStatisticComparison';
-                let rawPreviousTotal = totalFromDate(byDays.data, startPrevious, endPrevious);
-                if (statisticsToIterate[i].property == "time") {
-                    total = convert(rawPreviousTotal)
-                } else {
-                    total = rawPreviousTotal;
-                }
-
-                let percentage;
-                if (rawCurrentTotal > rawPreviousTotal) {
-                    percentage = "Up " + (((rawCurrentTotal / rawPreviousTotal) * 100) - 100).toFixed(2) + "%"
-                } else {
-                    percentage = "Down " + (((rawCurrentTotal - rawPreviousTotal) / rawPreviousTotal) * 100).toFixed(2) + "%"
-                }
-                /* sub.innerHTML = 'Totals from <b>' + startDateDisplay + '</b> to <b>' + endDateDisplay + '</b>: ' + total + statisticsToIterate[i].unit + ' (' + percentage + ')';  */
-                sub.innerHTML = "(" + percentage + " from " + total + statisticsToIterate[i].unit + ')';
-                outerStatisticWrapper.appendChild(sub);
+                byDays = processAllActivitiesByDayAndProperty(allActivities, statisticsToIterate[i].property);
+            } else if (statisticsToIterate[i].display == "Days Active") {
+                byDays = processAllActivitiesByDayAndProperty(allActivities, "distance");
+            } else if (statisticsToIterate[i].display == "Avg Pace") {
+                byDays = processAllActivitiesByDayAndProperty(allActivities, "distance");
             }
+            console.log(byDays);
+            const dateArray = byDays.data.map(e => e[0]);
+            let filterIndex, startPrevious, endPrevious, startDateDisplay, endDateDisplay;
+
+            if (id === "yearStatistics" ) {
+                filterIndex = dateArray.indexOf('1-1-' + new Date().getFullYear());
+                startPrevious = dateArray.indexOf('1-1-' + (new Date().getFullYear() - 1));
+                endPrevious = dateArray.indexOf((new Date().getMonth() + 1) + "-" + new Date().getDate() + "-" + (new Date().getFullYear() - 1))
+
+                startDateDisplay = '1/1/' + (new Date().getFullYear() - 1)
+                endDateDisplay = (new Date().getMonth() + 1) + "/" + new Date().getDate() + "/" + (new Date().getFullYear() - 1)
+
+            } else if (id === "monthStatistics") {
+                filterIndex = dateArray.indexOf((new Date().getMonth() + 1) + "-1-" + new Date().getFullYear())
+                let prevmonth = new Date().getMonth() ; // previous month
+                let year = new Date().getFullYear();
+                if (prevmonth === 0) {
+                    // if the current month is january, then previous month is december of last year.
+                    prevmonth = 12;
+                    year = new Date().getFullYear() - 1;
+                }
+                startPrevious = dateArray.indexOf((prevmonth)  + '-1-' + year);
+                // to make sure the day of the month doesn't overflow
+                if (numberOfDaysPerMonth[prevmonth-1] >= new Date().getDate()) {
+                    endPrevious = dateArray.indexOf((prevmonth) + '-' + new Date().getDate() + '-' + year);
+                } else {
+                    endPrevious = dateArray.indexOf((prevmonth) + '-' + numberOfDaysPerMonth[prevmonth-1]+ '-' + year);
+                }
+               
+
+                startDateDisplay = prevmonth + '/1/' + year;
+                endDateDisplay = prevmonth + '/' + new Date().getDate() + '/' + year;
+
+            } else if (id === "weekStatistics") {
+                const prevSunday = new Date(Date.now() - (86400000*new Date().getDay()))
+                filterIndex = dateArray.indexOf((prevSunday.getMonth() + 1)  + "-" + prevSunday.getDate() + "-" + prevSunday.getFullYear())
+
+                const twoSundaysAgo = new Date(Date.now() - (86400000*new Date().getDay()) - 604800000)
+                startPrevious = dateArray.indexOf((twoSundaysAgo.getMonth() + 1)  + "-" + twoSundaysAgo.getDate() + "-" + twoSundaysAgo.getFullYear())
+                startDateDisplay = (twoSundaysAgo.getMonth() + 1)  + "/" + twoSundaysAgo.getDate() + "/" + twoSundaysAgo.getFullYear()
+
+                const aWeekAgo = new Date(Date.now() - 604800000);
+                endPrevious = dateArray.indexOf((aWeekAgo.getMonth() + 1)  + "-" + aWeekAgo.getDate() + "-" + aWeekAgo.getFullYear())
+                endDateDisplay = (aWeekAgo.getMonth() + 1)  + "/" + aWeekAgo.getDate() + "/" + aWeekAgo.getFullYear()
+            }
+            let rawCurrentTotal;
+            if (statisticsToIterate[i].display == "Days Active") {
+                rawCurrentTotal = totalFromDate(byDays.data, filterIndex, null, true);
+            } else {
+                rawCurrentTotal = totalFromDate(byDays.data, filterIndex, null, false);
+            }
+            
+            let total;
+            if (statisticsToIterate[i].property == "time") {
+                total = convert(rawCurrentTotal)
+            } else {
+                total = rawCurrentTotal;
+            }
+            
+            innerStatisticText.getElementsByTagName('b')[0].innerHTML = total + statisticsToIterate[i].unit ;
+            
+            // also compute the previous timeframe's cumulatives and create the statistic comparison div
+            const sub = document.createElement('p');
+            sub.className = 'quickStatisticComparison';
+
+            let rawPreviousTotal;
+            if (statisticsToIterate[i].display == "Days Active") {
+                rawPreviousTotal = totalFromDate(byDays.data, startPrevious, endPrevious, true);
+            } else {
+                rawPreviousTotal = totalFromDate(byDays.data, startPrevious, endPrevious, false);
+            }
+            
+            if (statisticsToIterate[i].property == "time") {
+                total = convert(rawPreviousTotal)
+            } else {
+                total = rawPreviousTotal;
+            }
+
+            let percentage;
+            if (rawCurrentTotal > rawPreviousTotal) {
+                percentage = "Up " + (((rawCurrentTotal / rawPreviousTotal) * 100) - 100).toFixed(2) + "%"
+            } else {
+                percentage = "Down " + (((rawPreviousTotal - rawCurrentTotal) / rawPreviousTotal) * 100).toFixed(2) + "%"
+            }
+            /* sub.innerHTML = 'Totals from <b>' + startDateDisplay + '</b> to <b>' + endDateDisplay + '</b>: ' + total + statisticsToIterate[i].unit + ' (' + percentage + ')';  */
+            sub.innerHTML = "(" + percentage + " from " + total + statisticsToIterate[i].unit + ')'/* + 'rawCurrentTotal is: ' + rawCurrentTotal + ' ' + 'rawPreviousTotal is: ' + rawPreviousTotal;*/
+            outerStatisticWrapper.appendChild(sub);
             
             document.getElementById(id).appendChild(outerStatisticWrapper);
         }
@@ -113,9 +136,12 @@ function createQuickStats() {
     
 }
 
-function totalFromDate(array, startIndex, endIndex) {
+function totalFromDate(array, startIndex, endIndex, countingDays) {
+    // array is in the form of [<date>, <cumulative>, <statistic that day>]
     // startIndex inclusive, endIndex exclusive.
     // startIndex (required), endIndex is not required. Totals the statistics between startIndex and endIndex of array.
+    // countingDays (boolean), if true, the number of active dates are counted. if false, the total cumulative statistics are counted.
+
     if (startIndex == -1) {
         startIndex = 0;
     }
@@ -125,13 +151,20 @@ function totalFromDate(array, startIndex, endIndex) {
     }
 
     if (!endIndex) {
-        endIndex = array.length;
+        endIndex = array.length-1;
     }
-    console.log("The date array that is being calculated is:")
-    console.log(array);
+
     let total = 0;
-    for (let i = startIndex; i < endIndex; i++) {
-        total+=array[i][2];
+    for (let i = startIndex; i <= endIndex; i++) {
+        if (!countingDays) {
+            // add cumulatives
+            total+=array[i][2];
+        } else {
+            // add number of days
+            if (array[i][2] > 0) {
+                total++;
+            }
+        }
     }
 
     if (total.toString().indexOf('.') != -1) {

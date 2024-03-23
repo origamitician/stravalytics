@@ -19,11 +19,6 @@
     <title>Document</title>
 </head>
 <body>
-    <div id = 'welcomeMsg'>
-        <p id = 'welcomeText'></p>
-        <p id = 'logoutBtn' onclick = "logout()">Logout</p>
-    </div>
-
     <div id = 'notLoggedInBody'>
         <img src="/public/scatter.png" alt="" id = 'coverImg'>
         <div id = 'notLoggedInContainer'>
@@ -75,25 +70,24 @@
                 <Button onclick=changeDates() id = "applyDateBtn">✅</Button>
             </div>
             <hr>
-            <p class = 'applicationMenuOption'>Home</p>
-            <p class = 'applicationMenuOption'>Histograms</p>
-            <p class = 'applicationMenuOption'>Scatterplot</p>
-            <p class = 'applicationMenuOption'>Trends</p>
-            <p class = 'applicationMenuOption'>Stats for nerds</p>
+            <a class = 'applicationMenuOption' href="#summaryDiv">Home</a>
+            <a class = 'applicationMenuOption' href="#histogramDiv">Histograms</a>
+            <a class = 'applicationMenuOption' href="#scatterDiv">Scatterplot</a>
+            <a class = 'applicationMenuOption'>Trends</a>
+            <a class = 'applicationMenuOption'>Analyze</a>
+            <a class = 'applicationMenuOption'>Stats for nerds</a>
+            <br><br>
+            <p id = "displayNumRuns"></p>
+            <p id = 'logoutBtn' onclick = "logout()">Logout</p>
         </div>
         <div id = 'applicationBody'>
-            <p id = "displayNumRuns"></p>
-            <div id = "summaryDiv">
+            <section id = "summaryDiv" class="mainDiv">
                 <p id = "summaryDivWelcomeMsg"></p>
-                <p id = "quickGraphs">Quick Statistics</p>
-                <div id = 'quickStatistics'>
-                    <div class = 'statisticHolder'>
-                        <p className = 'quickStatisticText'><b className = 'quickStatisticHighlight'></b> Average Pace</p>
-                    </div>
-                    <div class = 'statisticHolder'>
-                        <p className = 'quickStatisticText'><b className = 'quickStatisticHighlight'></b> Average Time Active</p>
-                    </div>
+                <div class = 'quickOverviewTopDiv'>
+                    <h1>Quick Overview</h1>
+                    <p>To view these statistics in more detail, please head to the "Trends" section.</p>
                 </div>
+                
                 <div id = 'yearStatistics' class = 'ymwDivHolder'>
                     <div class = 'summaryStatHeader'>
                         <h1>This Year</h1>
@@ -111,316 +105,295 @@
                         <h1>This Week</h1>
                     </div>
                 </div>
-                <!--<p id = 'summaryDayInput'>Show up to <input type="number" name = "numberOfDays" id = "numberOfDaysInput" placeholder="Enter a number" value="30" onchange="createSummaryPage()"> days prior</p>
-                <div>
-                    <button onclick="showLagMenu()" id="lagBtn">Graphs Lagging?</button>
+                <br><br><br>
+            </section>
+
+            <section id = "histogramDiv"  class="mainDiv">
+                <div class = 'quickOverviewTopDiv'>
+                    <h1>Histograms</h1>
+                    <p>Edit the increments.</p>
                 </div>
-                <div id = 'lagDiv'>
-                    <p id = "debugDuration"></p>
-                    <p id = "graphDetailText">Adjust graph quality</p>
-                    <form action="">
-                    <input type="radio" class = "lagOption" name="lagOption" id = "very_high" value="9999" onChange = "applyLagOptions()">
-                    <label for="very_high" class = "lagOptionText">Very High<b style = "color: red" > (Warning, turns into a lag machine, especially with a high number of activities!)</b></label><br>
 
-                    <input type="radio" class = "lagOption" name="lagOption" id = "high" value="200" onChange = "applyLagOptions()" checked >
-                    <label for="high" class = "lagOptionText">High (150)</label><br>
-
-                    <input type="radio" class = "lagOption" name="lagOption" id = "mid" value="100" onChange = "applyLagOptions()">
-                    <label for="mid" class = "lagOptionText">Medium (100)</label><br>
-
-                    <input type="radio" class = "lagOption" name="lagOption"  id = "low" value="50" onChange = "applyLagOptions()">
-                    <label for="low" class = "lagOptionText">Low (50)</label><br>
-
-                    <input type="radio" class = "lagOption" name="lagOption"  id = "depend" value="100" onChange = "applyLagOptions()">
-                    <label for="depend" class = "lagOptionText">Dependent on # day moving average (fast if high, slow if low)</label><br>
-
-                    <input type="radio" class = "lagOption" name="custom" id = "custom" value="250" onChange = "applyLagOptions()">
-                    <label for="custom" class = "lagOptionText">Custom <input type="number" value = "250" onChange = "applyLagOptions()"></label><br>
-                    </form>
-                    
-                </div>-->
-
-                <p className = "summaryDivHeading">Cumulative trends</p>
-                <p className = "summaryDivSubHeading">To view these graphs in more detail, please head to the "Trends" section.</p>
-                <!--<div class = "innerLabel">
-                    <label for="numberOfDays" class = "labels">Number </label>
-                    
-                </div>-->
-            </div>
-            <div class = "graphDiv">
-                <Button class = "incrementBtn" onClick = "showIncrementMenu('pace')">Edit Increments</Button>
-                <h1 class = "graphHeader">Pace (min / mi)</h1>
-                <p id = "pace_distribution_overview" class = "overview"></p>
-                <!--<canvas id = "pace_distribution" class = "graph"></canvas>-->
-                <div id = "pace_distribution" class = "graph"></div>
-                <div id = "pace_distribution_breakdown" class = "boxAndWhiskerData"></div>
-                <div class = "infoWrapper" id = "pace_distribution_wrapper">
-                    <div class = "infoWrapperLeft">
-                        <p id = "pace_distribution_counter" class = "counterDisplay"><span></span> runs at <span></span> pace</p>
-                        <p id = "pace_distribution_info" class = "info"></p>
-                    </div>
-                    <div class = "infoWrapperRight"></div>
-                </div>
-            </div>
-            
-            <div class = "graphDiv">
-                <Button class = "incrementBtn" onClick = "showIncrementMenu('uptime')">Edit Increments</Button>
-                <h1 class = "graphHeader">% Uptime</h1>
-                <p id = "time_distribution_overview" class = "overview"></p>
-                <!--<canvas id = "time_distribution" class = "graph"></canvas>-->
-                <div id = "time_distribution" class = "graph"></div>
-                <div id = "time_distribution_breakdown" class = "boxAndWhiskerData"></div>
-                <div class = "infoWrapper" id = "time_distribution_wrapper">
-                    <div class = "infoWrapperLeft">
-                        <p id = "time_distribution_counter" class = "counterDisplay"><span></span> runs with <span></span> uptime</p>
-                        <p id = "time_distribution_info" class = "info"></p>
-                    </div>
-                    <div class = "infoWrapperRight"></div>
-                </div>
-            </div>
-            
-            <div class = "graphDiv">
-                <Button class = "incrementBtn" onClick = "showIncrementMenu('distance')">Edit Increments</Button>
-                <h1 class = "graphHeader">Distance</h1>
-                <p id = "dist_distribution_overview" class = "overview"></p>
-                <!--<canvas id = "distance_distribution" class = "graph"></canvas>-->
-                <div id = "dist_distribution" class = "graph"></div>
-                <div id = "dist_distribution_breakdown" class = "boxAndWhiskerData"></div>
-                <div class = "infoWrapper" id = "dist_distribution_wrapper">
-                    <div class = "infoWrapperLeft">
-                        <p id = "dist_distribution_counter" class = "counterDisplay"><span></span> runs with distance <span></span></p>
-                        <p id = "dist_distribution_info" class = "info"></p>
-                    </div>
-                    <div class = "infoWrapperRight"></div>
-                </div>
-            </div>
-            
-            <div class = "graphDiv">
-                <Button class = "incrementBtn" onClick = "showIncrementMenu('elevation')">Edit Increments</Button>
-                <h1 class = "graphHeader">Elevation gain</h1>
-                <p id = "elev_distribution_overview" class = "overview"></p>
-                <!--<canvas id = "elev_distribution" class = "graph"></canvas>-->
-                <div id = "elev_distribution" class = "graph"></div>
-                <div id = "elev_distribution_breakdown" class = "boxAndWhiskerData"></div>
-                <div class = "infoWrapper" id = "elev_distribution_wrapper">
-                    <div class = "infoWrapperLeft">
-                        <p id = "elev_distribution_counter" class = "counterDisplay"><span></span> runs with <span></span> elevation gain</p>
-                        <p id = "elev_distribution_info" class = "info"></p>
-                    </div>
-                    <div class = "infoWrapperRight"></div>
-                </div>
-            </div>
-            
-            <br><br><br>
-    
-            <div id = "settings">
-                <div id = "settingsDiv">
-                    <p id = "settingsTitle"></p>
-                    <label for="leftOutlier" class = "settingsLabels" >Left Outlier:</label>
-                    <input type="number" name = "leftOutlier"  class = "settingsLabelsBox" onchange = "realtimeUpdateLeft()">
-                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <label for="rightOutlier" class = "settingsLabels" >Right Outlier:</label>
-                    <input type="number" name = "rightOutlier" class = "settingsLabelsBox" onchange = "realtimeUpdateRight()">
-                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <label for="increment" class = "settingsLabels">Increment By:</label>
-                    <input type="number" name = "increment" class = "settingsLabelsBox" onChange = "realtimeUpdateRight()">
-                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <br><br>
-                    <input type="checkbox" name = "leftOutlierCheck" class = "settingsLabelsCheck" >
-                    <label for="leftOutlierCheck" class = "settingsLabels" id = "leftOutlier">Include values less than left outlier?</label>
-                    <br><br>
-                    <input type="checkbox" name = "rightOutlierCheck" class = "settingsLabelsCheck"  >
-                    <label for="rightOutlierCheck" class = "settingsLabels" id = "rightOutlier">Include values greater than right outlier?</label>
-                    <br><br>
-                    <label for="" class = "settingsLabels">Primary Distribution Color: </label>
-                    <input type="color" name = "distributionColor" value = "#149c1f" id = "colorPicker">
-                    <br><br>
-                    <label for="" class = "settingsLabels">Secondary Distribution Color: </label>
-                    <input type="color" name = "distributionColor2" value = "#149c1f" id = "colorPicker2">
-                    <br><br>
-                    <div style = "text-align: right">
-                        <button class = "settingsButtons" id = "closeBtn" onClick = "closeSettingsMenu()">Close</button>
-                        <button class = "settingsButtons" id = "applyBtn" onClick = "applySettings()">Apply</button>
+                <div class = "graphDiv">
+                    <Button class = "incrementBtn" onClick = "showIncrementMenu('pace')">Edit Increments</Button>
+                    <h1 class = "graphHeader">Pace (min / mi)</h1>
+                    <p id = "pace_distribution_overview" class = "overview"></p>
+                    <!--<canvas id = "pace_distribution" class = "graph"></canvas>-->
+                    <div id = "pace_distribution" class = "graph"></div>
+                    <div id = "pace_distribution_breakdown" class = "boxAndWhiskerData"></div>
+                    <div class = "infoWrapper" id = "pace_distribution_wrapper">
+                        <div class = "infoWrapperLeft">
+                            <p id = "pace_distribution_counter" class = "counterDisplay"><span></span> runs at <span></span> pace</p>
+                            <p id = "pace_distribution_info" class = "info"></p>
+                        </div>
+                        <div class = "infoWrapperRight"></div>
                     </div>
                 </div>
-            </div>
-    
+                
+                <div class = "graphDiv">
+                    <Button class = "incrementBtn" onClick = "showIncrementMenu('uptime')">Edit Increments</Button>
+                    <h1 class = "graphHeader">% Uptime</h1>
+                    <p id = "time_distribution_overview" class = "overview"></p>
+                    <!--<canvas id = "time_distribution" class = "graph"></canvas>-->
+                    <div id = "time_distribution" class = "graph"></div>
+                    <div id = "time_distribution_breakdown" class = "boxAndWhiskerData"></div>
+                    <div class = "infoWrapper" id = "time_distribution_wrapper">
+                        <div class = "infoWrapperLeft">
+                            <p id = "time_distribution_counter" class = "counterDisplay"><span></span> runs with <span></span> uptime</p>
+                            <p id = "time_distribution_info" class = "info"></p>
+                        </div>
+                        <div class = "infoWrapperRight"></div>
+                    </div>
+                </div>
+                
+                <div class = "graphDiv">
+                    <Button class = "incrementBtn" onClick = "showIncrementMenu('distance')">Edit Increments</Button>
+                    <h1 class = "graphHeader">Distance</h1>
+                    <p id = "dist_distribution_overview" class = "overview"></p>
+                    <!--<canvas id = "distance_distribution" class = "graph"></canvas>-->
+                    <div id = "dist_distribution" class = "graph"></div>
+                    <div id = "dist_distribution_breakdown" class = "boxAndWhiskerData"></div>
+                    <div class = "infoWrapper" id = "dist_distribution_wrapper">
+                        <div class = "infoWrapperLeft">
+                            <p id = "dist_distribution_counter" class = "counterDisplay"><span></span> runs with distance <span></span></p>
+                            <p id = "dist_distribution_info" class = "info"></p>
+                        </div>
+                        <div class = "infoWrapperRight"></div>
+                    </div>
+                </div>
+                
+                <div class = "graphDiv">
+                    <Button class = "incrementBtn" onClick = "showIncrementMenu('elevation')">Edit Increments</Button>
+                    <h1 class = "graphHeader">Elevation gain</h1>
+                    <p id = "elev_distribution_overview" class = "overview"></p>
+                    <!--<canvas id = "elev_distribution" class = "graph"></canvas>-->
+                    <div id = "elev_distribution" class = "graph"></div>
+                    <div id = "elev_distribution_breakdown" class = "boxAndWhiskerData"></div>
+                    <div class = "infoWrapper" id = "elev_distribution_wrapper">
+                        <div class = "infoWrapperLeft">
+                            <p id = "elev_distribution_counter" class = "counterDisplay"><span></span> runs with <span></span> elevation gain</p>
+                            <p id = "elev_distribution_info" class = "info"></p>
+                        </div>
+                        <div class = "infoWrapperRight"></div>
+                    </div>
+                </div>
+                
+                <br><br><br>
+        
+                <div id = "settings">
+                    <div id = "settingsDiv">
+                        <p id = "settingsTitle"></p>
+                        <label for="leftOutlier" class = "settingsLabels" >Left Outlier:</label>
+                        <input type="number" name = "leftOutlier"  class = "settingsLabelsBox" onchange = "realtimeUpdateLeft()">
+                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <label for="rightOutlier" class = "settingsLabels" >Right Outlier:</label>
+                        <input type="number" name = "rightOutlier" class = "settingsLabelsBox" onchange = "realtimeUpdateRight()">
+                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <label for="increment" class = "settingsLabels">Increment By:</label>
+                        <input type="number" name = "increment" class = "settingsLabelsBox" onChange = "realtimeUpdateRight()">
+                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <br><br>
+                        <input type="checkbox" name = "leftOutlierCheck" class = "settingsLabelsCheck" >
+                        <label for="leftOutlierCheck" class = "settingsLabels" id = "leftOutlier">Include values less than left outlier?</label>
+                        <br><br>
+                        <input type="checkbox" name = "rightOutlierCheck" class = "settingsLabelsCheck"  >
+                        <label for="rightOutlierCheck" class = "settingsLabels" id = "rightOutlier">Include values greater than right outlier?</label>
+                        <br><br>
+                        <label for="" class = "settingsLabels">Primary Distribution Color: </label>
+                        <input type="color" name = "distributionColor" value = "#149c1f" id = "colorPicker">
+                        <br><br>
+                        <label for="" class = "settingsLabels">Secondary Distribution Color: </label>
+                        <input type="color" name = "distributionColor2" value = "#149c1f" id = "colorPicker2">
+                        <br><br>
+                        <div style = "text-align: right">
+                            <button class = "settingsButtons" id = "closeBtn" onClick = "closeSettingsMenu()">Close</button>
+                            <button class = "settingsButtons" id = "applyBtn" onClick = "applySettings()">Apply</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <hr>
-            <h1 class='graphHeader'>Scatterplot</h1>
-            <br><br>
-            <div id = 'scatterplotDiv'>
-                <!--the actual scatterplot-->
-                <div id="scatterPlot">
-                    <canvas id = 'scatterCanv' style="width: 100%;height: 80vh;"></canvas>
-                    <div id = 'predictionDiv'>
-                        <p id = 'predictionTxtX'></p>
-                        <p id = 'predictionTxtY'></p>
-                    </div>
-                    <div id = 'spectrum'>
-                        <p id = 'spectrumLowerBound'></p>
-                        <p id = 'spectrumUpperBound'></p>
-                    </div>
-                    <hr width="50%">
-                    <p id = "curveText">Curve of best fit: <span id = "curveEquation"></span></p>
-                    <div style="width: 100%; font-size: 125%;">
-                        <p id = "">Enter <b class = "xPredictionVarName" style = "color: orange;"></b> to predict <b class = "yPredictionVarName" style = "color: orange;"></b> based on best fit.</p>
-                        <div class = 'subScatterInputLabelsFlex'>   
-                            <label for="xInput" class = 'subScatterInputLabels'>Input <span class = "xPredictionVarName"></span></label>
-                            <input type="text" name="xInput" class = "scatterBoundInput" onchange = "showInputPrediction()">
-                        </div>
-                        <div class = 'subScatterInputLabelsFlex'>   
-                            <label for="yInput" class = 'subScatterInputLabels'>Predicted <span class = "yPredictionVarName"></span></label>
-                            <input type="text" name="yInput" class = "scatterBoundInput">
-                        </div>
-                    </div>
+            <section id = "scatterDiv"  class="mainDiv">
+                <div class = 'quickOverviewTopDiv'>
+                    <h1>Scatterplot</h1>
+                    <p>Edit the increments.</p>
                 </div>
+                <br><br>
+                <section id = 'scatterplotDiv'>
+                    <!--the actual scatterplot-->
+                    <div id="scatterPlot">
+                        <canvas id = 'scatterCanv' style="width: 100%;height: 80vh;"></canvas>
+                        <div id = 'predictionDiv'>
+                            <p id = 'predictionTxtX'></p>
+                            <p id = 'predictionTxtY'></p>
+                        </div>
+                        <div id = 'spectrum'>
+                            <p id = 'spectrumLowerBound'></p>
+                            <p id = 'spectrumUpperBound'></p>
+                        </div>
+                        <hr width="50%">
+                        <p id = "curveText">Curve of best fit: <span id = "curveEquation"></span></p>
+                        <div style="width: 100%; font-size: 125%;">
+                            <p id = "">Enter <b class = "xPredictionVarName" style = "color: orange;"></b> to predict <b class = "yPredictionVarName" style = "color: orange;"></b> based on best fit.</p>
+                            <div class = 'subScatterInputLabelsFlex'>   
+                                <label for="xInput" class = 'subScatterInputLabels'>Input <span class = "xPredictionVarName"></span></label>
+                                <input type="text" name="xInput" class = "scatterBoundInput" onchange = "showInputPrediction()">
+                            </div>
+                            <div class = 'subScatterInputLabelsFlex'>   
+                                <label for="yInput" class = 'subScatterInputLabels'>Predicted <span class = "yPredictionVarName"></span></label>
+                                <input type="text" name="yInput" class = "scatterBoundInput">
+                            </div>
+                        </div>
+                    </div>
 
-                <!--settings-->
-                <div id = 'scatterSettingsHolder'>
-                    <div class = 'scatterInputLabelsFlex'>
-                        <h2 class = 'scatterInputLabels'>X-Axis: &nbsp;&nbsp;</h2>
-                        <div class = 'scatterArrowHolder'>
-                            <h2 class = 'scatterArrow'>&gt;</h2>
+                    <!--settings-->
+                    <div id = 'scatterSettingsHolder'>
+                        <div class = 'scatterInputLabelsFlex'>
+                            <h2 class = 'scatterInputLabels'>X-Axis: &nbsp;&nbsp;</h2>
+                            <div class = 'scatterArrowHolder'>
+                                <h2 class = 'scatterArrow'>&gt;</h2>
+                            </div>
+                        </div>
+                        
+                        <div id = 'scatterSettingsHolderXaxis' class = 'scatterSettingsHolderSection'>
+                            <select name="variable1" id="scatterVariable1" onChange = "updateScatterDrawingsInResponseToVariableChange(1)">
+                                <option value="distance" selected>Distance</option>
+                                <option value="time">Moving Time</option>
+                                <option value="elapsedTime">Elapsed Time</option>
+                                <option value="uptime">Uptime (%)</option>
+                                <option value="elevation">Elevation Gain</option>
+                                <option value="incline">Incline</option>
+                                <option value="pace">Pace</option>
+                                <option value="kudos">Kudos</option>
+                                <option value="maxPace">Top speed</option>
+                                <option value="cadence">Cadence (steps/min)</option>
+                                <option value="stepsPerMile">Steps per mile</option>
+                                <option value="strideLength">Stride length</option>
+                                <option value="startDate">Date (mm-dd-yyyy)</option>
+                            </select>
+                            <div class = 'subScatterInputLabelsFlex'>   
+                                <label for="xAxisMin" class = 'subScatterInputLabels'>Lower Bound</label>
+                                <input type="text" name="xAxisMin" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+                            </div>
+                            <div class = 'subScatterInputLabelsFlex'>   
+                                <label for="xAxisMax" class = 'subScatterInputLabels'>Upper Bound</label>
+                                <input type="text" name="xAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+                            </div>
+                        </div>
+                        <br>
+                        <div class = 'scatterInputLabelsFlex'>
+                            <h2 class = 'scatterInputLabels'>Y-Axis: &nbsp;&nbsp;</h2>
+                            <div class = 'scatterArrowHolder'>
+                                <h2 class = 'scatterArrow'>&gt;</h2>
+                            </div>
+                        </div>
+                        <div id = 'scatterSettingsHolderYaxis' class = 'scatterSettingsHolderSection'>
+                            <select name="variable2" id="scatterVariable2" onChange = "updateScatterDrawingsInResponseToVariableChange(2)">
+                                <option value="distance">Distance</option>
+                                <option value="time">Moving Time</option>
+                                <option value="elapsedTime">Elapsed Time</option>
+                                <option value="uptime">Uptime (%)</option>
+                                <option value="elevation">Elevation Gain</option>
+                                <option value="incline">Incline</option>
+                                <option value="pace" selected>Pace</option>
+                                <option value="kudos">Kudos</option>
+                                <option value="maxPace">Top speed</option>
+                                <option value="cadence">Cadence (steps/min)</option>
+                                <option value="stepsPerMile">Steps per mile</option>
+                                <option value="strideLength">Stride length</option>
+                                <option value="startDate">Date (mm-dd-yyyy)</option>
+                            </select>
+                            <div class = 'subScatterInputLabelsFlex'>   
+                                <p for="yAxisMin" class = 'subScatterInputLabels'>Lower Bound</p>
+                                <input type="text" name="yAxisMin" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+                            </div>
+                            <div class = 'subScatterInputLabelsFlex'>
+                                <p for="yAxisMax" class = 'subScatterInputLabels'>Upper Bound</p>
+                                <input type="text" name="yAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+                            </div>
+                        </div>
+                        <br>
+                        <div class = 'scatterInputLabelsFlex'>
+                            <h2 class = 'scatterInputLabels'>Tertiary Variable &nbsp;&nbsp;</h2>
+                            <div class = 'scatterArrowHolder'>
+                                <h2 class = 'scatterArrow'>&gt;</h2>
+                            </div>
+                        </div>
+                        <div id = 'scatterSettingsHolderTertiary' class = 'scatterSettingsHolderSection'>
+                            <select name="variable3" id="scatterVariable3" onChange = "updateScatterDrawingsInResponseToVariableChange(3)">
+                                <option value="" selected>None</option>
+                                <option value="distance">Distance</option>
+                                <option value="time">Moving Time</option>
+                                <option value="elapsedTime">Elapsed Time</option>
+                                <option value="uptime">Uptime (%)</option>
+                                <option value="elevation">Elevation Gain</option>
+                                <option value="incline">Incline</option>
+                                <option value="pace">Pace</option>
+                                <option value="kudos">Kudos</option>
+                                <option value="maxPace">Top speed</option>
+                                <option value="cadence">Cadence (steps/min)</option>
+                                <option value="stepsPerMile">Steps per mile</option>
+                                <option value="strideLength">Stride length</option>
+                                <option value="startDate">Date (mm-dd-yyyy)</option>
+                            </select>
+                            <div class = 'subScatterInputLabelsFlex'>   
+                                <input type="color" name = "scatterColor1" value = "#ff0000" class = 'scatterColorPickers' onChange = "updateScatterDrawings()">
+                                <label for="zAxisMin" class = 'subScatterInputLabelsColor'>L. Bound</label>
+                                <input type="text" name="zAxisMin" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+                            </div>
+                            <div class = 'subScatterInputLabelsFlex'>
+                                <input type="color" name = "scatterColor2" value = "#ffdd00" class = 'scatterColorPickers'  onChange = "updateScatterDrawings()" >
+                                <label for="zAxisMax" class = 'subScatterInputLabelsColor'>U. Bound</label>
+                                <input type="text" name="zAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+                            </div>                
+                        </div>
+                        <br>
+                        <div class = 'scatterInputLabelsFlex'>
+                            <h2 class = 'scatterInputLabels'>Curve of Best Fit</h2>
+                            <div class = 'scatterArrowHolder'>
+                                <h2 class = 'scatterArrow'>&gt;</h2>
+                            </div>
+                        </div>
+                        <div id = 'scatterSettingsHolderCurve' class = 'scatterSettingsHolderSection'>
+                            <div class = 'subScatterInputLabelsFlex'>
+                                <label for="curveColor" class = 'subScatterInputLabelsBig'>Curve Color</label>
+                                <input type="color" name = "curveColor" value = "#00ff7b" class = 'scatterColorPickers'  onChange = "updateScatterDrawings()" >
+                            </div>
+                            <div class = 'subScatterInputLabelsFlex'>
+                                <label for="curveSize" class = 'subScatterInputLabelsBig'>Size (0 = hide curve)</label>
+                                <input type="number" name="curveSize" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value = "13">
+                            </div>
+                        </div>
+                        <br>
+                        <div class = 'scatterInputLabelsFlex'>
+                            <h2 class = 'scatterInputLabels'>Other Graph Options</h2>
+                            <div class = 'scatterArrowHolder'>
+                                <h2 class = 'scatterArrow'>&gt;</h2>
+                            </div>
+                        </div>
+                        <div id = 'scatterSettingsHolderPlot' class = 'scatterSettingsHolderSection'>
+                            <div class = 'subScatterInputLabelsFlex'>
+                                <label for="plotColor" class = 'subScatterInputLabelsBig'>Plot Color</label>
+                                <input type="color" name = "plotColor" value = "#0008ff" class = 'scatterColorPickers'  onChange = "updateScatterDrawings()" >
+                            </div>
+                            <div class = 'subScatterInputLabelsFlex'>
+                                <label for="plotSize" class = 'subScatterInputLabelsBig'>Plot Size</label>
+                                <input type="number" name="plotSize" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value = "13">
+                            </div>
+                            <div class = 'subScatterInputLabelsFlex'>
+                                <label for="incrementsX" class = 'subScatterInputLabelsBig'>X increments</label>
+                                <input type="number" name="incrementsX" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value="4">
+                            </div>
+                            <div class = 'subScatterInputLabelsFlex'>
+                                <label for="incrementsY" class = 'subScatterInputLabelsBig'>Y increments</label>
+                                <input type="number" name="incrementsY" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value="4">
+                            </div>
                         </div>
                     </div>
-                    
-                    <div id = 'scatterSettingsHolderXaxis' class = 'scatterSettingsHolderSection'>
-                        <select name="variable1" id="scatterVariable1" onChange = "updateScatterDrawingsInResponseToVariableChange(1)">
-                            <option value="distance" selected>Distance</option>
-                            <option value="time">Moving Time</option>
-                            <option value="elapsedTime">Elapsed Time</option>
-                            <option value="uptime">Uptime (%)</option>
-                            <option value="elevation">Elevation Gain</option>
-                            <option value="incline">Incline</option>
-                            <option value="pace">Pace</option>
-                            <option value="kudos">Kudos</option>
-                            <option value="maxPace">Top speed</option>
-                            <option value="cadence">Cadence (steps/min)</option>
-                            <option value="stepsPerMile">Steps per mile</option>
-                            <option value="strideLength">Stride length</option>
-                            <option value="startDate">Date (mm-dd-yyyy)</option>
-                        </select>
-                        <div class = 'subScatterInputLabelsFlex'>   
-                            <label for="xAxisMin" class = 'subScatterInputLabels'>Lower Bound</label>
-                            <input type="text" name="xAxisMin" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
-                        </div>
-                        <div class = 'subScatterInputLabelsFlex'>   
-                            <label for="xAxisMax" class = 'subScatterInputLabels'>Upper Bound</label>
-                            <input type="text" name="xAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
-                        </div>
-                    </div>
-                    <br>
-                    <div class = 'scatterInputLabelsFlex'>
-                        <h2 class = 'scatterInputLabels'>Y-Axis: &nbsp;&nbsp;</h2>
-                        <div class = 'scatterArrowHolder'>
-                            <h2 class = 'scatterArrow'>&gt;</h2>
-                        </div>
-                    </div>
-                    <div id = 'scatterSettingsHolderYaxis' class = 'scatterSettingsHolderSection'>
-                        <select name="variable2" id="scatterVariable2" onChange = "updateScatterDrawingsInResponseToVariableChange(2)">
-                            <option value="distance">Distance</option>
-                            <option value="time">Moving Time</option>
-                            <option value="elapsedTime">Elapsed Time</option>
-                            <option value="uptime">Uptime (%)</option>
-                            <option value="elevation">Elevation Gain</option>
-                            <option value="incline">Incline</option>
-                            <option value="pace" selected>Pace</option>
-                            <option value="kudos">Kudos</option>
-                            <option value="maxPace">Top speed</option>
-                            <option value="cadence">Cadence (steps/min)</option>
-                            <option value="stepsPerMile">Steps per mile</option>
-                            <option value="strideLength">Stride length</option>
-                            <option value="startDate">Date (mm-dd-yyyy)</option>
-                        </select>
-                        <div class = 'subScatterInputLabelsFlex'>   
-                            <p for="yAxisMin" class = 'subScatterInputLabels'>Lower Bound</p>
-                            <input type="text" name="yAxisMin" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
-                        </div>
-                        <div class = 'subScatterInputLabelsFlex'>
-                            <p for="yAxisMax" class = 'subScatterInputLabels'>Upper Bound</p>
-                            <input type="text" name="yAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
-                        </div>
-                    </div>
-                    <br>
-                    <div class = 'scatterInputLabelsFlex'>
-                        <h2 class = 'scatterInputLabels'>Tertiary Variable &nbsp;&nbsp;</h2>
-                        <div class = 'scatterArrowHolder'>
-                            <h2 class = 'scatterArrow'>&gt;</h2>
-                        </div>
-                    </div>
-                    <div id = 'scatterSettingsHolderTertiary' class = 'scatterSettingsHolderSection'>
-                        <select name="variable3" id="scatterVariable3" onChange = "updateScatterDrawingsInResponseToVariableChange(3)">
-                            <option value="" selected>None</option>
-                            <option value="distance">Distance</option>
-                            <option value="time">Moving Time</option>
-                            <option value="elapsedTime">Elapsed Time</option>
-                            <option value="uptime">Uptime (%)</option>
-                            <option value="elevation">Elevation Gain</option>
-                            <option value="incline">Incline</option>
-                            <option value="pace">Pace</option>
-                            <option value="kudos">Kudos</option>
-                            <option value="maxPace">Top speed</option>
-                            <option value="cadence">Cadence (steps/min)</option>
-                            <option value="stepsPerMile">Steps per mile</option>
-                            <option value="strideLength">Stride length</option>
-                            <option value="startDate">Date (mm-dd-yyyy)</option>
-                        </select>
-                        <div class = 'subScatterInputLabelsFlex'>   
-                            <input type="color" name = "scatterColor1" value = "#ff0000" class = 'scatterColorPickers' onChange = "updateScatterDrawings()">
-                            <label for="zAxisMin" class = 'subScatterInputLabelsColor'>L. Bound</label>
-                            <input type="text" name="zAxisMin" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
-                        </div>
-                        <div class = 'subScatterInputLabelsFlex'>
-                            <input type="color" name = "scatterColor2" value = "#ffdd00" class = 'scatterColorPickers'  onChange = "updateScatterDrawings()" >
-                            <label for="zAxisMax" class = 'subScatterInputLabelsColor'>U. Bound</label>
-                            <input type="text" name="zAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
-                        </div>                
-                    </div>
-                    <br>
-                    <div class = 'scatterInputLabelsFlex'>
-                        <h2 class = 'scatterInputLabels'>Curve of Best Fit</h2>
-                        <div class = 'scatterArrowHolder'>
-                            <h2 class = 'scatterArrow'>&gt;</h2>
-                        </div>
-                    </div>
-                    <div id = 'scatterSettingsHolderCurve' class = 'scatterSettingsHolderSection'>
-                        <div class = 'subScatterInputLabelsFlex'>
-                            <label for="curveColor" class = 'subScatterInputLabelsBig'>Curve Color</label>
-                            <input type="color" name = "curveColor" value = "#00ff7b" class = 'scatterColorPickers'  onChange = "updateScatterDrawings()" >
-                        </div>
-                        <div class = 'subScatterInputLabelsFlex'>
-                            <label for="curveSize" class = 'subScatterInputLabelsBig'>Size (0 = hide curve)</label>
-                            <input type="number" name="curveSize" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value = "13">
-                        </div>
-                    </div>
-                    <br>
-                    <div class = 'scatterInputLabelsFlex'>
-                        <h2 class = 'scatterInputLabels'>Other Graph Options</h2>
-                        <div class = 'scatterArrowHolder'>
-                            <h2 class = 'scatterArrow'>&gt;</h2>
-                        </div>
-                    </div>
-                    <div id = 'scatterSettingsHolderPlot' class = 'scatterSettingsHolderSection'>
-                        <div class = 'subScatterInputLabelsFlex'>
-                            <label for="plotColor" class = 'subScatterInputLabelsBig'>Plot Color</label>
-                            <input type="color" name = "plotColor" value = "#0008ff" class = 'scatterColorPickers'  onChange = "updateScatterDrawings()" >
-                        </div>
-                        <div class = 'subScatterInputLabelsFlex'>
-                            <label for="plotSize" class = 'subScatterInputLabelsBig'>Plot Size</label>
-                            <input type="number" name="plotSize" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value = "13">
-                        </div>
-                        <div class = 'subScatterInputLabelsFlex'>
-                            <label for="incrementsX" class = 'subScatterInputLabelsBig'>X increments</label>
-                            <input type="number" name="incrementsX" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value="4">
-                        </div>
-                        <div class = 'subScatterInputLabelsFlex'>
-                            <label for="incrementsY" class = 'subScatterInputLabelsBig'>Y increments</label>
-                            <input type="number" name="incrementsY" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value="4">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <br><br><br>
+                </section>
+                <br><br><br>
+
         </div>
     </div>
 </body>

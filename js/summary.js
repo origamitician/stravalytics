@@ -16,10 +16,16 @@ function createQuickStats() {
         {display: "Avg Pace", property: null, unit: '/mi'},
     ]
 
+    const toDelete = document.getElementsByClassName('statisticHolder');
+    while(toDelete[0]) {
+        toDelete[0].parentNode.removeChild(toDelete[0]);
+    }
+
     const IDsToAddStatisticsTo = ['yearStatistics', 'monthStatistics', 'weekStatistics']
     const numberOfDaysPerMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 31 /*for extra */];
 
     IDsToAddStatisticsTo.forEach(id => {
+        let totalMilesCurrent, totalTimeCurrent, totalMilesPrevious, totalTimePrevious // used to calculate average pace
         for (let i = 0; i < statisticsToIterate.length; i++) {
             const outerStatisticWrapper = document.createElement('div');
             outerStatisticWrapper.className  = 'statisticHolder';
@@ -68,7 +74,6 @@ function createQuickStats() {
                 } else {
                     endPrevious = dateArray.indexOf((prevmonth) + '-' + numberOfDaysPerMonth[prevmonth-1]+ '-' + year);
                 }
-               
 
                 startDateDisplay = prevmonth + '/1/' + year;
                 endDateDisplay = prevmonth + '/' + new Date().getDate() + '/' + year;
@@ -95,8 +100,18 @@ function createQuickStats() {
             let total;
             if (statisticsToIterate[i].property == "time") {
                 total = convert(rawCurrentTotal)
+                totalTimeCurrent = rawCurrentTotal;
             } else {
-                total = rawCurrentTotal;
+                if (statisticsToIterate[i].property == "distance") {
+                    totalMilesCurrent = rawCurrentTotal;
+                }
+
+                if (statisticsToIterate[i].display == "Avg Pace") {
+                    rawCurrentTotal = totalTimeCurrent / totalMilesCurrent;
+                    total = convert((totalTimeCurrent / totalMilesCurrent), 2);
+                } else {
+                    total = rawCurrentTotal;
+                }
             }
             
             innerStatisticText.getElementsByTagName('b')[0].innerHTML = total + statisticsToIterate[i].unit ;
@@ -114,26 +129,57 @@ function createQuickStats() {
             
             if (statisticsToIterate[i].property == "time") {
                 total = convert(rawPreviousTotal)
-            } else {
-                total = rawPreviousTotal;
+                totalTimePrevious = rawPreviousTotal;
+            } else { 
+                if (statisticsToIterate[i].property == "distance") {
+                    totalMilesPrevious = rawPreviousTotal;
+                }
+    
+                if (statisticsToIterate[i].display == "Avg Pace") {
+                    rawPreviousTotal = totalTimePrevious / totalMilesPrevious;
+                    total = convert((totalTimePrevious / totalMilesPrevious), 2);
+                } else {
+                    total = rawPreviousTotal;
+                }
             }
 
             let percentage;
             if (rawCurrentTotal > rawPreviousTotal) {
-                percentage = "Up " + (((rawCurrentTotal / rawPreviousTotal) * 100) - 100).toFixed(2) + "%"
+                if (statisticsToIterate[i].display == "Avg Pace") {
+                    percentage = "▼" + (((rawCurrentTotal / rawPreviousTotal) * 100) - 100).toFixed(2) + "%"
+                } else {
+                    percentage = "▲" + (((rawCurrentTotal / rawPreviousTotal) * 100) - 100).toFixed(2) + "%"
+                }
+                
             } else {
-                percentage = "Down " + (((rawPreviousTotal - rawCurrentTotal) / rawPreviousTotal) * 100).toFixed(2) + "%"
+                if (statisticsToIterate[i].display == "Avg Pace") {
+                    percentage = "▲" + (((rawPreviousTotal - rawCurrentTotal) / rawPreviousTotal) * 100).toFixed(2) + "%"
+                } else {
+                    percentage = "▼" + (((rawPreviousTotal - rawCurrentTotal) / rawPreviousTotal) * 100).toFixed(2) + "%"
+                }
             }
+            
+            let timeIndicator;
+            if (id === 'yearStatistics') {
+                timeIndicator = "Last yr"
+            } else if (id === 'monthStatistics') {
+                timeIndicator = "Last mth"
+            } else {
+                timeIndicator = "Last wk"
+            }
+            
             /* sub.innerHTML = 'Totals from <b>' + startDateDisplay + '</b> to <b>' + endDateDisplay + '</b>: ' + total + statisticsToIterate[i].unit + ' (' + percentage + ')';  */
-            sub.innerHTML = "(" + percentage + " from " + total + statisticsToIterate[i].unit + ')'/* + 'rawCurrentTotal is: ' + rawCurrentTotal + ' ' + 'rawPreviousTotal is: ' + rawPreviousTotal;*/
+            if (rawPreviousTotal) {
+                sub.innerHTML = timeIndicator + ": " + total + statisticsToIterate[i].unit + " (" + percentage + ")"
+            } else {
+                sub.innerHTML = "No available data for " + timeIndicator
+            }
+            /* + 'rawCurrentTotal is: ' + rawCurrentTotal + ' ' + 'rawPreviousTotal is: ' + rawPreviousTotal;*/
             outerStatisticWrapper.appendChild(sub);
             
             document.getElementById(id).appendChild(outerStatisticWrapper);
         }
     })
-    
-
-    
 }
 
 function totalFromDate(array, startIndex, endIndex, countingDays) {

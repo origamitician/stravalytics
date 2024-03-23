@@ -2,6 +2,28 @@
 var allActivities = []; // actual, dynamically changing activities list upon filtering.
 const allActivitiesRef = []; // FIXED activities list. All lifetime activities are stored in here so that no unneccessary API calls are made.
 
+// for asthetics
+const sectionColors = ['blue', 'cornflowerblue', 'green', 'purple', 'orange', 'maroon'];
+for (let i = 0; i < sectionColors.length; i++){
+    document.getElementsByClassName('applicationMenuOption')[i].style.borderLeft = '5px solid  ' + sectionColors[i];
+    document.getElementsByClassName('applicationMenuOption')[i].addEventListener('mouseover', () => {document.getElementsByClassName('applicationMenuOption')[i].style.backgroundColor = sectionColors[i]})
+    document.getElementsByClassName('applicationMenuOption')[i].addEventListener('mouseout', () => {document.getElementsByClassName('applicationMenuOption')[i].style.backgroundColor = 'white'})
+    document.getElementsByClassName('applicationMenuOption')[i].addEventListener('click', (e) => {
+        let link = e.target.href;
+        console.log(link.substring(link.indexOf('#')+1));
+        for (let j = 0; j < document.getElementsByClassName('mainDiv').length; j++) {
+            document.getElementsByClassName('mainDiv')[j].style.display = 'none';
+        }
+        document.getElementById(link.substring(link.indexOf('#')+1)).style.display = 'block';
+    })
+    if (i < 3) {
+        document.getElementsByClassName('quickOverviewTopDiv')[i].style.backgroundColor = sectionColors[i];
+    }
+}
+
+// keep track of which components are shown.
+
+    
 let loadingBarFrame = 0;
 document.getElementById("applicationBody").style.display = "none";
 function init(){
@@ -104,11 +126,11 @@ if (indexOfAuthorization == -1) {
 
             document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
             document.getElementById('applicationBody').style.display = 'block';
+            document.getElementById('applicationMenu').style.display = 'block';
             clearInterval(loadingBarInterval)
             document.getElementById('transition').style.display = 'none';
             document.getElementById('welcomeText').innerHTML = 'Welcome, ' + '<b>' + localStorage.getItem('stravaName') + '!</b>'
-            document.getElementById('welcomeMsg').style.display = 'block';
-            document.getElementById('welcomeMsg').style.display = 'flex';
+
         })
         
     } else {

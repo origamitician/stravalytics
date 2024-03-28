@@ -217,4 +217,17 @@
         width: 80%;
         margin: 0 10% 3% 10%;
     }
+
+    .quickStatisticHighlight span {
+        font-size: 4.5vw;
+        
+    }
+
+    .quickStatisticHighlight b {
+        font-size: 5vw;
+    }
+
+    .quickStatisticComparison {
+        margin-bottom: 6%;
+    }
 }

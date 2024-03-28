@@ -111,11 +111,11 @@
             <section id = "histogramDiv"  class="mainDiv">
                 <div class = 'quickOverviewTopDiv'>
                     <h1>Histograms</h1>
-                    <p>Edit the increments.</p>
+                    <p>Click on a bar to see more details. Clicking on a specific run will show you specific details of it!</p>
                 </div>
 
                 <div class = "graphDiv">
-                    <Button class = "incrementBtn" onClick = "showIncrementMenu('pace')">Edit Increments</Button>
+                    <Button class = "incrementBtn" onClick = "showIncrementMenu('pace')">Edit</Button>
                     <h1 class = "graphHeader">Pace (min / mi)</h1>
                     <p id = "pace_distribution_overview" class = "overview"></p>
                     <!--<canvas id = "pace_distribution" class = "graph"></canvas>-->
@@ -131,7 +131,7 @@
                 </div>
                 
                 <div class = "graphDiv">
-                    <Button class = "incrementBtn" onClick = "showIncrementMenu('uptime')">Edit Increments</Button>
+                    <Button class = "incrementBtn" onClick = "showIncrementMenu('uptime')">Edit</Button>
                     <h1 class = "graphHeader">% Uptime</h1>
                     <p id = "time_distribution_overview" class = "overview"></p>
                     <!--<canvas id = "time_distribution" class = "graph"></canvas>-->
@@ -147,7 +147,7 @@
                 </div>
                 
                 <div class = "graphDiv">
-                    <Button class = "incrementBtn" onClick = "showIncrementMenu('distance')">Edit Increments</Button>
+                    <Button class = "incrementBtn" onClick = "showIncrementMenu('distance')">Edit</Button>
                     <h1 class = "graphHeader">Distance</h1>
                     <p id = "dist_distribution_overview" class = "overview"></p>
                     <!--<canvas id = "distance_distribution" class = "graph"></canvas>-->
@@ -163,7 +163,7 @@
                 </div>
                 
                 <div class = "graphDiv">
-                    <Button class = "incrementBtn" onClick = "showIncrementMenu('elevation')">Edit Increments</Button>
+                    <Button class = "incrementBtn" onClick = "showIncrementMenu('elevation')">Edit</Button>
                     <h1 class = "graphHeader">Elevation gain</h1>
                     <p id = "elev_distribution_overview" class = "overview"></p>
                     <!--<canvas id = "elev_distribution" class = "graph"></canvas>-->
@@ -210,6 +210,11 @@
                             <button class = "settingsButtons" id = "applyBtn" onClick = "applySettings()">Apply</button>
                         </div>
                     </div>
+                </div>
+
+                <div id = "runLookupDiv">
+                    <h1 id = 'runLookupDivTitle'></h1>
+                    
                 </div>
             </section>
 

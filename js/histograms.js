@@ -700,10 +700,19 @@ function renderTypeGraph(array, type, color, color2, sortBy){
             document.getElementById("dist_distribution_overview").innerHTML = "Total mileage: " + (totalMileage.toFixed(2)) + " mi (" + (totalMileage*1.609).toFixed(2) + " km) <br> Avg per run: " + ((totalMileage/allActivities.length).toFixed(3)) + " mi (" + ((totalMileage/allActivities.length)*1.609).toFixed(3) + " km)"
 
             let minutes = Math.floor(totalMovingTime % 3600)
-            document.getElementById("time_distribution_overview").innerHTML = "<b>*Note: Uptime = (Moving time / Elapsed time) * 100</b><br>Total moving time: " + Math.floor(totalMovingTime / 3600) + " hours, " + Math.floor(minutes / 60) + " minutes, " + (minutes % 60) + " seconds <br> Avg. % moving overall: " + (totalMovingTime / totalElapsedTime*100).toFixed(3) + "%"
+            document.getElementById("time_distribution_overview").innerHTML = "<b>*Note: Uptime = (Moving time / Elapsed time) * 100</b><br>Total moving time: " + /*Math.floor(totalMovingTime / 3600) + " hours, " + Math.floor(minutes / 60) + " minutes, " + (minutes % 60)*/ convertToDays(totalMovingTime) + "<br> Avg. % moving overall: " + (totalMovingTime / totalElapsedTime*100).toFixed(3) + "%"
         }catch{
             
         }
+    }
+}
+
+function createRunLookup (id) {
+    const propertiesToParse = [{display: 'mi', property: 'distance'}, {display: '/mi', property: 'pace'}, {display: 'ft gain', property: 'elevation'}, {display: '%', property: 'uptime'}, {display: 'moving', property: 'time'}, {display: 'elapsed', property: 'elapsedTime'}, {display: "%", property: 'incline'}, {display: 'kudos', property: 'kudos'}, {display: 'steps/min', property: 'cadence'}, {display: 'steps', property: 'stepsPerMile'}, {display: 'ft', property: 'strideLength'}]
+    for (let i = 0; i < propertiesToParse.length; i++) {
+        const statDiv = document.createElement('div');
+        statDiv.className = 'indivRunLookupDiv';
+        
     }
 }
 

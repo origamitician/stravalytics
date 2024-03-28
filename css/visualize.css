@@ -297,12 +297,11 @@ body{
 .incrementBtn{
     font-size: 110%;
     position: absolute;
-    width: 15%;
+    padding: 0.5% 1.5% 0.5% 1.5%;
     transform: translate(-100%, 0%);
     left: 100%;
     top: 0;
-    text-align: center;
-    
+    text-align: center; 
 }
 
 #settingsTitle{
@@ -773,7 +772,7 @@ input::-webkit-inner-spin-button {
     .overview{
         width: 100%;
         margin-left: 0;
-        font-size: 100%;
+        font-size: 3.75vw;
     }
 
     .info{

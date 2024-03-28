@@ -90,6 +90,9 @@ body{
 
 .mainDiv {
     margin-bottom: 10%;
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
 }
 
 .verticalHolderStat{
@@ -676,6 +679,11 @@ input::-webkit-inner-spin-button {
         font-size: 100%;
     }
 
+    .mainDiv, #histogramDiv, #summaryDiv, #scatterDiv {
+        width: 100%;
+        margin: 0;
+    }
+
     #mobileApplicationMenu {
         display: block;
         display: flex;
@@ -687,6 +695,14 @@ input::-webkit-inner-spin-button {
         margin-right: -2.5%;
         margin-top: -1.5%;
         z-index: 1000;
+    }
+
+    .innerLabel label {
+        width: 30%;
+    }
+
+    .innerLabel input {
+        width: 70%;
     }
 
     #mobileTitle {
@@ -717,7 +733,23 @@ input::-webkit-inner-spin-button {
 
     #applicationMenu {
         display: none;
-        width: 100%;
+        width: 104%;
+        margin-left: -2%;
+        margin-right: -2%;
+        background-color: white;
+        z-index: 1000;
+        padding-left: 3%;
+        padding-right: 3%;
+        box-sizing: border-box;
+    }
+
+    #title {
+        display: none;
+    }
+
+    .applicationMenuOption {
+        font-size: 5vw;
+        padding: 1.5% 0 1.5% 3%;
     }
 
     #applicationMain {
@@ -772,7 +804,7 @@ input::-webkit-inner-spin-button {
         margin-left: 0;
         width: 100%;
         font-size:70%;
- 
+        border: 1px solid black;
     }
 
     .counterDisplay{
@@ -877,5 +909,9 @@ input::-webkit-inner-spin-button {
 
     .scatterBoundInput{
         font-size: 3.5vw;
+    }
+
+    .verticalHolderBelow {
+        font-size: 2.5vw;
     }
 }

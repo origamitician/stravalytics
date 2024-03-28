@@ -1,8 +1,3 @@
-#summaryDiv {
-    width: 90%;
-    margin-left: 5%;
-    margin-right: 5%;
-}
 
 #summaryDivWelcomeMsg {
     text-align: center;
@@ -203,5 +198,23 @@
     
     .ymwDivHolder {
         width: 100%;
+    }
+
+    .quickOverviewTopDiv {
+        width: 120%;
+        margin-left: -10%;
+        margin-right: -10%;
+    }
+    
+    .quickOverviewTopDiv  h1 {
+        font-size: 8vw;
+        width: 80%;
+        margin: 3% 10% 3% 10%
+    }
+    
+    .quickOverviewTopDiv p {
+        font-size: 4vw;
+        width: 80%;
+        margin: 0 10% 3% 10%;
     }
 }

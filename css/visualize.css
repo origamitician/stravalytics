@@ -384,6 +384,24 @@ body{
     text-align: center;
 }
 
+.runLookupSpectrum {
+    height: 4vh;
+    border: 1px solid black;
+    width: 100%;
+}
+
+.runLookupDivMainText b {
+    font-size: 300%;
+}
+
+.runLookupDivMainText span {
+    font-size: 80%;
+}
+
+.indivRunLookupDiv {
+    margin-bottom: 8%;
+}
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;

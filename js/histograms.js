@@ -4,6 +4,7 @@ var startDate = Math.floor(Date.parse("01-01-2023") / 1000)
 var endDate = Math.floor(Date.now() / 1000);
 let scrub;
 
+
 if (window.innerWidth > window.innerHeight) {
     // landscape mode
     scrub = {
@@ -230,7 +231,16 @@ function showStatsOnHTML(array, location, id, color){
             span.style.color = "darkblue"
             span.setAttribute("href", "https://strava.com/activities/" + array[id].list_of_activities[i].id);
             span.setAttribute("target", "_blank");
-            document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
+
+            /*if(array[id].list_of_activities[i].name.length > 30){
+                span.innerHTML = array[id].list_of_activities[i].name.substring(0, 30) + "...";
+            }else{
+                span.innerHTML  = array[id].list_of_activities[i].name;
+            }
+            span.style.color = 'darkblue';
+            span.style.textDecoration = 'underline';
+            span.addEventListener('click', createRunLookup(array[id].list_of_activities[i].id))
+            document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)*/
         }
 
         span = document.createElement("span");
@@ -340,6 +350,7 @@ function establishIncrements(item, value, scrubProperty, distributionToUpdate){
 }
 
 function renderGraph(){
+    createRunLookup(11073562266);
     totalMileage=0;
     totalElevGain=0;
     totalPace=0;
@@ -708,11 +719,61 @@ function renderTypeGraph(array, type, color, color2, sortBy){
 }
 
 function createRunLookup (id) {
-    const propertiesToParse = [{display: 'mi', property: 'distance'}, {display: '/mi', property: 'pace'}, {display: 'ft gain', property: 'elevation'}, {display: '%', property: 'uptime'}, {display: 'moving', property: 'time'}, {display: 'elapsed', property: 'elapsedTime'}, {display: "%", property: 'incline'}, {display: 'kudos', property: 'kudos'}, {display: 'steps/min', property: 'cadence'}, {display: 'steps', property: 'stepsPerMile'}, {display: 'ft', property: 'strideLength'}]
+    console.log(id);
+    const propertiesToParse = [{display: 'mi', property: 'distance', decimalPlaces: 3}, {display: '/mi', property: 'pace', decimalPlaces: 2}, {display: 'ft gain', property: 'elevation', decimalPlaces: 2}, {display: '% uptime', property: 'uptime', decimalPlaces: 2}, {display: 'moving', property: 'time', decimalPlaces: 0}, {display: 'elapsed', property: 'elapsedTime', decimalPlaces: 0}, {display: "% incline", property: 'incline' , decimalPlaces: 2}, {display: 'kudos', property: 'kudos', decimalPlaces: 0}, {display: 'steps/min', property: 'cadence', decimalPlaces: 2}, {display: 'steps/mile', property: 'stepsPerMile', decimalPlaces: 0}, {display: 'ft/stride', property: 'strideLength', decimalPlaces: 3}]
+
+    const runObject = allActivities[allActivities.map(e => e.id).indexOf(id)]
+    const info = document.getElementsByClassName('indivRunLookupDiv');
+    while(info[0]) {
+        info[0].parentNode.removeChild(info[0]);
+    }
+
     for (let i = 0; i < propertiesToParse.length; i++) {
+        // sort all activities and rank them.
+        for (let inner = 1; inner < allActivities.length; inner++) {
+            let currentElement = allActivities[inner];
+            let lastIndex = inner - 1;
+        
+            while (lastIndex >= 0 && allActivities[lastIndex][propertiesToParse[i].property] > currentElement[propertiesToParse[i].property]) {
+                allActivities[lastIndex + 1] = allActivities[lastIndex];
+                lastIndex--;
+            }
+            allActivities[lastIndex + 1] = currentElement;
+        }
+
         const statDiv = document.createElement('div');
         statDiv.className = 'indivRunLookupDiv';
         
+        const mainDisplay = document.createElement('p');
+        mainDisplay.className = 'runLookupDivMainText'
+        if (propertiesToParse[i].property === "pace" || propertiesToParse[i].property === "time" || propertiesToParse[i].property === "elapsedTime") {
+            mainDisplay.innerHTML = '<b>' + convert(runObject[propertiesToParse[i].property], propertiesToParse[i].decimalPlaces)+ '</b> <span>' + propertiesToParse[i].display + '</span>'
+        } else {
+            mainDisplay.innerHTML = '<b>' + runObject[propertiesToParse[i].property].toFixed(propertiesToParse[i].decimalPlaces) + '</b> <span>' + propertiesToParse[i].display + '</span>'
+        }
+        
+        statDiv.appendChild(mainDisplay);
+
+        const spectrum = document.createElement('div');
+        spectrum.className = 'runLookupSpectrum';
+        if (scrub[propertiesToParse[i].property]) {
+            spectrum.style.background = 'linear-gradient(to right, ' + scrub[propertiesToParse[i].property].color + ', ' + scrub[propertiesToParse[i].property].color2 + ')'
+        } else {
+            spectrum.style.backgroundColor = "orange";
+        }
+        statDiv.appendChild(spectrum);
+
+        const rank = allActivities.map(e => e.id).indexOf(id)
+        const rankDisplay = document.createElement('p');
+        rankDisplay.className = 'runLookupDivRank';
+        if (propertiesToParse[i].property === "pace") {
+            rankDisplay.innerHTML = 'Rank <b>' + (rank) + "/" + allActivities.length + "</b> (Top " + ((rank / allActivities.length)*100).toFixed(2) + "%)";
+        } else {
+            rankDisplay.innerHTML = 'Rank <b>' + (allActivities.length - rank) + "/" + allActivities.length + "</b> (Top " + (((allActivities.length - rank) / allActivities.length)*100).toFixed(2) + "%)";
+        }
+        statDiv.appendChild(rankDisplay);
+        document.getElementById('runLookupDiv').appendChild(statDiv);
+
     }
 }
 

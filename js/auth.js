@@ -103,15 +103,16 @@ if (indexOfAuthorization == -1) {
                 item.elevation *= 3.28;
                 item.incline = parseFloat(((item.elevation / (item.distance * 5280))*100).toFixed(2))
                 item.pace = 1609 / item.pace;
-                item.cadence = 2 * item.cadence
                 item.uptime = parseFloat(((item.time / item.elapsedTime)*100).toFixed(2))
                 item.maxPace = 1609 / item.maxPace;
                 item.parsedNumericalDate = Date.parse(item.startDate) / 1000;
                 /*item.startDate = Date.parse(item.startDate) / 1000*/
                 if (item.cadence) {
+                    item.cadence = 2 * item.cadence
                     item.stepsPerMile = item.cadence * (item.pace / 60) 
                     item.strideLength = 5280 / item.stepsPerMile
                 } else {
+                    item.cadence = null;
                     item.stepsPerMile = null;
                     item.strideLength = null;
                 }

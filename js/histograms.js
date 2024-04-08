@@ -213,16 +213,17 @@ function showStatsOnHTML(array, location, id, color){
             document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
         }
         
-        span = document.createElement("a");
+        span = document.createElement("span");
         span.className = "indivGrid";
         span.style.width = "25%"
         span.style.textAlign = "left";
+        span.id = "runLookupLink";
         //span.id = "title";
         if(i == -1){
             span.innerHTML = "Title"
             document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
         }else{
-            if(array[id].list_of_activities[i].name.length > 30){
+            /*if(array[id].list_of_activities[i].name.length > 30){
                 var innerLink = document.createTextNode(array[id].list_of_activities[i].name.substring(0, 30) + "...");
             }else{
                 var innerLink = document.createTextNode(array[id].list_of_activities[i].name);
@@ -230,17 +231,17 @@ function showStatsOnHTML(array, location, id, color){
             span.appendChild(innerLink)
             span.style.color = "darkblue"
             span.setAttribute("href", "https://strava.com/activities/" + array[id].list_of_activities[i].id);
-            span.setAttribute("target", "_blank");
+            span.setAttribute("target", "_blank");*/
 
-            /*if(array[id].list_of_activities[i].name.length > 30){
+            if(array[id].list_of_activities[i].name.length > 30){
                 span.innerHTML = array[id].list_of_activities[i].name.substring(0, 30) + "...";
             }else{
                 span.innerHTML  = array[id].list_of_activities[i].name;
             }
             span.style.color = 'darkblue';
             span.style.textDecoration = 'underline';
-            span.addEventListener('click', createRunLookup(array[id].list_of_activities[i].id))
-            document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)*/
+            span.addEventListener('click', createRunLookup.bind(this, array[id].list_of_activities[i].id))
+            document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
         }
 
         span = document.createElement("span");
@@ -350,7 +351,6 @@ function establishIncrements(item, value, scrubProperty, distributionToUpdate){
 }
 
 function renderGraph(){
-    createRunLookup(11073562266);
     totalMileage=0;
     totalElevGain=0;
     totalPace=0;
@@ -720,9 +720,13 @@ function renderTypeGraph(array, type, color, color2, sortBy){
 
 function createRunLookup (id) {
     console.log(id);
+    
     const propertiesToParse = [{display: 'mi', property: 'distance', decimalPlaces: 3}, {display: '/mi', property: 'pace', decimalPlaces: 2}, {display: 'ft gain', property: 'elevation', decimalPlaces: 2}, {display: '% uptime', property: 'uptime', decimalPlaces: 2}, {display: 'moving', property: 'time', decimalPlaces: 0}, {display: 'elapsed', property: 'elapsedTime', decimalPlaces: 0}, {display: "% incline", property: 'incline' , decimalPlaces: 2}, {display: 'kudos', property: 'kudos', decimalPlaces: 0}, {display: 'steps/min', property: 'cadence', decimalPlaces: 2}, {display: 'steps/mile', property: 'stepsPerMile', decimalPlaces: 0}, {display: 'ft/stride', property: 'strideLength', decimalPlaces: 3}]
 
     const runObject = allActivities[allActivities.map(e => e.id).indexOf(id)]
+
+    document.getElementById("runLookupDiv").style.display = "block";
+    document.getElementById("runLookupDivTitle").innerHTML = runObject.name
     const info = document.getElementsByClassName('indivRunLookupDiv');
     while(info[0]) {
         info[0].parentNode.removeChild(info[0]);
@@ -730,51 +734,86 @@ function createRunLookup (id) {
 
     for (let i = 0; i < propertiesToParse.length; i++) {
         // sort all activities and rank them.
-        for (let inner = 1; inner < allActivities.length; inner++) {
-            let currentElement = allActivities[inner];
-            let lastIndex = inner - 1;
-        
-            while (lastIndex >= 0 && allActivities[lastIndex][propertiesToParse[i].property] > currentElement[propertiesToParse[i].property]) {
-                allActivities[lastIndex + 1] = allActivities[lastIndex];
-                lastIndex--;
+        if (runObject[propertiesToParse[i].property] != null) {
+            for (let inner = 1; inner < allActivities.length; inner++) {
+                let currentElement = allActivities[inner];
+                let lastIndex = inner - 1;
+            
+                while (lastIndex >= 0 && allActivities[lastIndex][propertiesToParse[i].property] > currentElement[propertiesToParse[i].property]) {
+                    allActivities[lastIndex + 1] = allActivities[lastIndex];
+                    lastIndex--;
+                }
+                allActivities[lastIndex + 1] = currentElement;
             }
-            allActivities[lastIndex + 1] = currentElement;
-        }
 
-        const statDiv = document.createElement('div');
-        statDiv.className = 'indivRunLookupDiv';
-        
-        const mainDisplay = document.createElement('p');
-        mainDisplay.className = 'runLookupDivMainText'
-        if (propertiesToParse[i].property === "pace" || propertiesToParse[i].property === "time" || propertiesToParse[i].property === "elapsedTime") {
-            mainDisplay.innerHTML = '<b>' + convert(runObject[propertiesToParse[i].property], propertiesToParse[i].decimalPlaces)+ '</b> <span>' + propertiesToParse[i].display + '</span>'
-        } else {
-            mainDisplay.innerHTML = '<b>' + runObject[propertiesToParse[i].property].toFixed(propertiesToParse[i].decimalPlaces) + '</b> <span>' + propertiesToParse[i].display + '</span>'
-        }
-        
-        statDiv.appendChild(mainDisplay);
+            let rank;
+            // calculate ranks
+            if (runObject[propertiesToParse[i].property] == 0) {
+                rank = 0 //first
+            } else if (propertiesToParse[i].property == "uptime" && runObject[propertiesToParse[i].property] == 100) {
+                rank = allActivitiesRef.length - 1; //last
+            } else {
+                rank = allActivities.map(e => e.id).indexOf(id) + 1;
+            }
 
-        const spectrum = document.createElement('div');
-        spectrum.className = 'runLookupSpectrum';
-        if (scrub[propertiesToParse[i].property]) {
-            spectrum.style.background = 'linear-gradient(to right, ' + scrub[propertiesToParse[i].property].color + ', ' + scrub[propertiesToParse[i].property].color2 + ')'
-        } else {
-            spectrum.style.backgroundColor = "orange";
-        }
-        statDiv.appendChild(spectrum);
+            let textColor = "black";
+            if (scrub[propertiesToParse[i].property]) {
+                const clr1 = hexToRgb(scrub[propertiesToParse[i].property].color)
+                const clr2 = hexToRgb(scrub[propertiesToParse[i].property].color2);
+                const calculatedPosition = rank / allActivitiesRef.length;
+                const r = (clr1.r + (clr2.r - clr1.r) * (calculatedPosition))
+                const g = (clr1.g + (clr2.g - clr1.g) * (calculatedPosition))
+                const b = (clr1.b + (clr2.b - clr1.b) * (calculatedPosition))
+                textColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
+            }
+            
+            // the big number.
+            const statDiv = document.createElement('div');
+            statDiv.className = 'indivRunLookupDiv';
+            
+            const mainDisplay = document.createElement('p');
+            mainDisplay.className = 'runLookupDivMainText'
+            if (propertiesToParse[i].property === "pace" || propertiesToParse[i].property === "time" || propertiesToParse[i].property === "elapsedTime") {
+                mainDisplay.innerHTML = '<b>' + convert(runObject[propertiesToParse[i].property], propertiesToParse[i].decimalPlaces)+ '</b> <span>' + propertiesToParse[i].display + '</span>'
+            } else {
+                mainDisplay.innerHTML = '<b>' + runObject[propertiesToParse[i].property].toFixed(propertiesToParse[i].decimalPlaces) + '</b> <span>' + propertiesToParse[i].display + '</span>'
+            }
+            mainDisplay.style.color = textColor
+            statDiv.appendChild(mainDisplay);
 
-        const rank = allActivities.map(e => e.id).indexOf(id)
-        const rankDisplay = document.createElement('p');
-        rankDisplay.className = 'runLookupDivRank';
-        if (propertiesToParse[i].property === "pace") {
-            rankDisplay.innerHTML = 'Rank <b>' + (rank) + "/" + allActivities.length + "</b> (Top " + ((rank / allActivities.length)*100).toFixed(2) + "%)";
-        } else {
-            rankDisplay.innerHTML = 'Rank <b>' + (allActivities.length - rank) + "/" + allActivities.length + "</b> (Top " + (((allActivities.length - rank) / allActivities.length)*100).toFixed(2) + "%)";
-        }
-        statDiv.appendChild(rankDisplay);
-        document.getElementById('runLookupDiv').appendChild(statDiv);
+            // create spectrum
+            const spectrum = document.createElement('div');
+            spectrum.className = 'runLookupSpectrum';
+            if (scrub[propertiesToParse[i].property]) {
+                spectrum.style.background = 'linear-gradient(to right, ' + scrub[propertiesToParse[i].property].color + ', ' + scrub[propertiesToParse[i].property].color2 + ')'
+            } else {
+                spectrum.style.backgroundColor = "orange";
+            }
 
+            const bar = document.createElement('div');
+            bar.className = 'runLookupSpectrumBar';
+            bar.style.position = 'absolute';
+            bar.style.left = ((rank / allActivitiesRef.length)*100) + "%";
+            spectrum.appendChild(bar)
+            statDiv.appendChild(spectrum);
+
+            // create ranking info
+            const rankDisplay = document.createElement('p');
+            rankDisplay.className = 'runLookupDivRank';
+            if (propertiesToParse[i].property === "pace") {
+                rankDisplay.innerHTML = 'Rank <b>' + (rank) + "/" + allActivitiesRef.length + "</b> (Top " + ((rank / allActivitiesRef.length)*100).toFixed(2) + "%)";
+            } else {
+                rankDisplay.innerHTML = 'Rank <b>' + (allActivitiesRef.length - rank) + "/" + allActivitiesRef.length + "</b> (Top " + (((allActivitiesRef.length - rank) / allActivitiesRef.length)*100).toFixed(2) + "%)";
+            }
+
+            statDiv.appendChild(rankDisplay);
+            document.getElementById('runLookupDivContainer').appendChild(statDiv);
+        }
     }
+}
+
+function closeRunLookup() {
+    document.getElementById('runLookupDiv').style.display = "none";
 }
 
 

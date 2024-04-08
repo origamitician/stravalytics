@@ -751,7 +751,7 @@ function createRunLookup (id) {
             if (runObject[propertiesToParse[i].property] == 0) {
                 rank = 0 //first
             } else if (propertiesToParse[i].property == "uptime" && runObject[propertiesToParse[i].property] == 100) {
-                rank = allActivitiesRef.length - 1; //last
+                rank = allActivities.length - 1; //last
             } else {
                 rank = allActivities.map(e => e.id).indexOf(id) + 1;
             }
@@ -760,7 +760,7 @@ function createRunLookup (id) {
             if (scrub[propertiesToParse[i].property]) {
                 const clr1 = hexToRgb(scrub[propertiesToParse[i].property].color)
                 const clr2 = hexToRgb(scrub[propertiesToParse[i].property].color2);
-                const calculatedPosition = rank / allActivitiesRef.length;
+                const calculatedPosition = rank / allActivities.length;
                 const r = (clr1.r + (clr2.r - clr1.r) * (calculatedPosition))
                 const g = (clr1.g + (clr2.g - clr1.g) * (calculatedPosition))
                 const b = (clr1.b + (clr2.b - clr1.b) * (calculatedPosition))
@@ -793,7 +793,7 @@ function createRunLookup (id) {
             const bar = document.createElement('div');
             bar.className = 'runLookupSpectrumBar';
             bar.style.position = 'absolute';
-            bar.style.left = ((rank / allActivitiesRef.length)*100) + "%";
+            bar.style.left = ((rank / allActivities.length)*100) + "%";
             spectrum.appendChild(bar)
             statDiv.appendChild(spectrum);
 
@@ -801,9 +801,9 @@ function createRunLookup (id) {
             const rankDisplay = document.createElement('p');
             rankDisplay.className = 'runLookupDivRank';
             if (propertiesToParse[i].property === "pace") {
-                rankDisplay.innerHTML = 'Rank <b>' + (rank) + "/" + allActivitiesRef.length + "</b> (Top " + ((rank / allActivitiesRef.length)*100).toFixed(2) + "%)";
+                rankDisplay.innerHTML = 'Rank <b>' + (rank) + "/" + allActivities.length + "</b> (Top " + ((rank / allActivities.length)*100).toFixed(2) + "%)";
             } else {
-                rankDisplay.innerHTML = 'Rank <b>' + (allActivitiesRef.length - rank) + "/" + allActivitiesRef.length + "</b> (Top " + (((allActivitiesRef.length - rank) / allActivitiesRef.length)*100).toFixed(2) + "%)";
+                rankDisplay.innerHTML = 'Rank <b>' + (allActivities.length - rank) + "/" + allActivities.length + "</b> (Top " + (((allActivities.length - rank) / allActivities.length)*100).toFixed(2) + "%)";
             }
 
             statDiv.appendChild(rankDisplay);

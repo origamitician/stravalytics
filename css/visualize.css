@@ -394,7 +394,7 @@ body{
 
 .indivRunLookupDiv {
     width: 45%;
-    margin: 0% 2.5% 1% 2.5%;
+    margin: 1% 2.5% 1% 2.5%;
     display: inline-block;
 }
 
@@ -406,7 +406,7 @@ body{
     width: 50%;
     background-color: white;
     z-index: 999;
-    height:  80vh;
+    height:  70vh;
     transform: translate(-50%, -50%);
     top: 50vh;
     left: 50vw;

@@ -33,11 +33,11 @@ app.get('/api/token/:authCode', (req, res) => {
         const obtainedToken = json.refresh_token
         const name = json.athlete.firstname + ' ' + json.athlete.lastname
         // obtain refreshtoken for a user. It should be the same every time the same user logs in. 
-        console.log('-----')
-        console.log('trying to find doc w refresh token ' + obtainedToken)
+        // console.log('-----')
+        // console.log('trying to find doc w refresh token ' + obtainedToken)
 
         RefreshTokens.findOne({ refreshToken : obtainedToken }).exec((err, data) => {
-            console.log('result for finding one: ' + JSON.stringify(data))
+            // console.log('result for finding one: ' + JSON.stringify(data))
             let accountId;
             if(data){
                 // if the refresh token exists.
@@ -46,9 +46,9 @@ app.get('/api/token/:authCode', (req, res) => {
                 // if the refresh token doesn't exist in the database; create a new user.
                 let r = new RefreshTokens({refreshToken: obtainedToken});
                 r.save((err, data) => {
-                    console.log('refresh token doesnt exist and creating a new one')
+                    // console.log('refresh token doesnt exist and creating a new one')
                     if(err) console.log(err);
-                    console.log(data)
+                    // console.log(data)
                     accountId = data._id
                 })
             }
@@ -67,14 +67,14 @@ app.get('/api/activities/:accountID', (req, res) => {
     allActivities = [];
     const CLIENT_ID = process.env.CLIENT_ID
     const CLIENT_SECRET = process.env.CLIENT_SECRET
-    console.log('trying to find by id ' + req.params.accountID)
+    // console.log('trying to find by id ' + req.params.accountID)
     RefreshTokens.findById(req.params.accountID).exec((err, data) => {
         if (err) {
             console.log(err)
         } else {
-            console.log(data)
+            // console.log(data)
             if (data) {
-                console.log('no refresh tokens')
+                // console.log('no refresh tokens')
                 const token = data.refreshToken
                 console.log(`https://www.strava.com/api/v3/oauth/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&refresh_token=${token}&grant_type=refresh_token`)
                 fetch(`https://www.strava.com/api/v3/oauth/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&refresh_token=${token}&grant_type=refresh_token`, {
@@ -91,10 +91,10 @@ app.get('/api/activities/:accountID', (req, res) => {
                     //make sure this is an array of Promise objects.
                     Promise.all([
                         getIndividualPaginatedData(1, key), 
-                        getIndividualPaginatedData(2, key), 
+                        /* getIndividualPaginatedData(2, key), 
                         getIndividualPaginatedData(3, key), 
                         getIndividualPaginatedData(4, key),
-                    getIndividualPaginatedData(5, key)]).then(() => {
+                    getIndividualPaginatedData(5, key)*/]).then(() => {
                             res.send(allActivities)
                         })
                 })

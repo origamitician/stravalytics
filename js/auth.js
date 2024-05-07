@@ -16,7 +16,7 @@ for (let i = 0; i < sectionColors.length; i++){
         }
         document.getElementById(link.substring(link.indexOf('#')+1)).style.display = 'block';
     })
-    if (i < 3) {
+    if (i < 4) {
         document.getElementsByClassName('quickOverviewTopDiv')[i].style.backgroundColor = sectionColors[i];
     }
 }

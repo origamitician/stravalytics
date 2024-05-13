@@ -74,10 +74,14 @@ function changeDates(){
                 allActivities.push(a);
             }
         })
-        createSummaryPage();
-        renderGraph();
-        renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value)
-        document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
+
+        if (allActivities.length != 0) {
+            createSummaryPage();
+            renderGraph();
+            renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value)
+            document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
+        }
+        
     /* } /*catch (err){
         alert("Invalid date! " + err)
     } */
@@ -121,9 +125,12 @@ if (indexOfAuthorization == -1) {
             })
             document.getElementById("applicationBody").style.display = "block";
             
-            createSummaryPage();
-            renderGraph(); //histograms
-            renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
+            if (allActivities.length !== 0) {
+                createSummaryPage();
+                renderGraph(); //histograms
+                renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
+            } 
+            
 
             document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
             document.getElementById('applicationBody').style.display = 'block';

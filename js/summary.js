@@ -302,7 +302,7 @@ async function createCumulativeTrends() {
     const current = Date.now();
     var toDelete = document.getElementsByClassName('indivSummaryDiv');
     // const dayHistory = Math.abs(Math.trunc(document.getElementsByName('numberOfDays')[0].value));
-    const dayHistory = 30; // <------- CHANGE THIS !!!!
+    const dayHistory = 21; // <------- CHANGE THIS !!!!
     if (dayHistory >= allActivities.length) {
         dayHistory = allActivities.length - 1;
     }

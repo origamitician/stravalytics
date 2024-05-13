@@ -12,20 +12,21 @@ console.log(listOfNames);
 
 function runKudoAnalysis() {
     const minIndex = 0;
-    const maxIndex = 97;
+    const maxIndex = 190;
     console.log('running kudo analysis')
     const numberOfFragments = Math.ceil(allActivities.length / fragmentLength);
-    fetch(`https://www.strava.com/api/v3/oauth/token?client_id=107318&client_secret=1bac185421708876ddd639fcef0a319d5896d3b1&refresh_token=48f138733218bdd7c10c586c704b8f104a5221f2&grant_type=refresh_token`, {
+    fetch(`https://www.strava.com/api/v3/oauth/token?client_id=107318&client_secret=1bac185421708876ddd639fcef0a319d5896d3b1&refresh_token=d60bedf5f0e7d556687f0f277a02ee0c7a4de16f&grant_type=refresh_token`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
     }).then((res) => res.json()).then((j) => {
         accessToken = j.access_token
+        console.log(`access token is: ${accessToken}`)
         /* getBatchKudos();
         batchInterval = setInterval(getBatchKudos, 900000); */
         for (let index = minIndex; index < maxIndex; index++) {
-            const peoplePromise = fetchAPIData(allActivities[(fragmentNum * fragmentLength) + index].id);
+            const peoplePromise = fetchAPIData(allActivities[index].id);
             peoplePromise.then((res => {
                 const people = [...res];
                 people.forEach(ppl => {
@@ -42,6 +43,7 @@ function runKudoAnalysis() {
             }))
         }
         fragmentNum++;
+        combine();
     })
 }
 
@@ -85,7 +87,7 @@ async function fetchAPIData(id) {
 function combine() {
     const semester1parsed = [...semester1];
     const semester2parsed = [...semester2];
-    const combined = [];
+    const combined = [{name:"Ethan K.",totalKudos:5},{name:"Micaiah C.",totalKudos:174},{name:"Kia'i T.",totalKudos:42},{name:"Peter L.",totalKudos:134},{name:"Isaac P.",totalKudos:100},{name:"Theresa L.",totalKudos:7},{name:"Josh T.",totalKudos:2},{name:"Austin C.",totalKudos:17},{name:"Ethan F.",totalKudos:1},{name:"Seita T.",totalKudos:7},{name:"Christian K.",totalKudos:1},{name:"Evan C.",totalKudos:1}]
     /* semester1.forEach(e => {
         semester1parsed.push(JSON.parse(e));
     })
@@ -93,7 +95,7 @@ function combine() {
         semester2parsed.push(JSON.parse(e));
     }) */
 
-    for (let i = 0; i < semester1parsed.length; i++) {
+    /* for (let i = 0; i < semester1parsed.length; i++) {
         const sem2names = semester2parsed.map(e => e.name)
         const index = sem2names.indexOf(semester1parsed[i].name)
         if (index == -1) {
@@ -110,7 +112,7 @@ function combine() {
             // if name was not found in the first semester list.
             combined.push(semester2parsed[i]);
         }
-    }
+    } */
 
     // sort allActivities by date.
     for (let i = 1; i < combined.length; i++) {
@@ -127,8 +129,8 @@ function combine() {
     console.log(JSON.stringify(combined));
 
     const graphColors = ['cornflowerblue', '#fc9003', 'purple', '#3bbf53', '#d12828', 'darkgreen', 'maroon', 'darkblue', 'seagreen', 'gray']
-    const maxValue = 222;
-    for (let i = 0; i < 46; i++) {
+    const maxValue = 190;
+    for (let i = 0; i < combined.length; i++) {
         const graphRow = document.createElement('div');
         graphRow.className = 'graphRow';
 
@@ -144,10 +146,25 @@ function combine() {
         graphBar.className = 'kudoGraphBar';
         graphBar.style.backgroundColor = graphColors[i % graphColors.length];
         /* graphBar.style.background = 'linear-gradient(to right, white, ' + graphColors[i % graphColors.length] + ')'; */
-        graphBar.innerHTML = combined[i].totalKudos + " (" + ((combined[i].totalKudos / maxValue) * 100).toFixed(1) + "%)";
+        if ((combined[i].totalKudos / maxValue) * 100 > 18) {
+            graphBar.innerHTML = combined[i].totalKudos + " (" + ((combined[i].totalKudos / maxValue) * 100).toFixed(1) + "%)";
+        } else {
+            graphBar.innerHTML = "."
+        }
+        
         graphBar.style.width = (combined[i].totalKudos / maxValue) * 100 + "%";
         graphBarHolder.appendChild(graphBar);
-
+         
+        if ((combined[i].totalKudos / maxValue) * 100 <= 18) {
+            const graphTailText = document.createElement('p');
+            graphTailText.innerHTML = combined[i].totalKudos + " (" + ((combined[i].totalKudos / maxValue) * 100).toFixed(1) + "%)";
+            graphTailText.style.paddingLeft = "2%";
+            graphTailText.style.marginTop = "1%";
+            graphTailText.style.marginBottom = "1%";
+            graphTailText.style.fontSize = "110%";
+            graphBarHolder.appendChild(graphTailText);
+        }
+        
         graphRow.appendChild(graphBarHolder);
 
         document.getElementById('kudoGraphDiv').appendChild(graphRow);
@@ -156,7 +173,7 @@ function combine() {
     const kudoScale = document.createElement('div');
     kudoScale.className = 'kudoGraphScale';
 
-    const increments = 6;
+    const increments = 5;
     for (let j = 0; j < increments; j++) {
         const scaleIncrement = document.createElement('div');
         scaleIncrement.className = 'kudoScaleIncrement'

@@ -138,8 +138,8 @@ const refreshTokenDoc = new mongoose.Schema({
 const RefreshTokens = mongoose.model("tokens", refreshTokenDoc);
 
 mongoose.connect(process.env.MONGO_URI, () => {
-    const port = 3000
-    app.listen(port, () => {
+    const port = process.env.PORT || 3000;
+    app.listen(port, "0.0.0.0", () => {
         console.log("Server is running on port: " + port);
     })
 })

@@ -80,6 +80,7 @@ function changeDates(){
             renderGraph();
             renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value)
             document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
+            runTrends();
         }
         
     /* } /*catch (err){
@@ -129,6 +130,7 @@ if (indexOfAuthorization == -1) {
                 createSummaryPage();
                 renderGraph(); //histograms
                 renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
+                runTrends();
             } 
             
 
@@ -235,8 +237,8 @@ function generateRandomData(){
     document.getElementById('applicationBody').style.display = 'block';
     createSummaryPage();
     renderGraph(); //histograms
-
     renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
+    runTrends(); //create trends page
 }
 
 function updateLoadingBar(){

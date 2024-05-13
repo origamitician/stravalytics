@@ -1,0 +1,11 @@
+#mainTrendDivHolder {
+    display: flex;
+    width: 100%;
+}
+
+.trendDiv {
+    width: 100%;
+    border: 1px solid black;
+    box-sizing: border-box;
+    height: 75vh;
+}

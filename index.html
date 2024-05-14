@@ -413,13 +413,31 @@
                     <p>See your monthly and yearly trends in distance, kudos, elevation, and other statistics. </p>
                 </div>
                 <br><br>
-                <select name="trendsCumVariable" id="trendsCumVariable" onChange = "drawTrendGraph()">
+                <label for="trendsCumVariable">Variable</label>
+                <select name="trendsCumVariable" class="trendsCumVariable" onChange = "drawTrendGraph()">
                     <option value="distance" selected>Distance</option>
                     <option value="time">Moving Time</option>
                     <option value="elapsedTime">Elapsed Time</option>
+                    <option value="uptime">Uptime (%)</option>
                     <option value="elevation">Elevation Gain</option>
+                    <option value="incline">Incline</option>
+                    <option value="pace">Pace</option>
                     <option value="kudos">Kudos</option>
+                    <option value="maxPace">Top speed</option>
+                    <option value="cadence">Cadence (steps/min)</option>
+                    <option value="stepsPerMile">Steps per mile</option>
+                    <option value="strideLength">Stride length</option>
                 </select>
+
+                <label for="trendsCumVariableSetting">Calculate by</label>
+                <select name="trendsCumVariableSetting" class="trendsCumVariable" onChange = "drawTrendGraph()">
+                    <option value="cumulative" selected>Cumulative</option>
+                    <option value="cumulativeMoving" selected>Moving Cumulative</option>
+                    <option value="movingAvg">Moving Average</option>
+                </select>
+               
+                <label for="movingAvgDays">Days</label>
+                <input type="number" name="movingAvgDays" class="trendsCumVariable" value=30 onChange = "drawTrendGraph()">
                 <br><br>
                 <div id = "mainTrendDivHolder">
                     <div id = "yearTrendDiv" class="trendDiv">

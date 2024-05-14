@@ -5,7 +5,21 @@
 
 .trendDiv {
     width: 100%;
-    border: 1px solid black;
     box-sizing: border-box;
     height: 75vh;
+}
+
+.trendsCumVariable {
+    font-size: 110%;
+    margin-right: 3%;
+}
+
+.trendsCumVariable option {
+    font-size: 100%;
+}
+
+#trendsDiv label {
+    font-size: 110%;
+    margin-right: 0.5%;
+    font-weight: bold;
 }

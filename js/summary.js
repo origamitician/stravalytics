@@ -1,4 +1,3 @@
-const unitsThatCanBeTotaled = ["kudos", "distance", "elevation", "time", "elapsedTime"]
 let graphDetail;
 
 function createSummaryPage() {
@@ -46,7 +45,7 @@ function createQuickStats() {
             } else if (statisticsToIterate[i].display == "Avg Pace") {
                 byDays = processAllActivitiesByDayAndProperty(allActivities, "distance");
             }
-            console.log(byDays);
+
             const dateArray = byDays.data.map(e => e[0]);
             let filterIndex, startPrevious, endPrevious, startDateDisplay, endDateDisplay;
 
@@ -222,6 +221,7 @@ function totalFromDate(array, startIndex, endIndex, countingDays) {
 
 function processAllActivitiesByDayAndProperty(array, property, numberOfDays, average) {
     // a function that takes allActivities (array), and process them into the property. numberOfDays (int) and average (boolean) is optional.
+    const unitsThatCanBeTotaled = ["kudos", "distance", "elevation", "time", "elapsedTime"]
     const allActivitiesByDay = [];
     const chartData = [];
     // sort allActivities by date.
@@ -248,10 +248,16 @@ function processAllActivitiesByDayAndProperty(array, property, numberOfDays, ave
         let activitiesThatDay = 0;
         while (activityDateObj.split("-")[0] == refDateObj.getFullYear() && activityDateObj.split("-")[1] - 1 == refDateObj.getMonth() && activityDateObj.split("-")[2] == refDateObj.getDate() && currIndex <= array.length) {
             
-            currentVal += array[currIndex][property]
-            if (unitsThatCanBeTotaled.includes(property)) {
-                cum += array[currIndex][property]
+            if (array[currIndex][property]) {
+                currentVal += array[currIndex][property]
+                if (unitsThatCanBeTotaled.includes(property)) {
+                    cum += array[currIndex][property]
+                }
+            } else {
+                currentVal += 0
+                cum += 0
             }
+            
             
             activitiesThatDay ++;
             if (currIndex < array.length - 1) {
@@ -294,6 +300,7 @@ function processAllActivitiesByDayAndProperty(array, property, numberOfDays, ave
             chartData.push([refDateString, cum.toFixed(2), currentVal])
         }
     }
+
     return {data: chartData, cumulative: cum, daysActive: daysActive};
 }
 
@@ -432,8 +439,6 @@ function createCumulativeGraph(property, divName, subText, numberOfDays, average
     }
 
     // trim the chart data into only ~100 entries to reduce lag.
-
-    console.log("Graph Detail is: " + graphDetail);
     const trimBy = Math.ceil(chartData.length / graphDetail)
     const trimmedChart = [];
     for (let i = chartData.length - 1; i >= 0; i -= trimBy) {

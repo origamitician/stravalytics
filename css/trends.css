@@ -1,5 +1,4 @@
 #mainTrendDivHolder {
-    display: flex;
     width: 100%;
 }
 
@@ -22,4 +21,37 @@
     font-size: 110%;
     margin-right: 0.5%;
     font-weight: bold;
+}
+
+#trendLineOptionLabel, .indivTrendLineOption {
+    font-size: 120%;
+}
+
+#trendLineOptionLabel {
+    margin-right: 1.5%;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.indivTrendLineOption {
+    padding: 0.5% 2% 0.5% 2%;
+    margin: 0;
+    border: 1px solid black;
+}
+
+#trendLineOptionFlex {
+    display: flex;
+    justify-content: right;
+    width: 100%;
+}
+
+.indivTrendLineOption:hover {
+    cursor: pointer;
+    color: white;
+    background-color: purple;
+}
+
+#yearly {
+    color: white;
+    background-color: purple;
 }

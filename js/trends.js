@@ -2,6 +2,19 @@ function runTrends() {
     drawTrendGraph();
 }
 
+function updateTrendLineOption(event) {
+    for (let i = 0; i < document.getElementsByClassName('indivTrendLineOption').length; i++) {
+        const elem = document.getElementsByClassName('indivTrendLineOption')[i];
+        elem.style.backgroundColor = "white";
+        elem.style.color = "black";
+    }
+    console.log(event)
+    const curr = document.getElementById(event.target.id)
+    curr.style.color = "white";
+    curr.style.backgroundColor = "purple";
+    drawTrendGraph();
+}
+
 // returns data in the form of: {data: [2d array of activity stats], dataTitles: [1d array of line titles], unitInfo: {value: <variable>, display: <display>, unit: <unit>}}
 function processTrendData() {
     // delete all yearly trend graphs.
@@ -9,8 +22,7 @@ function processTrendData() {
         document.getElementById('yearTrendDiv').getElementsByTagName('div')[0].remove(); 
     }
      
-
-     // set the variable.
+     // set the variables.
     const variableToParse = document.getElementsByName('trendsCumVariable')[0].value;
     const variableStatus = document.getElementsByName('trendsCumVariableSetting')[0].value;
     const dayHistory = parseInt(document.getElementsByName('movingAvgDays')[0].value);
@@ -29,6 +41,17 @@ function processTrendData() {
         {value: 'stepsPerMile', display: 'Steps / mile', unit: "steps/mi"},
         {value: 'strideLength', display: 'Stride length', unit: "ft"},
     ]
+
+    // determine whether it's yearly, monthly, or historical by seeing which div is purple.
+    let timeline; // either "yearly", "monthly", or "historical"
+    for (let i = 0; i < document.getElementsByClassName('indivTrendLineOption').length; i++) {
+        const elem = document.getElementsByClassName('indivTrendLineOption')[i];
+        if (getComputedStyle(elem).getPropertyValue('color') == 'rgb(255, 255, 255)') {
+            timeline = elem.id;
+            break;
+        }
+    }
+
     let processed;
     if (variableStatus === 'cumulative') {
         processed = processAllActivitiesByDayAndProperty(allActivities, variableToParse).data;
@@ -37,8 +60,7 @@ function processTrendData() {
     } else {
         processed = processAllActivitiesByDayAndProperty(allActivities, variableToParse, dayHistory, true).data;
     }
-    console.log(variableToParse);
-    console.log(processed);
+
     const firstYear = parseInt(processed[0][0].split('-')[2])
     const choppedByYear = [];
     const dates = processed.map(a => a[0]);
@@ -46,28 +68,31 @@ function processTrendData() {
     const titles = [];
     // sort by year.
     let cumulativeAtEndOfYear = 0;
-    for (let i = firstYear; i <= new Date().getFullYear(); i++) {
-        let sliced;
-        if (i == firstYear) {
-            // if the first year of activities are getting parsed.
-            sliced = processed.slice(0, dates.indexOf('1-1-' + (i+1)))
-            choppedByYear.push(sliced.map(e => [e[0], parseFloat(e[1] - cumulativeAtEndOfYear), e[2]]))
-        } else if (i == new Date().getFullYear()) {
-            // if the most recent year of activities are getting parsed.
-            sliced = processed.slice(dates.indexOf('1-1-' + i))
-            choppedByYear.push(sliced.map(e => [e[0], parseFloat(e[1] - cumulativeAtEndOfYear), e[2]]));
-        } else {
-            // if the middle year of activities are getting parsed.
-            sliced = processed.slice(dates.indexOf('1-1-' + i), dates.indexOf('1-1-' + (i+1)));
-            choppedByYear.push(sliced.map(e => [e[0], parseFloat(e[1] - cumulativeAtEndOfYear), e[2]]));
-        }
+    if (timeline == "yearly") {
+        for (let i = firstYear; i <= new Date().getFullYear(); i++) {
+            let sliced;
+            if (i == firstYear) {
+                // if the first year of activities are getting parsed.
+                sliced = processed.slice(0, dates.indexOf('1-1-' + (i+1)))
+                choppedByYear.push(sliced.map(e => [e[0], parseFloat(e[1] - cumulativeAtEndOfYear), e[2]]))
+            } else if (i == new Date().getFullYear()) {
+                // if the most recent year of activities are getting parsed.
+                sliced = processed.slice(dates.indexOf('1-1-' + i))
+                choppedByYear.push(sliced.map(e => [e[0], parseFloat(e[1] - cumulativeAtEndOfYear), e[2]]));
+            } else {
+                // if the middle year of activities are getting parsed.
+                sliced = processed.slice(dates.indexOf('1-1-' + i), dates.indexOf('1-1-' + (i+1)));
+                choppedByYear.push(sliced.map(e => [e[0], parseFloat(e[1] - cumulativeAtEndOfYear), e[2]]));
+            }
 
-        if (variableStatus === 'cumulative') {
-            cumulativeAtEndOfYear = parseFloat(sliced[sliced.length-1][1])
+            if (variableStatus === 'cumulative') {
+                cumulativeAtEndOfYear = parseFloat(sliced[sliced.length-1][1])
+            }
+            titles.push(i);
         }
-        titles.push(i);
     }
-    console.log(choppedByYear);
+    
+    
 
     // add all 366 days worth to choppedByYear. Leap year use is intended.
     let base = '01-01-2020'
@@ -79,8 +104,14 @@ function processTrendData() {
     }
 
     const ar = [];
+    if (timeline == 'historical') {
+        processed.forEach(e => {
+            ar.push([e[0], parseFloat(e[1])])
+        })
+        titles.push("Historical");
+    }
 
-    while (day < 366) {
+    while (day < 366 && timeline !== 'historical') {
         const subArray = [];
         const newDate = new Date(seconds * 1000);
         subArray.push(newDate.getMonth() + 1 + '/' + newDate.getDate())
@@ -101,8 +132,12 @@ function processTrendData() {
                 dayIndexes[i]++;
             }
         }
-        ar.push(subArray);
+        if (timeline !== 'historical') {
+            ar.push(subArray);
+        }
     }
+
+    console.log(ar);
     return {data: ar, dataTitles: titles, unitInfo: unitInfo[units.indexOf(variableToParse)]};
 }
 
@@ -113,12 +148,14 @@ function drawTrendGraph() {
     const titles = trendObj.dataTitles;
     var dataSet = anychart.data.set(data);
     const series = [];
-    const seriesColors = ['lime', 'orange', 'red', 'cornflowerblue', 'darkblue', 'darkgreen']
-
+    const seriesColors = ['red', 'cornflowerblue', 'seagreen', 'orange', 'cornflowerblue', 'red', 'darkgreen']
+    console.log(data[0]);
     for (let i = 1; i < data[0].length; i++) {
         series.push(dataSet.mapAs({x: 0, value: i}));
     }
-  
+
+    console.log(series);
+    console.log(titles);
     // create a line chart
     var chart = anychart.line();
 
@@ -129,11 +166,12 @@ function drawTrendGraph() {
     chart.crosshair().enabled(true).yLabel(false).yStroke(null);
 
     for (let i = 0; i < series.length; i++) {
-        let lineStroke = 2;
+        let lineStroke = 3;
         if (titles[i] == new Date().getFullYear()) {
             // if it's current.
-            lineStroke = 6;
+            lineStroke = 3;
         }
+
         const ser = chart.spline(series[i]);
         if (trendObj.unitInfo.value == "elapsedTime" || trendObj.unitInfo.value == "time") {
             ser.name(titles[i]).stroke(lineStroke + ' ' + seriesColors[i]).tooltip().format(function (e){

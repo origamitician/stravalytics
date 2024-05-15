@@ -153,7 +153,7 @@ if (indexOfAuthorization == -1) {
             // if user wants to generate random data
             document.getElementById("applicationBody").style.display = "block";
             document.getElementById('transition').style.display = 'none';
-            document.getElementById('welcomeText').innerHTML = 'Viewing randomly generated data!'
+            // document.getElementById('welcomeText').innerHTML = 'Viewing randomly generated data!'
             document.getElementById('notLoggedInBody').style.display = 'none';
             generateRandomData();
         }
@@ -187,9 +187,17 @@ function generateRandomData(){
         // console.log("Pace: " + generatedPace);
         const elapsedPaceDifferencePercent = Math.random()*45
         const generatedTime = generatedDistance * generatedPace
-        const generatedYear = Math.floor(Math.random()*4 + 2020);
-        let generatedMonth = Math.floor(Math.random()*12 + 1);
-        let generatedDay = Math.floor(Math.random()*28 + 1);
+        const generatedYear = Math.floor(Math.random()*5 + 2020);
+
+        let generatedMonth, generatedDay;
+        if (generatedYear !== new Date().getFullYear()) {
+            generatedMonth = Math.floor(Math.random()*12 + 1);
+            generatedDay = Math.floor(Math.random()*28 + 1);
+        } else {
+            generatedMonth = Math.floor(Math.random()*(new Date().getMonth()+1) + 1);
+            generatedDay = Math.floor(Math.random()*(new Date().getDate()-1) + 1);
+        }
+        
         let generatedHour = Math.floor(Math.random()*15 + 5);
         let generatedMin = Math.floor(Math.random()*60);
         let generatedSec = Math.floor(Math.random()*60);

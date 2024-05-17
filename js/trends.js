@@ -90,6 +90,52 @@ function processTrendData() {
             }
             titles.push(i);
         }
+    } else if (timeline == "monthly") {
+        for (let yr = firstYear; yr <= new Date().getFullYear(); yr++) {
+            let startMonth = 1;
+            let endMonth = 12;
+            let sliced = [];
+            if (yr === firstYear) {
+                // if the first year is being parsed.
+                startMonth = parseInt(processed[0][0].split('-')[0])
+            }
+
+            if (yr === new Date().getFullYear()) {
+                // if the last year is getting processed.
+                endMonth = new Date().getMonth() + 1;
+            }
+
+            for (let month = startMonth; month <= endMonth; month++) {
+                let nextMonth, nextYear;
+                if (month == 12) {
+                    nextMonth = 1
+                    nextYear = yr + 1;
+                } else {
+                    nextMonth = month+1;
+                    nextYear = yr;
+                }
+
+                if (month == startMonth && yr == firstYear) {
+                    // if the first month is getting processed.
+                    sliced = processed.slice(0, dates.indexOf(`${nextMonth}-1-${nextYear}`))
+                    choppedByYear.push(sliced.map(e => [e[0], parseFloat(e[1] - cumulativeAtEndOfYear), e[2]]));
+                } else if (month == endMonth && yr == new Date().getFullYear()) {
+                    // if the last month is getting processed.
+                    sliced = processed.slice(dates.indexOf(`${month}-1-${yr}`))
+                    choppedByYear.push(sliced.map(e => [e[0], parseFloat(e[1] - cumulativeAtEndOfYear), e[2]]));
+                } else {
+                    // if the other middle months are getting processesd.
+                    sliced = processed.slice(dates.indexOf(`${month}-1-${yr}`), dates.indexOf(`${nextMonth}-1-${nextYear}`))
+                    choppedByYear.push(sliced.map(e => [e[0], parseFloat(e[1] - cumulativeAtEndOfYear), e[2]]));
+                }
+
+                if (variableStatus === 'cumulative') {
+                    cumulativeAtEndOfYear = parseFloat(sliced[sliced.length-1][1])
+                }
+                titles.push(`${month}/${yr}`);
+            }
+        }
+        console.log(choppedByYear);
     }
     
     
@@ -111,20 +157,39 @@ function processTrendData() {
         titles.push("Historical");
     }
 
-    while (day < 366 && timeline !== 'historical') {
+    let maxDays;
+    if (timeline == 'yearly') {
+        maxDays = 366;
+    } else {
+        maxDays = 31;
+    }
+    while (day < maxDays && timeline !== 'historical') {
         const subArray = [];
         const newDate = new Date(seconds * 1000);
-        subArray.push(newDate.getMonth() + 1 + '/' + newDate.getDate())
-        seconds += 86400
-        day++;
+        if (timeline == 'yearly') {
+            subArray.push(newDate.getMonth() + 1 + '/' + newDate.getDate())
+        } else if (timeline == 'monthly') {
+            subArray.push(`Day ${newDate.getDate()}`)
+        }
+        
         for (let i = 0; i < choppedByYear.length; i++) {
             const dates = choppedByYear[i].map(a => {
                 const toMap = a[0].split('-');
-                return toMap[0] + '/' + toMap[1];
+                if (timeline == 'yearly') {
+                    return toMap[0] + '/' + toMap[1];
+                } else {
+                    return `Day ${toMap[1]}`;
+                }
             });
             // console.log(dates);
 
-            const ind = dates.indexOf(newDate.getMonth() + 1 + '/' + newDate.getDate())
+            let ind;
+            if (timeline == 'yearly') {
+                ind = dates.indexOf(newDate.getMonth() + 1 + '/' + newDate.getDate())
+            } else {
+                ind = dates.indexOf(`Day ${newDate.getDate()}`)
+            }
+            
             if (ind == -1) {
                 subArray.push(null);
             } else {
@@ -135,6 +200,9 @@ function processTrendData() {
         if (timeline !== 'historical') {
             ar.push(subArray);
         }
+
+        seconds += 86400
+        day++;
     }
 
     console.log(ar);
@@ -145,14 +213,28 @@ function drawTrendGraph() {
 
     const trendObj = processTrendData()
     const data = trendObj.data;
-    const titles = trendObj.dataTitles;
+    let titles = trendObj.dataTitles;
     var dataSet = anychart.data.set(data);
     const series = [];
-    const seriesColors = ['red', 'cornflowerblue', 'seagreen', 'orange', 'cornflowerblue', 'red', 'darkgreen']
+    const seriesColors = ['red', 'cornflowerblue', 'seagreen', 'orange', 'darkblue', 'gold', 'lime', 'black', 'grey', 'purple', 'skyblue', 'black']
     console.log(data[0]);
-    for (let i = 1; i < data[0].length; i++) {
-        series.push(dataSet.mapAs({x: 0, value: i}));
+
+    if (data[0].length > seriesColors.length) {
+        const tempDataTitles = [...titles];
+        titles = [];
+        for (let i = data[0].length - 1; i > data[0].length - 1 - seriesColors.length; i--) {
+            series.push(dataSet.mapAs({x: 0, value: i}));
+            titles.push(tempDataTitles[i-1])
+        }
+        /* for (let i = 1; i < seriesColors.length; i++) {
+            series.push(dataSet.mapAs({x: 0, value: i}));
+        } */
+    } else {
+        for (let i = 1; i < data[0].length; i++) {
+            series.push(dataSet.mapAs({x: 0, value: i}));
+        }
     }
+    
 
     console.log(series);
     console.log(titles);
@@ -164,25 +246,26 @@ function drawTrendGraph() {
 
     // turn on the crosshair
     chart.crosshair().enabled(true).yLabel(false).yStroke(null);
+    
 
     for (let i = 0; i < series.length; i++) {
         let lineStroke = 3;
         if (titles[i] == new Date().getFullYear()) {
             // if it's current.
-            lineStroke = 3;
+            lineStroke = 5;
         }
-
-        const ser = chart.spline(series[i]);
+        
+        const ser = chart.line(series[i]);
         if (trendObj.unitInfo.value == "elapsedTime" || trendObj.unitInfo.value == "time") {
-            ser.name(titles[i]).stroke(lineStroke + ' ' + seriesColors[i]).tooltip().format(function (e){
+            ser.name(titles[i]).stroke(lineStroke + ' ' + seriesColors[i % seriesColors.length]).tooltip().format(function (e){
                 return titles[i] + ': ' + convert(this.value)
             }); 
         } else if (trendObj.unitInfo.value == "pace") {
-            ser.name(titles[i]).stroke(lineStroke + ' ' + seriesColors[i]).tooltip().format(function (e){
+            ser.name(titles[i]).stroke(lineStroke + ' ' + seriesColors[i % seriesColors.length]).tooltip().format(function (e){
                 return titles[i] + ': ' + convert(this.value, 2)
             }); 
         } else {
-            ser.name(titles[i]).stroke(lineStroke + ' ' + seriesColors[i]).tooltip().format(titles[i] + ": {%value} " + trendObj.unitInfo.unit);
+            ser.name(titles[i]).stroke(lineStroke + ' ' + seriesColors[i % seriesColors.length]).tooltip().format(titles[i] + ": {%value} " + trendObj.unitInfo.unit);
         }
     }
 

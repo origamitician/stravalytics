@@ -3,6 +3,8 @@ function runTrends() {
 }
 
 let processedByDay = []; // global var
+let barRaceInterval; // global var for bar race
+let timeline; // global var for graph render status
 
 function updateTrendLineOption(event) {
     for (let i = 0; i < document.getElementsByClassName('indivTrendLineOption').length; i++) {
@@ -10,7 +12,6 @@ function updateTrendLineOption(event) {
         elem.style.backgroundColor = "white";
         elem.style.color = "black";
     }
-    console.log(event)
     const curr = document.getElementById(event.target.id)
     curr.style.color = "white";
     curr.style.backgroundColor = "purple";
@@ -20,6 +21,10 @@ function updateTrendLineOption(event) {
 // returns data in the form of: {data: [2d array of activity stats], dataTitles: [1d array of line titles], unitInfo: {value: <variable>, display: <display>, unit: <unit>}}
 function processTrendData() {
     // delete all yearly trend graphs.
+    if (barRaceInterval) {
+        clearInterval(barRaceInterval);
+    }
+    
     if (document.getElementById('yearTrendDiv').getElementsByTagName('div')[0]) {
         document.getElementById('yearTrendDiv').getElementsByTagName('div')[0].remove(); 
     }
@@ -46,7 +51,6 @@ function processTrendData() {
     ]
 
     // determine whether it's yearly, monthly, or historical by seeing which div is purple.
-    let timeline; // either "yearly", "monthly", or "historical"
     for (let i = 0; i < document.getElementsByClassName('indivTrendLineOption').length; i++) {
         const elem = document.getElementsByClassName('indivTrendLineOption')[i];
         if (getComputedStyle(elem).getPropertyValue('color') == 'rgb(255, 255, 255)') {
@@ -138,7 +142,6 @@ function processTrendData() {
                 titles.push(`${month}/${yr}`);
             }
         }
-        console.log(choppedByYear);
     }
     
     // add all 366 days worth to choppedByYear. Leap year use is intended.
@@ -206,8 +209,6 @@ function processTrendData() {
         seconds += 86400
         day++;
     }
-
-    console.log(ar);
     return {data: ar, dataTitles: titles, unitInfo: unitInfo[units.indexOf(variableToParse)]};
 }
 
@@ -219,7 +220,6 @@ function drawTrendGraph() {
     var dataSet = anychart.data.set(data);
     const series = [];
     const seriesColors = ['red', 'cornflowerblue', 'seagreen', 'orange', 'darkblue', 'gold', 'lime', 'black', 'grey', 'purple', 'skyblue', 'black']
-    console.log(data[0]);
 
     if (data[0].length > seriesColors.length) {
         const tempDataTitles = [...titles];
@@ -249,8 +249,7 @@ function drawTrendGraph() {
             }
         }
     }
-    
-    console.log(processedByDay);
+
     // create a line chart
     var chart = anychart.line();
 
@@ -292,17 +291,45 @@ function drawTrendGraph() {
     chart.draw();
 }
 
-let barRaceInterval;
-let graphFrame = 0;
-let scrubbingRate = 50 // # of increments per data point.
 function runBarRace() {
     graphFrame = 0;
-    barRaceInterval = setInterval(() => drawBarFrame(processedByDay[graphFrame]), 10)
+    // compute the intermediate.
+    if (timeline == "yearly") {
+        scrubbingRate = 8;
+    } else {
+        scrubbingRate = 100;
+    }
+    barRaceInterval = setInterval(() => computeIntermediatesAndDraw(), 40)
+}
+
+let graphFrame = 0;
+let scrubbingRate = 100 // # of increments per data point.
+function computeIntermediatesAndDraw() {
+    const fraction = (graphFrame % scrubbingRate) / scrubbingRate;
+    let computedIntermediate = [];
+    const item = processedByDay[Math.floor(graphFrame / scrubbingRate)]
+    const nextItem = processedByDay[Math.ceil(graphFrame / scrubbingRate)]
+
+    if (!nextItem) {
+        // if it goes out of bounds, stop immediately.
+        clearInterval(barRaceInterval);
+        return 0;
+    }
+
+    computedIntermediate.push(item[0]) // push the date.
+    for (let i = 1; i < processedByDay[0].length; i++) {
+        computedIntermediate.push({
+            name: item[i].name, 
+            value: item[i].value + ((nextItem[i].value - item[i].value) * fraction), 
+            color: item[i].color
+        })
+    }
+    drawBarFrame(computedIntermediate)
 }
 
 function drawBarFrame(array) {
     // array is in the format [<date>, {name: name1, value: val, color: c1}, {name: name2, value: val, color: c1}, ...]
-   
+    document.getElementById('barRaceMarker').innerHTML = array[0];
     // delete existing bars.
     var paras = document.getElementsByClassName('graphRow');
 
@@ -345,7 +372,7 @@ function drawBarFrame(array) {
         graphBar.style.backgroundColor = data[i].color
         /* graphBar.style.background = 'linear-gradient(to right, white, ' + graphColors[i % graphColors.length] + ')'; */
         if ((data[i].value / maxValue) * 100 > 18) {
-            graphBar.innerHTML = data[i].value
+            graphBar.innerHTML = data[i].value.toFixed(2)
         } else {
             graphBar.innerHTML = "."
         }
@@ -355,7 +382,7 @@ function drawBarFrame(array) {
          
         if ((data[i].value / maxValue) * 100 <= 18) {
             const graphTailText = document.createElement('p');
-            graphTailText.innerHTML = data[i].value + " (" + ((data[i].value / maxValue) * 100).toFixed(1) + "%)";
+            graphTailText.innerHTML = data[i].value.toFixed(2)
             graphTailText.style.paddingLeft = "2%";
             graphTailText.style.marginTop = "1%";
             graphTailText.style.marginBottom = "1%";

@@ -2,6 +2,8 @@ function runTrends() {
     drawTrendGraph();
 }
 
+let processedByDay = []; // global var
+
 function updateTrendLineOption(event) {
     for (let i = 0; i < document.getElementsByClassName('indivTrendLineOption').length; i++) {
         const elem = document.getElementsByClassName('indivTrendLineOption')[i];
@@ -22,7 +24,8 @@ function processTrendData() {
         document.getElementById('yearTrendDiv').getElementsByTagName('div')[0].remove(); 
     }
      
-     // set the variables.
+    // set the variables.
+    processedByDay  = [];
     const variableToParse = document.getElementsByName('trendsCumVariable')[0].value;
     const variableStatus = document.getElementsByName('trendsCumVariableSetting')[0].value;
     const dayHistory = parseInt(document.getElementsByName('movingAvgDays')[0].value);
@@ -138,8 +141,6 @@ function processTrendData() {
         console.log(choppedByYear);
     }
     
-    
-
     // add all 366 days worth to choppedByYear. Leap year use is intended.
     let base = '01-01-2020'
     let seconds = Date.parse(base) / 1000;
@@ -153,6 +154,7 @@ function processTrendData() {
     if (timeline == 'historical') {
         processed.forEach(e => {
             ar.push([e[0], parseFloat(e[1])])
+            processedByDay.push([e[0], parseFloat(e[1])])
         })
         titles.push("Historical");
     }
@@ -199,8 +201,8 @@ function processTrendData() {
         }
         if (timeline !== 'historical') {
             ar.push(subArray);
+            processedByDay.push(subArray);
         }
-
         seconds += 86400
         day++;
     }
@@ -225,19 +227,30 @@ function drawTrendGraph() {
         for (let i = data[0].length - 1; i > data[0].length - 1 - seriesColors.length; i--) {
             series.push(dataSet.mapAs({x: 0, value: i}));
             titles.push(tempDataTitles[i-1])
+            // rappel all changes down processedByDay.
+            for (let j = 0; j < processedByDay.length; j++) {
+                const tempData = processedByDay[j][i];
+                processedByDay[j][i] = {name: tempDataTitles[i-1], value: tempData, color: seriesColors[data[0].length - 1 - i]}
+            }
         }
-        /* for (let i = 1; i < seriesColors.length; i++) {
-            series.push(dataSet.mapAs({x: 0, value: i}));
-        } */
+
+        // clean up processedByDay by removing any entry that isn't an object.
+        for (let j = 0; j < processedByDay.length; j++) {
+            const end = processedByDay[j].length;
+            processedByDay[j].splice(1, end - seriesColors.length - 1);
+        }
+
     } else {
         for (let i = 1; i < data[0].length; i++) {
             series.push(dataSet.mapAs({x: 0, value: i}));
+            for (let j = 0; j < processedByDay.length; j++) {
+                const tempData = processedByDay[j][i];
+                processedByDay[j][i] = {name: titles[i-1], value: tempData, color: seriesColors[i % seriesColors.length]}
+            }
         }
     }
     
-
-    console.log(series);
-    console.log(titles);
+    console.log(processedByDay);
     // create a line chart
     var chart = anychart.line();
 
@@ -277,4 +290,97 @@ function drawTrendGraph() {
 
     // draw the line chart
     chart.draw();
+}
+
+let barRaceInterval;
+let graphFrame = 0;
+let scrubbingRate = 50 // # of increments per data point.
+function runBarRace() {
+    graphFrame = 0;
+    barRaceInterval = setInterval(() => drawBarFrame(processedByDay[graphFrame]), 10)
+}
+
+function drawBarFrame(array) {
+    // array is in the format [<date>, {name: name1, value: val, color: c1}, {name: name2, value: val, color: c1}, ...]
+   
+    // delete existing bars.
+    var paras = document.getElementsByClassName('graphRow');
+
+    while(paras[0]) {
+        paras[0].parentNode.removeChild(paras[0]);
+    }
+
+    const data = array.slice(1);
+    let maxValue;
+
+    const values = data.map(e => e.value);
+    maxValue = Math.max(...values);
+
+    // sort data by decreasing order.
+    for (let i = 1; i < data.length; i++) {
+        let currentElement = data[i];
+        let lastIndex = i - 1;
+  
+        while (lastIndex >= 0 && data[lastIndex].value < currentElement.value) {
+            data[lastIndex + 1] = data[lastIndex];
+            lastIndex--;
+        }
+        data[lastIndex + 1] = currentElement;
+    }
+
+    for (let i = 0; i < data.length; i++) {
+        const graphRow = document.createElement('div');
+        graphRow.className = 'graphRow';
+
+        const graphText = document.createElement('p');
+        graphText.className = 'trendsRaceText';
+        graphText.innerHTML = data[i].name;
+        graphRow.appendChild(graphText);
+
+        const graphBarHolder = document.createElement('div');
+        graphBarHolder.className = 'trendsRaceBarHolder';
+
+        const graphBar = document.createElement('div');
+        graphBar.className = 'trendsRaceGraphBar';
+        graphBar.style.backgroundColor = data[i].color
+        /* graphBar.style.background = 'linear-gradient(to right, white, ' + graphColors[i % graphColors.length] + ')'; */
+        if ((data[i].value / maxValue) * 100 > 18) {
+            graphBar.innerHTML = data[i].value
+        } else {
+            graphBar.innerHTML = "."
+        }
+        
+        graphBar.style.width = (data[i].value / maxValue) * 100 + "%";
+        graphBarHolder.appendChild(graphBar);
+         
+        if ((data[i].value / maxValue) * 100 <= 18) {
+            const graphTailText = document.createElement('p');
+            graphTailText.innerHTML = data[i].value + " (" + ((data[i].value / maxValue) * 100).toFixed(1) + "%)";
+            graphTailText.style.paddingLeft = "2%";
+            graphTailText.style.marginTop = "1%";
+            graphTailText.style.marginBottom = "1%";
+            graphTailText.style.fontSize = "110%";
+            graphBarHolder.appendChild(graphTailText);
+        }
+        
+        graphRow.appendChild(graphBarHolder);
+
+        document.getElementById('kudoGraphDiv').appendChild(graphRow);
+    }
+
+    graphFrame++;
+
+    /* const kudoScale = document.createElement('div');
+    kudoScale.className = 'kudoGraphScale';
+
+    const increments = 5;
+    for (let j = 0; j < increments; j++) {
+        const scaleIncrement = document.createElement('div');
+        scaleIncrement.className = 'kudoScaleIncrement'
+        scaleIncrement.style.width = (100 / increments) + "%";
+        scaleIncrement.innerHTML = (maxValue / increments) * (j + 1);
+        kudoScale.appendChild(scaleIncrement);
+    }
+
+    document.getElementById('kudoGraphDiv').appendChild(kudoScale); */
 }

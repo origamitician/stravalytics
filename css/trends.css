@@ -90,3 +90,20 @@
 .graphRow {
     display: flex;
 }
+
+#trendInfoHighlight {
+    font-size: 400%;
+    margin: 0;
+}
+
+#trendInfoHighlight span{
+    font-size: 40%;
+    font-weight: lighter;
+    margin-left: 1%;
+}
+
+#trendInfoUnitDisplay {
+    font-size: 110%;
+    margin-top: 0.25%;
+    margin-bottom: 0.25%;
+}

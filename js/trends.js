@@ -60,18 +60,63 @@ function processTrendData() {
     }
 
     let processed;
+    let extra;
+    const units = unitInfo.map(a => a.value);
+    const important = unitInfo[units.indexOf(variableToParse)];
     if (variableStatus === 'cumulative') {
         processed = processAllActivitiesByDayAndProperty(allActivities, variableToParse).data;
+        extra = `Total ${important.display}`
     } else if (variableStatus === 'cumulativeMoving') {
         processed = processAllActivitiesByDayAndProperty(allActivities, variableToParse, dayHistory).data;
+        extra = `Total ${important.display.toLowerCase()}, last ${dayHistory} days`
     } else {
         processed = processAllActivitiesByDayAndProperty(allActivities, variableToParse, dayHistory, true).data;
+        extra = `Avg ${important.display.toLowerCase()}/day, last ${dayHistory} days`
     }
+
+    // set the top variable and comparisons (if applicable)
+    let disp = parseFloat(processed[processed.length - 1][1])
+    let unitDisplayer = `<span>${important.unit}</span>`
+    if (variableToParse == "time" || variableToParse == "elapsedTime") {
+        document.getElementById("trendInfoHighlight").innerHTML = convert(disp) + unitDisplayer
+    } else if (variableToParse == "pace" || variableToParse == "maxPace") {
+        document.getElementById("trendInfoHighlight").innerHTML = convert(disp, 2) + unitDisplayer
+    } else {
+        document.getElementById("trendInfoHighlight").innerHTML = disp.toFixed(2) + unitDisplayer
+    }
+    document.getElementById("trendInfoUnitDisplay").innerHTML = extra;
+    
+    /*let prev, percentage;
+    if (variableStatus !== 'cumulative') {
+        if () {
+            prev = chartData[chartData.length - 1 - numberOfDays][1]
+            percentage = ((chartData[chartData.length - 1][1] - prev) / prev) * 100
+        } else {
+            prev = chartData[chartData.length - 1 - numberOfDays][1]
+            percentage = ((cum - prev) / prev) * 100
+        }
+        
+        if (property == "time" || property == "pace") {
+            prev = convert(Math.trunc(prev));
+        }
+
+        if (percentage > 0) {
+            diff.innerHTML = "▲ Up <b>" + percentage.toFixed(2) + "%</b> from " + prev
+            diff.style.color = "green";
+        } else {
+            diff.innerHTML = "▼ Down <b>" + percentage.toFixed(2) + "%</b> from " + prev
+            diff.style.color = "blue";
+        }
+        
+        diff.className = "summaryDiffText";
+        document.getElementById(divName + "-info").appendChild(diff);
+    }*/
+
+    // start processing data further
 
     const firstYear = parseInt(processed[0][0].split('-')[2])
     const choppedByYear = [];
     const dates = processed.map(a => a[0]);
-    const units = unitInfo.map(a => a.value);
     const titles = [];
     // sort by year.
     let cumulativeAtEndOfYear = 0;

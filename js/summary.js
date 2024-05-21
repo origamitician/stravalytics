@@ -317,8 +317,6 @@ async function createCumulativeTrends() {
         toDelete[0].parentNode.removeChild(toDelete[0]);
     }
 
-    document.getElementById("summaryDivWelcomeMsg").innerHTML = `Welcome, ${localStorage.stravaName}!`;
-
     let now = Date.now();
     console.log ((now - current) / 1000 + "seconds have elapsed to delete.")
 

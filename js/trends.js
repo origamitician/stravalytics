@@ -150,9 +150,9 @@ function processTrendData() {
     let day = 0;
     let dayIndexes = [];
     for (let j = 0; j < choppedByYear.length; j++) {
-        dayIndexes.push(0)
+        dayIndexes.push({index: 0, last: 0})
     }
-
+    console.log(choppedByYear);
     const ar = [];
     if (timeline == 'historical') {
         processed.forEach(e => {
@@ -196,10 +196,12 @@ function processTrendData() {
             }
             
             if (ind == -1) {
-                subArray.push(null);
+                subArray.push(dayIndexes[i].last);
             } else {
-                subArray.push(choppedByYear[i][dayIndexes[i]][1]);
-                dayIndexes[i]++;
+                const toAdd = choppedByYear[i][dayIndexes[i].index][1]
+                subArray.push(toAdd);
+                dayIndexes[i].last = toAdd;
+                dayIndexes[i].index++;
             }
         }
         if (timeline !== 'historical') {
@@ -295,7 +297,7 @@ function runBarRace() {
     graphFrame = 0;
     // compute the intermediate.
     if (timeline == "yearly") {
-        scrubbingRate = 8;
+        scrubbingRate = 12;
     } else {
         scrubbingRate = 100;
     }
@@ -318,17 +320,23 @@ function computeIntermediatesAndDraw() {
 
     computedIntermediate.push(item[0]) // push the date.
     for (let i = 1; i < processedByDay[0].length; i++) {
+        let calculatedDifference = (nextItem[i].value - item[i].value).toFixed(2);
+        if (calculatedDifference >= 0) {
+            calculatedDifference = "+" + calculatedDifference;
+        }
+
         computedIntermediate.push({
             name: item[i].name, 
             value: item[i].value + ((nextItem[i].value - item[i].value) * fraction), 
-            color: item[i].color
+            color: item[i].color,
+            diff: calculatedDifference
         })
     }
     drawBarFrame(computedIntermediate)
 }
 
 function drawBarFrame(array) {
-    // array is in the format [<date>, {name: name1, value: val, color: c1}, {name: name2, value: val, color: c1}, ...]
+    // array is in the format [<date>, {name: name1, value: val, diff: dif1, color: c1}, {name: name2, value: val, color: c1}, ...]
     document.getElementById('barRaceMarker').innerHTML = array[0];
     // delete existing bars.
     var paras = document.getElementsByClassName('graphRow');
@@ -372,7 +380,7 @@ function drawBarFrame(array) {
         graphBar.style.backgroundColor = data[i].color
         /* graphBar.style.background = 'linear-gradient(to right, white, ' + graphColors[i % graphColors.length] + ')'; */
         if ((data[i].value / maxValue) * 100 > 18) {
-            graphBar.innerHTML = data[i].value.toFixed(2)
+            graphBar.innerHTML = `${data[i].value.toFixed(2)} (${data[i].diff})`
         } else {
             graphBar.innerHTML = "."
         }
@@ -382,7 +390,7 @@ function drawBarFrame(array) {
          
         if ((data[i].value / maxValue) * 100 <= 18) {
             const graphTailText = document.createElement('p');
-            graphTailText.innerHTML = data[i].value.toFixed(2)
+            graphTailText.innerHTML = `${data[i].value.toFixed(2)} (${data[i].diff})`
             graphTailText.style.paddingLeft = "2%";
             graphTailText.style.marginTop = "1%";
             graphTailText.style.marginBottom = "1%";

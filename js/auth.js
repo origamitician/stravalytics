@@ -22,8 +22,6 @@ for (let i = 0; i < sectionColors.length; i++){
 }
 
 // keep track of which components are shown.
-
-    
 let loadingBarFrame = 0;
 document.getElementById("applicationBody").style.display = "none";
 function init(){
@@ -139,8 +137,8 @@ if (indexOfAuthorization == -1) {
             document.getElementById('applicationMenu').style.display = 'block';
             clearInterval(loadingBarInterval)
             document.getElementById('transition').style.display = 'none';
-            document.getElementById('welcomeText').innerHTML = 'Welcome, ' + '<b>' + localStorage.getItem('stravaName') + '!</b>'
-
+            document.getElementById("summaryDivWelcomeMsg").innerHTML = 'Welcome, ' + '<b>' + localStorage.getItem('stravaName') + '!</b>'
+            document.title = `${localStorage.getItem('stravaName')} on Stravalytics`
         })
         
     } else {
@@ -151,10 +149,12 @@ if (indexOfAuthorization == -1) {
             document.getElementById('transition').style.display = 'none';
         }else{
             // if user wants to generate random data
-            document.getElementById("applicationBody").style.display = "block";
-            document.getElementById('transition').style.display = 'none';
-            // document.getElementById('welcomeText').innerHTML = 'Viewing randomly generated data!'
             document.getElementById('notLoggedInBody').style.display = 'none';
+            document.getElementById("applicationBody").style.display = "block";
+            document.getElementById('applicationMenu').style.display = 'block';
+            document.getElementById('transition').style.display = 'none';
+            document.getElementById("summaryDivWelcomeMsg").innerHTML = 'Viewing randomly generated data.'
+            
             generateRandomData();
         }
     }

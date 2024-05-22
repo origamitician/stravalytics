@@ -35,15 +35,20 @@
 }
 
 .indivTrendLineOption {
-    padding: 0.5% 2% 0.5% 2%;
+    padding: 0.75% 2% 0.75% 2%;
     margin: 0;
+    width: auto;
+    box-sizing: border-box;
     border: 1px solid black;
+    text-align: center;
 }
 
 #trendLineOptionFlex {
     display: flex;
     justify-content: right;
-    width: 100%;
+    width: 50%;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 .indivTrendLineOption:hover {
@@ -93,7 +98,8 @@
 
 #trendInfoHighlight {
     font-size: 400%;
-    margin: 0;
+    margin-top: 3%;
+    margin-bottom: 1%;
 }
 
 #trendInfoHighlight span{
@@ -103,7 +109,26 @@
 }
 
 #trendInfoUnitDisplay {
-    font-size: 110%;
-    margin-top: 0.25%;
-    margin-bottom: 0.25%;
+    font-size: 135%;
+    margin-top: 0.5%;
+    margin-bottom: 0.5%;
+    font-weight: bold;
+}
+
+#trendInfoComparison {
+    font-size: 100%;
+    margin-top: 0%;
+    margin-bottom: 0%;
+}
+
+#trendInfo {
+    width: 50%;
+    box-sizing: border-box;
+    border-right: 3px dotted purple;
+}
+
+#trendsGraphSecondRowFlex {
+    display: flex;
+    width: 100%;
+    margin-top: 1%;
 }

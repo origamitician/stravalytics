@@ -440,18 +440,22 @@
                 <input type="number" name="movingAvgDays" class="trendsCumVariable" value=30 onChange = "drawTrendGraph()">
                 <br><br>
                 <div id = "mainTrendDivHolder">
-                    <div id = "trendLineOptionFlex">
-                        <p id="trendLineOptionLabel">View by:</p>
-                        <p class="indivTrendLineOption" id="yearly" onclick="updateTrendLineOption(event)">Yearly</p>
-                        <p class="indivTrendLineOption" id="monthly" onclick="updateTrendLineOption(event)">Monthly</p>
-                        <p class="indivTrendLineOption" id="historical" onclick="updateTrendLineOption(event)">Historical</p>
+                    <div id = "trendsGraphSecondRowFlex">
+                        <div id = "trendInfo">
+                            <p id = "trendInfoUnitDisplay"></p>
+                            <h1 id = "trendInfoHighlight"></h1>
+                            <p id = "trendInfoComparison"></p>
+                        </div>
+                        <div id = "trendLineOptionFlex">
+                            <p id="trendLineOptionLabel">View by:</p>
+                            <p class="indivTrendLineOption" id="yearly" onclick="updateTrendLineOption(event)">Yearly</p>
+                            <p class="indivTrendLineOption" id="monthly" onclick="updateTrendLineOption(event)">Monthly</p>
+                            <p class="indivTrendLineOption" id="historical" onclick="updateTrendLineOption(event)">Historical</p>
+                        </div>
                     </div>
+                    
                     <br><br>
-                    <div id = "trendInfo">
-                        <h1 id = "trendInfoHighlight"></h1>
-                        <p id = "trendInfoUnitDisplay"></p>
-                        <p id = "trendInfoComparison"></p>
-                    </div>
+                    
                     <div id = "yearTrendDiv" class="trendDiv">
                         <h3 class="trendTotal"></h3>
                         <p class="trendTotalSubtitle" id="trendTotalYearSubtitle"></p>

@@ -65,13 +65,13 @@ function processTrendData() {
     const important = unitInfo[units.indexOf(variableToParse)];
     if (variableStatus === 'cumulative') {
         processed = processAllActivitiesByDayAndProperty(allActivities, variableToParse).data;
-        extra = `Total ${important.display}`
+        extra = `Total ${important.display}:`
     } else if (variableStatus === 'cumulativeMoving') {
         processed = processAllActivitiesByDayAndProperty(allActivities, variableToParse, dayHistory).data;
-        extra = `Total ${important.display.toLowerCase()}, last ${dayHistory} days`
+        extra = `Total ${important.display.toLowerCase()}, last ${dayHistory} days:`
     } else {
         processed = processAllActivitiesByDayAndProperty(allActivities, variableToParse, dayHistory, true).data;
-        extra = `Avg ${important.display.toLowerCase()}/day, last ${dayHistory} days`
+        extra = `Avg ${important.display.toLowerCase()}/day, last ${dayHistory} days:`
     }
 
     // set the top variable and comparisons (if applicable)
@@ -86,31 +86,32 @@ function processTrendData() {
     }
     document.getElementById("trendInfoUnitDisplay").innerHTML = extra;
     
-    /*let prev, percentage;
+    let prev, percentage;
     if (variableStatus !== 'cumulative') {
-        if () {
-            prev = chartData[chartData.length - 1 - numberOfDays][1]
-            percentage = ((chartData[chartData.length - 1][1] - prev) / prev) * 100
-        } else {
-            prev = chartData[chartData.length - 1 - numberOfDays][1]
-            percentage = ((cum - prev) / prev) * 100
-        }
-        
-        if (property == "time" || property == "pace") {
-            prev = convert(Math.trunc(prev));
+        if (processed[processed.length - 1 - dayHistory]) {
+            prev = processed[processed.length - 1 - dayHistory][1]
+            if (variableToParse == "pace" || variableToParse == "maxPace") {
+                percentage = ((prev - disp) / prev) * 100
+            } else {
+                percentage = ((disp - prev) / prev) * 100
+            }
         }
 
-        if (percentage > 0) {
-            diff.innerHTML = "▲ Up <b>" + percentage.toFixed(2) + "%</b> from " + prev
-            diff.style.color = "green";
-        } else {
-            diff.innerHTML = "▼ Down <b>" + percentage.toFixed(2) + "%</b> from " + prev
-            diff.style.color = "blue";
+        if (variableToParse == "pace" || variableToParse == "maxPace") {
+            prev = convert(prev, 2);
+        } else if (variableToParse == "time" || variableToParse == "elapsedTime" ) {
+            prev = convert(prev);
         }
         
-        diff.className = "summaryDiffText";
-        document.getElementById(divName + "-info").appendChild(diff);
-    }*/
+        const diff = document.getElementById("trendInfoComparison")
+        if (percentage > 0) {
+            diff.innerHTML = "▲ Up <b>" + percentage.toFixed(2) + "%</b> from " + prev + ' ' + unitDisplayer
+            diff.style.color = "green";
+        } else {
+            diff.innerHTML = "▼ Down <b>" + percentage.toFixed(2) + "%</b> from " + prev + " " + unitDisplayer
+            diff.style.color = "blue";
+        }
+    }
 
     // start processing data further
 

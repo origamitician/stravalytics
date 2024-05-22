@@ -31,7 +31,7 @@ function processTrendData() {
      
     // set the variables.
     processedByDay  = [];
-    const variableToParse = document.getElementsByName('trendsCumVariable')[0].value;
+    let variableToParse = document.getElementsByName('trendsCumVariable')[0].value;
     const variableStatus = document.getElementsByName('trendsCumVariableSetting')[0].value;
     const dayHistory = parseInt(document.getElementsByName('movingAvgDays')[0].value);
 
@@ -56,6 +56,40 @@ function processTrendData() {
         if (getComputedStyle(elem).getPropertyValue('color') == 'rgb(255, 255, 255)') {
             timeline = elem.id;
             break;
+        }
+    }
+
+    const canBeTotaled = ["distance", "time", "elapsedTime", "elevation", "kudos"];
+    if (variableStatus == "cumulative" || variableStatus == "cumulativeMoving") {
+        // disable most variables.
+        for (let i = 0; i < unitInfo.length; i++) {
+            if (canBeTotaled.indexOf(unitInfo[i].value) == -1) {
+                // if the variables can't be totaled.
+                document.getElementById("trendVariableList").getElementsByTagName('option')[i].setAttribute('disabled', true);
+            }
+        }
+
+        // disable the moving days field
+        if (variableStatus == "cumulative") {
+            document.getElementById("trendsNumDaysInput").setAttribute('readonly', true);
+            document.getElementById("trendsNumDaysInput").style.backgroundColor = "gray";
+        } else {
+            document.getElementById("trendsNumDaysInput").removeAttribute('readonly');
+            document.getElementById("trendsNumDaysInput").style.backgroundColor = "white";
+        }
+
+        // default back to distance if an unknown variable is chosen.
+        if (canBeTotaled.indexOf(variableToParse) == -1) {
+            variableToParse = "distance";
+            document.getElementById('trendVariableList').value = "distance";
+        }
+    } else {
+        document.getElementById("trendsNumDaysInput").removeAttribute('readonly');
+        document.getElementById("trendsNumDaysInput").style.backgroundColor = "white";
+
+        // open up all variables
+        for (let i = 0; i < document.getElementById("trendVariableList").getElementsByTagName('option').length; i++) {
+            document.getElementById("trendVariableList").getElementsByTagName('option')[i].removeAttribute('disabled');
         }
     }
 
@@ -87,6 +121,7 @@ function processTrendData() {
     document.getElementById("trendInfoUnitDisplay").innerHTML = extra;
     
     let prev, percentage;
+    const diff = document.getElementById("trendInfoComparison")
     if (variableStatus !== 'cumulative') {
         if (processed[processed.length - 1 - dayHistory]) {
             prev = processed[processed.length - 1 - dayHistory][1]
@@ -95,6 +130,9 @@ function processTrendData() {
             } else {
                 percentage = ((disp - prev) / prev) * 100
             }
+        } else {
+            alert ("Please enter a smaller day!");
+            return 0;
         }
 
         if (variableToParse == "pace" || variableToParse == "maxPace") {
@@ -103,7 +141,6 @@ function processTrendData() {
             prev = convert(prev);
         }
         
-        const diff = document.getElementById("trendInfoComparison")
         if (percentage > 0) {
             diff.innerHTML = "▲ Up <b>" + percentage.toFixed(2) + "%</b> from " + prev + ' ' + unitDisplayer
             diff.style.color = "green";
@@ -111,6 +148,9 @@ function processTrendData() {
             diff.innerHTML = "▼ Down <b>" + percentage.toFixed(2) + "%</b> from " + prev + " " + unitDisplayer
             diff.style.color = "blue";
         }
+    } else {
+        diff.innerHTML = "(No comparison provided)";
+        diff.style.color = "orange";
     }
 
     // start processing data further

@@ -144,3 +144,48 @@
 #trendsNumDaysInput {
     width: 10%;
 }
+
+@media only screen and (orientation: portrait) {
+    #trendsGraphSecondRowFlex {
+        flex-direction: column;
+    }
+
+    #trendInfo, #trendInfoMenu {
+        width: 100%;
+    }
+
+    #trendInfo {
+        padding: 0% 0 6% 0;
+        border-right: none;
+        border-bottom: 2px dotted purple;
+        margin-bottom: 6%;
+    }
+
+    #trendInfoUnitDisplay {
+        font-size: 5vw;
+    }
+
+    #trendInfoHighlight {
+        font-size: 12vw;
+    }
+
+    #trendInfoComparison {
+        font-size: 3.75vw;
+    }
+
+    #trendsDiv label {
+        font-size: 4vw;
+    }
+
+    .trendsCumVariable {
+        font-size: 4vw;
+    }
+
+    #trendInfoMenu {
+        padding: 0;
+    }
+
+    #trendLineOptionLabel, .indivTrendLineOption {
+        font-size: 3.75vw;
+    }
+}

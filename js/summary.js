@@ -247,6 +247,7 @@ function processAllActivitiesByDayAndProperty(array, property, numberOfDays, ave
         
         let currentVal = 0; //only gets the total in one day, resets the next day.
         let activitiesThatDay = 0;
+        let activityDetailThatDay = [];
         while (activityDateObj.split("-")[0] == refDateObj.getFullYear() && activityDateObj.split("-")[1] - 1 == refDateObj.getMonth() && activityDateObj.split("-")[2] == refDateObj.getDate() && currIndex <= array.length) {
             
             if (array[currIndex][property]) {
@@ -254,6 +255,7 @@ function processAllActivitiesByDayAndProperty(array, property, numberOfDays, ave
                 if (unitsThatCanBeTotaled.includes(property)) {
                     cum += array[currIndex][property]
                 }
+                activityDetailThatDay.push({activityID: array[currIndex].id, activityIndex: currIndex, activityStat: array[currIndex][property]})
             } else {
                 currentVal += 0
                 cum += 0
@@ -263,7 +265,6 @@ function processAllActivitiesByDayAndProperty(array, property, numberOfDays, ave
             if (currIndex < array.length - 1) {
                 currIndex++;
                 activityDateObj = array[currIndex].startDate.split("T")[0];
-                
             } else {
                 break;
             }
@@ -295,10 +296,10 @@ function processAllActivitiesByDayAndProperty(array, property, numberOfDays, ave
                 // chartData.push([refDateString, 0, currentVal])
                 chartData.push({date: refDateString, display: 0, statsThatDay: currentVal, dayBreakdown: []})
             } else {
-                chartData.push({date: refDateString, display: (cum / daysActive).toFixed(2), statsThatDay: currentVal, dayBreakdown: []})
+                chartData.push({date: refDateString, display: (cum / daysActive).toFixed(2), statsThatDay: currentVal, dayBreakdown: activityDetailThatDay})
             }
         } else {
-            chartData.push({date: refDateString, display: cum.toFixed(2), statsThatDay: currentVal, dayBreakdown: []})
+            chartData.push({date: refDateString, display: cum.toFixed(2), statsThatDay: currentVal, dayBreakdown: activityDetailThatDay})
         }
     }
 

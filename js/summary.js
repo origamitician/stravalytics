@@ -6,6 +6,7 @@ function createSummaryPage() {
 }
 
 function createQuickStats() {
+    console.log(processAllActivitiesByDayAndProperty(allActivities, "distance", 30, true))
     const statisticsToIterate = [
         {display: "Days Active", property: null, unit: ' days'}, 
         {display: "Miles", property: "distance", unit: 'mi'},
@@ -46,7 +47,7 @@ function createQuickStats() {
                 byDays = processAllActivitiesByDayAndProperty(allActivities, "distance");
             }
 
-            const dateArray = byDays.data.map(e => e[0]);
+            const dateArray = byDays.data.map(e => e.date);
             let filterIndex, startPrevious, endPrevious, startDateDisplay, endDateDisplay;
 
             if (id === "yearStatistics" ) {
@@ -203,10 +204,10 @@ function totalFromDate(array, startIndex, endIndex, countingDays) {
     for (let i = startIndex; i <= endIndex; i++) {
         if (!countingDays) {
             // add cumulatives
-            total+=array[i][2];
+            total+=array[i].statsThatDay;
         } else {
             // add number of days
-            if (array[i][2] > 0) {
+            if (array[i].statsThatDay > 0) {
                 total++;
             }
         }
@@ -258,7 +259,6 @@ function processAllActivitiesByDayAndProperty(array, property, numberOfDays, ave
                 cum += 0
             }
             
-            
             activitiesThatDay ++;
             if (currIndex < array.length - 1) {
                 currIndex++;
@@ -283,7 +283,7 @@ function processAllActivitiesByDayAndProperty(array, property, numberOfDays, ave
         
         if(numberOfDays && chartData.length >= numberOfDays) {
             // console.log("Subtracting cum by " + chartData[chartData.length - numberOfDays][2])
-            const removedFromMovingCalc = chartData[chartData.length - numberOfDays][2]
+            const removedFromMovingCalc = chartData[chartData.length - numberOfDays].statsThatDay
             cum -= removedFromMovingCalc
             if (removedFromMovingCalc > 0) {
                 daysActive--;
@@ -292,12 +292,13 @@ function processAllActivitiesByDayAndProperty(array, property, numberOfDays, ave
 
         if (average) {
             if (daysActive == 0) {
-                chartData.push([refDateString, 0, currentVal])
+                // chartData.push([refDateString, 0, currentVal])
+                chartData.push({date: refDateString, display: 0, statsThatDay: currentVal, dayBreakdown: []})
             } else {
-                chartData.push([refDateString, (cum / daysActive).toFixed(2), currentVal])
+                chartData.push({date: refDateString, display: (cum / daysActive).toFixed(2), statsThatDay: currentVal, dayBreakdown: []})
             }
         } else {
-            chartData.push([refDateString, cum.toFixed(2), currentVal])
+            chartData.push({date: refDateString, display: cum.toFixed(2), statsThatDay: currentVal, dayBreakdown: []})
         }
     }
 
@@ -413,10 +414,10 @@ function createCumulativeGraph(property, divName, subText, numberOfDays, average
         const diff = document.createElement("p");
         
         if (average) {
-            prev = chartData[chartData.length - 1 - numberOfDays][1]
+            prev = chartData[chartData.length - 1 - numberOfDays].display
             percentage = ((chartData[chartData.length - 1][1] - prev) / prev) * 100
         } else {
-            prev = chartData[chartData.length - 1 - numberOfDays][1]
+            prev = chartData[chartData.length - 1 - numberOfDays].display
             percentage = ((cum - prev) / prev) * 100
         }
         
@@ -440,9 +441,9 @@ function createCumulativeGraph(property, divName, subText, numberOfDays, average
     const trimBy = Math.ceil(chartData.length / graphDetail)
     const trimmedChart = [];
     for (let i = chartData.length - 1; i >= 0; i -= trimBy) {
-        trimmedChart.unshift([chartData[i][0], chartData[i][1]])
+        trimmedChart.unshift([chartData[i].date, chartData[i].display])
     }
-    trimmedChart.unshift([chartData[0][0], chartData[0][1]])
+    trimmedChart.unshift([chartData[0].date, chartData[0].display])
     // console.log(trimmedChart)
     
     // create the graph

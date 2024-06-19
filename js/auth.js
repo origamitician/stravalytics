@@ -11,12 +11,12 @@ for (let i = 0; i < sectionColors.length; i++){
     document.getElementsByClassName('applicationMenuOption')[i].addEventListener('click', (e) => {
         let link = e.target.href;
         console.log(link.substring(link.indexOf('#')+1));
-        for (let j = 0; j < document.getElementsByClassName('mainDiv').length; j++) {
+        /* for (let j = 0; j < document.getElementsByClassName('mainDiv').length; j++) {
             document.getElementsByClassName('mainDiv')[j].style.display = 'none';
         }
-        document.getElementById(link.substring(link.indexOf('#')+1)).style.display = 'block';
+        document.getElementById(link.substring(link.indexOf('#')+1)).style.display = 'block'; */
     })
-    if (i < 4) {
+    if (i < document.getElementsByClassName('mainDiv').length) {
         document.getElementsByClassName('quickOverviewTopDiv')[i].style.backgroundColor = sectionColors[i];
     }
 }

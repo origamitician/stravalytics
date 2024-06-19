@@ -109,7 +109,7 @@ function processTrendData() {
     }
 
     // set the top variable and comparisons (if applicable)
-    let disp = parseFloat(processed[processed.length - 1][1])
+    let disp = parseFloat(processed[processed.length - 1].display)
     let unitDisplayer = `<span>${important.unit}</span>`
     if (variableToParse == "time" || variableToParse == "elapsedTime") {
         document.getElementById("trendInfoHighlight").innerHTML = convert(disp) + unitDisplayer
@@ -124,7 +124,7 @@ function processTrendData() {
     const diff = document.getElementById("trendInfoComparison")
     if (variableStatus !== 'cumulative') {
         if (processed[processed.length - 1 - dayHistory]) {
-            prev = processed[processed.length - 1 - dayHistory][1]
+            prev = processed[processed.length - 1 - dayHistory].display
             if (variableToParse == "pace" || variableToParse == "maxPace") {
                 percentage = ((prev - disp) / prev) * 100
             } else {
@@ -155,9 +155,9 @@ function processTrendData() {
 
     // start processing data further
 
-    const firstYear = parseInt(processed[0][0].split('-')[2])
+    const firstYear = parseInt(processed[0].date.split('-')[2])
     const choppedByYear = [];
-    const dates = processed.map(a => a[0]);
+    const dates = processed.map(a => a.date);
     const titles = [];
     // sort by year.
     let cumulativeAtEndOfYear = 0;
@@ -167,19 +167,19 @@ function processTrendData() {
             if (i == firstYear) {
                 // if the first year of activities are getting parsed.
                 sliced = processed.slice(0, dates.indexOf('1-1-' + (i+1)))
-                choppedByYear.push(sliced.map(e => [e[0], parseFloat(e[1] - cumulativeAtEndOfYear), e[2]]))
+                choppedByYear.push(sliced.map(e => [e.date, parseFloat(e.display - cumulativeAtEndOfYear), e.statsThatDay]))
             } else if (i == new Date().getFullYear()) {
                 // if the most recent year of activities are getting parsed.
                 sliced = processed.slice(dates.indexOf('1-1-' + i))
-                choppedByYear.push(sliced.map(e => [e[0], parseFloat(e[1] - cumulativeAtEndOfYear), e[2]]));
+                choppedByYear.push(sliced.map(e => [e.date, parseFloat(e.display - cumulativeAtEndOfYear), e.statsThatDay]));
             } else {
                 // if the middle year of activities are getting parsed.
                 sliced = processed.slice(dates.indexOf('1-1-' + i), dates.indexOf('1-1-' + (i+1)));
-                choppedByYear.push(sliced.map(e => [e[0], parseFloat(e[1] - cumulativeAtEndOfYear), e[2]]));
+                choppedByYear.push(sliced.map(e => [e.date, parseFloat(e.display - cumulativeAtEndOfYear), e.statsThatDay]));
             }
 
             if (variableStatus === 'cumulative') {
-                cumulativeAtEndOfYear = parseFloat(sliced[sliced.length-1][1])
+                cumulativeAtEndOfYear = parseFloat(sliced[sliced.length-1].display)
             }
             titles.push(i);
         }
@@ -190,7 +190,7 @@ function processTrendData() {
             let sliced = [];
             if (yr === firstYear) {
                 // if the first year is being parsed.
-                startMonth = parseInt(processed[0][0].split('-')[0])
+                startMonth = parseInt(processed[0].date.split('-')[0])
             }
 
             if (yr === new Date().getFullYear()) {
@@ -211,19 +211,19 @@ function processTrendData() {
                 if (month == startMonth && yr == firstYear) {
                     // if the first month is getting processed.
                     sliced = processed.slice(0, dates.indexOf(`${nextMonth}-1-${nextYear}`))
-                    choppedByYear.push(sliced.map(e => [e[0], parseFloat(e[1] - cumulativeAtEndOfYear), e[2]]));
+                    choppedByYear.push(sliced.map(e => [e.date, parseFloat(e.display - cumulativeAtEndOfYear), e.statsThatDay]));
                 } else if (month == endMonth && yr == new Date().getFullYear()) {
                     // if the last month is getting processed.
                     sliced = processed.slice(dates.indexOf(`${month}-1-${yr}`))
-                    choppedByYear.push(sliced.map(e => [e[0], parseFloat(e[1] - cumulativeAtEndOfYear), e[2]]));
+                    choppedByYear.push(sliced.map(e => [e.date, parseFloat(e.display - cumulativeAtEndOfYear), e.statsThatDay]));
                 } else {
                     // if the other middle months are getting processesd.
                     sliced = processed.slice(dates.indexOf(`${month}-1-${yr}`), dates.indexOf(`${nextMonth}-1-${nextYear}`))
-                    choppedByYear.push(sliced.map(e => [e[0], parseFloat(e[1] - cumulativeAtEndOfYear), e[2]]));
+                    choppedByYear.push(sliced.map(e => [e.date, parseFloat(e.display - cumulativeAtEndOfYear), e.statsThatDay]));
                 }
 
                 if (variableStatus === 'cumulative') {
-                    cumulativeAtEndOfYear = parseFloat(sliced[sliced.length-1][1])
+                    cumulativeAtEndOfYear = parseFloat(sliced[sliced.length-1].display)
                 }
                 titles.push(`${month}/${yr}`);
             }
@@ -242,8 +242,8 @@ function processTrendData() {
     const ar = [];
     if (timeline == 'historical') {
         processed.forEach(e => {
-            ar.push([e[0], parseFloat(e[1])])
-            processedByDay.push([e[0], parseFloat(e[1])])
+            ar.push([e.date, parseFloat(e.display)])
+            processedByDay.push([e.date, parseFloat(e.display)])
         })
         titles.push("Historical");
     }

@@ -246,12 +246,25 @@ function processAllActivitiesByDayAndProperty(array, property, numberOfDays, ave
         let activityDateObj = array[currIndex].startDate.split("T")[0];
         
         let currentVal = 0; //only gets the total in one day, resets the next day.
+        // one-day total variables for weighted pace & uptime.
+        let currentDistance = 0;
+        let currentMovingTime = 0;
+        let currentElapsedTime = 0;
         let activitiesThatDay = 0;
         let activityDetailThatDay = [];
         while (activityDateObj.split("-")[0] == refDateObj.getFullYear() && activityDateObj.split("-")[1] - 1 == refDateObj.getMonth() && activityDateObj.split("-")[2] == refDateObj.getDate() && currIndex <= array.length) {
             
             if (array[currIndex][property]) {
-                currentVal += array[currIndex][property]
+                /* if (property === "pace") {
+                    currentDistance += array[currIndex].distance
+                    currentMovingTime += array[currIndex].time
+                } else if (property === "uptime") {
+                    currentMovingTime += array[currIndex].time
+                    currentElapsedTime += array[currIndex].elapsedTime
+                } else {
+                    currentVal += array[currIndex][property]
+                } */
+                    currentVal += array[currIndex][property]
                 if (unitsThatCanBeTotaled.includes(property)) {
                     cum += array[currIndex][property]
                 }

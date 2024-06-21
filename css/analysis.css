@@ -1,0 +1,41 @@
+#analysisBarChartHolder {
+    width: 100%;
+    display: flex;
+}
+
+.analysisVerticalHolder {
+    position: relative;
+    width: 100%;
+    
+}
+
+.analysisVerticalOuterContainer {
+    flex: 10 0 auto;
+}
+
+.analysisVerticalHolderBelow {
+    word-wrap: break-word;
+    font-size: 85%;
+    width: 100%;
+    text-align: center;
+    /* transform: rotate(-90deg);
+    border: 1px solid black;
+    margin-top: 10%; */
+}
+
+.analysisVerticalHolderStat {
+    color: white;
+    font-size: 100%;
+    text-align: center;
+    border: 1px solid white;
+    box-sizing: border-box;
+    position: absolute;
+}
+
+.analysisVerticalHolderStatTop{
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    font-size: 100%;
+    margin-bottom: 0;
+}

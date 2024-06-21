@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="css/notloggedin.css">
     <link rel="stylesheet" href="css/summary.css">
     <link rel="stylesheet" href="css/trends.css">
+    <link rel="stylesheet" href="css/analysis.css">
     <title>Document</title>
 </head>
 <body>
@@ -482,6 +483,32 @@
                     <h1>Analyze</h1>
                     <p>Details of your runs by day, week, or month.</p>
                 </div>
+                <select name="analysisVariable" class="analysisVariable" onChange = "runAnalysis()" id="analysisVariableList">
+                    <option value="distance" selected>Distance</option>
+                    <option value="time">Moving Time</option>
+                    <option value="elapsedTime">Elapsed Time</option>
+                    <option value="uptime">Uptime (%)</option>
+                    <option value="elevation">Elevation Gain</option>
+                    <option value="incline">Incline</option>
+                    <option value="pace">Pace</option>
+                    <option value="kudos">Kudos</option>
+                    <option value="maxPace">Top speed</option>
+                    <option value="cadence">Cadence (steps/min)</option>
+                    <option value="stepsPerMile">Steps per mile</option>
+                    <option value="strideLength">Stride length</option>
+                </select>
+                <br><br>
+                <label for="analysisVariableSetting">Calculate by</label>
+                <select name="analysisVariableSetting" class="analysisVariable" onChange = "runAnalysis()">
+                    <option value="cumulative" selected>Cumulative</option>
+                    <option value="average">Average per day</option>
+                </select>
+                <label for="analysisVariableDuration">Display by</label>
+                <select name="analysisVariableDuration" class="analysisVariable" onChange = "drawTrendGraph()">
+                    <option value="weekly" selected>Weekly</option>
+                    <option value="montly">Monthly</option>
+                </select>
+                <br><br>
                 <div id = "analysisBarChartHolder"></div>
             </section>
         </div>

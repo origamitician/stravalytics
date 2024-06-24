@@ -1,6 +1,7 @@
 function runAnalysis() {
     let variableToAnalyze = document.getElementsByName('analysisVariable')[0].value
     let calculationMethod = document.getElementsByName('analysisVariableSetting')[0].value
+    let duration = document.getElementsByName('analysisVariableDuration')[0].value
     let data;
     if (calculationMethod === "cumulative") {
         data = processAllActivitiesByDayAndProperty(allActivities, variableToAnalyze).data
@@ -12,19 +13,22 @@ function runAnalysis() {
     // sort by week.
 
     const unitInfo = [
-        {value: 'distance', display: 'Distance', unit: 'mi', canBeTotaled: true}, 
-        {value: 'time', display: 'Moving Time', unit: '', canBeTotaled: true},
-        {value: 'elapsedTime', display: 'Elapsed Time', unit: '', canBeTotaled: true},
-        {value: 'uptime', display: 'Uptime', unit: "%"},
-        {value: 'elevation', display: 'Elevation Gain', unit: "ft", canBeTotaled: true},
-        {value: 'incline', display: 'Incline', unit: "%"},
-        {value: 'pace', display: 'Pace', unit: "/mi"},
-        {value: 'kudos', display: 'Kudos', unit: "", canBeTotaled: true},
-        {value: 'maxPace', display: 'Maximum Pace', unit: "/mi"},
-        {value: 'cadence', display: 'Cadence', unit: "steps/min"},
-        {value: 'stepsPerMile', display: 'Steps / mile', unit: "steps/mi"},
-        {value: 'strideLength', display: 'Stride length', unit: "ft"},
+        {value: 'distance', display: 'Distance', unit: 'mi', canBeTotaled: true, totalDecimalPlaces: 2, avgDecimalPlaces: 2}, 
+        {value: 'time', display: 'Moving Time', unit: '', canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 0},
+        {value: 'elapsedTime', display: 'Elapsed Time', unit: '', canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 0},
+        {value: 'uptime', display: 'Uptime', unit: "%", avgDecimalPlaces: 2},
+        {value: 'elevation', display: 'Elevation Gain', unit: "ft", canBeTotaled: true, decimalPlaces: 1, avgDecimalPlaces: 2},
+        {value: 'incline', display: 'Incline', unit: "%", avgDecimalPlaces: 3},
+        {value: 'pace', display: 'Pace', unit: "/mi", avgDecimalPlaces: 2},
+        {value: 'kudos', display: 'Kudos', unit: "", canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 2},
+        {value: 'maxPace', display: 'Maximum Pace', unit: "/mi", avgDecimalPlaces: 2},
+        {value: 'cadence', display: 'Cadence', unit: "steps/min", avgDecimalPlaces: 1},
+        {value: 'stepsPerMile', display: 'Steps / mile', unit: "steps/mi", avgDecimalPlaces: 0},
+        {value: 'strideLength', display: 'Stride length', unit: "ft", avgDecimalPlaces: 3},
     ]
+
+    const unitValues = unitInfo.map(e => e.value)
+    const currentUnitInfo = unitInfo[unitValues.indexOf(variableToAnalyze)]
 
     let sum = 0;
     let numberOfDaysActive = 0;
@@ -32,27 +36,42 @@ function runAnalysis() {
     for (let i = 0; i < data.length; i++) {
         
         let date = new Date(data[i].date)
-        if (date.getDay() === 1) {
-            // if it's monday
 
-            // get the current numerical date
-            let dateOneDayAgo = new Date(Date.parse(date) - 86400000)
-            const currentNumericalDate = (dateOneDayAgo.getMonth()+1) + "/" + dateOneDayAgo.getDate() + "/" + dateOneDayAgo.getFullYear().toString().substring(2) 
-            // get the date one week ago
-            let prevDate = new Date(Date.parse(date) - 604800000)
-            const prevNumericalDate = (prevDate.getMonth()+1) + "/" + prevDate.getDate() + "/" + prevDate.getFullYear().toString().substring(2)
-
+        if ((duration === "weekly" && date.getDay() === 1) || (duration === "monthly" && date.getDate() === 1)) {
+            // if it's monday or the first day of the month.
+            let currentNumericalDate;
+            let prevNumericalDate;
+            let title;
+            if (duration === "weekly") {
+                // get the current numerical date
+                let dateOneDayAgo = new Date(Date.parse(date) - 86400000)
+                currentNumericalDate = (dateOneDayAgo.getMonth()+1) + "/" + dateOneDayAgo.getDate() + "/" + dateOneDayAgo.getFullYear().toString().substring(2) 
+                // get the date one week ago
+                prevDate = new Date(Date.parse(date) - 604800000)
+                prevNumericalDate = (prevDate.getMonth()+1) + "/" + prevDate.getDate() + "/" + prevDate.getFullYear().toString().substring(2)
+                title = prevNumericalDate + "-" + currentNumericalDate
+            } else if (duration === "monthly"){
+                // get previous date.
+                let year = date.getFullYear()
+                let month = date.getMonth()
+                if (date.getMonth() === 0) {
+                    // if it's january
+                    year = date.getFullYear()-1
+                    month = 12;
+                }
+                title = month + "/" + year
+            }
+            
             if (calculationMethod === "cumulative") {
                 // add the cumulative.
-                analyzedData.push({title: prevNumericalDate + "-" + currentNumericalDate, value: sum, daysActive: numberOfDaysActive, activities: subData})
+                analyzedData.push({title: title, value: sum.toFixed(currentUnitInfo.totalDecimalPlaces), daysActive: numberOfDaysActive, activities: subData})
             } else {
                 // add the average per day.
                 if (numberOfDaysActive == 0) {
-                    analyzedData.push({title: prevNumericalDate + "-" + currentNumericalDate, value: 0, daysActive: numberOfDaysActive, activities: subData})
+                    analyzedData.push({title: title, value: 0, daysActive: numberOfDaysActive, activities: subData})
                 } else {
-                    analyzedData.push({title: prevNumericalDate + "-" + currentNumericalDate, value: (sum/numberOfDaysActive), daysActive: numberOfDaysActive, activities: subData})
+                    analyzedData.push({title: title, value: (sum/numberOfDaysActive).toFixed(currentUnitInfo.avgDecimalPlaces), daysActive: numberOfDaysActive, activities: subData})
                 }
-                
             }
             
             // reset
@@ -68,6 +87,7 @@ function runAnalysis() {
             data[i].dayBreakdown.forEach(e => {
                 subData.push({...e});
             })
+        
         } else {
             sum += data[i].statsThatDay
             if (data[i].statsThatDay > 0) {
@@ -80,10 +100,10 @@ function runAnalysis() {
     }
     console.log("------------------------------------------------")
     console.log(analyzedData)
-    createBreakdown(analyzedData)
+    createBreakdown(analyzedData, currentUnitInfo)
 }
 
-function createBreakdown(array) {
+function createBreakdown(array, uInfo) {
     var paras = document.getElementsByClassName('analysisVerticalOuterContainer');
 
     while(paras[0]) {
@@ -98,7 +118,7 @@ function createBreakdown(array) {
     for (let i = 0; i < array.length; i++) {
         const o = document.createElement("div");
         o.className = "analysisVerticalOuterContainer";
-        const maxArrayLength = 25;
+        const maxArrayLength = 15;
         if (array.length <= maxArrayLength) {
             o.style.width = 100/array.length + "%";
             document.getElementById("analysisBarChartHolder").style.overflowX = "hidden"
@@ -125,14 +145,26 @@ function createBreakdown(array) {
         var verticalHolderStat = document.createElement("p");
         verticalHolderStat.className= "analysisVerticalHolderStat";
         if(array[i].value / maximum > 0.2){
-            verticalHolderStat.innerHTML = array[i].value.toFixed(2);
+            if (uInfo.value === "pace" || uInfo.value === "maxPace") {
+                verticalHolderStat.innerHTML = convert(array[i].value, uInfo.avgDecimalPlaces)
+            } else if (uInfo.value === "time" || uInfo.value === "elapsedTime") {
+                verticalHolderStat.innerHTML = convert(array[i].value)
+            } else {
+                verticalHolderStat.innerHTML = array[i].value
+            }
         }else{
-            verticalHolderStat.innerHTML = array[i].value.toFixed(2);
+            verticalHolderStat.innerHTML = ""
             verticalHolderStat.style.fontSize = "0px";
             //creating overflow text on the top of the
             var verticalHolderStatTop = document.createElement("p");
             verticalHolderStatTop.className = "analysisVerticalHolderStatTop";
-            verticalHolderStatTop.innerHTML = array[i].value.toFixed(2);
+            if (uInfo.value === "pace" || uInfo.value === "maxPace") {
+                verticalHolderStatTop.innerHTML = convert(array[i].value, uInfo.avgDecimalPlaces)
+            } else if (uInfo.value === "time" || uInfo.value === "elapsedTime") {
+                verticalHolderStatTop.innerHTML = convert(array[i].value)
+            } else {
+                verticalHolderStatTop.innerHTML = array[i].value
+            }
             verticalHolderStatTop.style.bottom = ((array[i].value / maximum) * (window.innerHeight * 0.3)) + "px"
             document.getElementsByClassName("analysisVerticalHolder")[i].appendChild(verticalHolderStatTop);
         }

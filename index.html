@@ -484,6 +484,7 @@
                     <p>Details of your runs by day, week, or month.</p>
                 </div>
                 <div id = "analysisSelectionDiv">
+                    <label for="analysisVariable">Variable</label>
                     <select name="analysisVariable" class="analysisVariable" onChange = "runAnalysis()" id="analysisVariableList">
                         <option value="distance" selected>Distance</option>
                         <option value="time">Moving Time</option>
@@ -509,6 +510,12 @@
                         <option value="weekly" selected>Weekly</option>
                         <option value="monthly">Monthly</option>
                     </select>
+                    <br><br>
+                    <label for="trendsColor1">Color 1: </label>
+                    <input type="color" name = "trendsColor1" value = "#ff3333" class="trendsColorPicker" onChange = "runAnalysis()">
+
+                    <label for="trendsColor2">Color 2:</label>
+                    <input type="color" name = "trendsColor2" value = "#ff7b00" class="trendsColorPicker" onChange = "runAnalysis()">
                 </div>
                 
                 <br><br>

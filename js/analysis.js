@@ -106,6 +106,9 @@ function runAnalysis() {
 function createBreakdown(array, uInfo) {
     var paras = document.getElementsByClassName('analysisVerticalOuterContainer');
 
+    const clr1 = hexToRgb(document.getElementsByName("trendsColor1")[0].value)
+    const clr2 = hexToRgb(document.getElementsByName("trendsColor2")[0].value)
+
     while(paras[0]) {
         paras[0].parentNode.removeChild(paras[0]);
     }
@@ -169,7 +172,12 @@ function createBreakdown(array, uInfo) {
             document.getElementsByClassName("analysisVerticalHolder")[i].appendChild(verticalHolderStatTop);
         }
         
-        verticalHolderStat.style.backgroundColor = "seagreen"
+        calculatedPosition = (array[i].value / (maximum * 0.85));
+        const r = (clr1.r + (clr2.r - clr1.r) * calculatedPosition)
+        const g = (clr1.g + (clr2.g - clr1.g) * calculatedPosition)
+        const b = (clr1.b + (clr2.b - clr1.b) * calculatedPosition)
+
+        verticalHolderStat.style.background = "linear-gradient(to top, rgb(" + clr1.r + ", " + clr1.g + ", " + clr1.b + "), rgb(" + r + ", " + g + ", " + b + ")"
         verticalHolderStat.style.height = ((array[i].value / maximum) * (window.innerHeight * 0.3)) + "px";
         verticalHolderStat.style.marginTop = (((maximum - array[i].value) / maximum) * (window.innerHeight * 0.3)) + "px";
         verticalHolderStat.style.width = "100%";

@@ -121,7 +121,13 @@ function createBreakdown(array, uInfo) {
     for (let i = 0; i < array.length; i++) {
         const o = document.createElement("div");
         o.className = "analysisVerticalOuterContainer";
-        const maxArrayLength = 15;
+        let maxArrayLength
+        if (window.innerWidth < window.innerHeight && window.innerWidth < 500) {
+            maxArrayLength = 6;
+        } else {
+            maxArrayLength = 15;
+        }
+       
         if (array.length <= maxArrayLength) {
             o.style.width = 100/array.length + "%";
             document.getElementById("analysisBarChartHolder").style.overflowX = "hidden"

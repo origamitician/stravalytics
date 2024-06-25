@@ -1,3 +1,5 @@
+let analyzedData = [];
+
 function runAnalysis() {
     let variableToAnalyze = document.getElementsByName('analysisVariable')[0].value
     let calculationMethod = document.getElementsByName('analysisVariableSetting')[0].value
@@ -9,9 +11,8 @@ function runAnalysis() {
         data = processAllActivitiesByDayAndProperty(allActivities, variableToAnalyze, 10000, true).data
     }
     
-    const analyzedData = [];
     // sort by week.
-
+    analyzedData = [];
     const unitInfo = [
         {value: 'distance', display: 'Distance', unit: 'mi', canBeTotaled: true, totalDecimalPlaces: 2, avgDecimalPlaces: 2}, 
         {value: 'time', display: 'Moving Time', unit: '', canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 0},
@@ -32,11 +33,12 @@ function runAnalysis() {
 
     let sum = 0;
     let numberOfDaysActive = 0;
-    let subData = [];
+    let subData = {};
+    let dayData = [];
+    let daysOfTheWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     for (let i = 0; i < data.length; i++) {
         
         let date = new Date(data[i].date)
-
         if ((duration === "weekly" && date.getDay() === 1) || (duration === "monthly" && date.getDate() === 1)) {
             // if it's monday or the first day of the month.
             let currentNumericalDate;
@@ -77,7 +79,8 @@ function runAnalysis() {
             // reset
             sum = 0
             numberOfDaysActive = 0;
-            subData = []
+            subData = {}
+            dayData = [];
 
             // add if needed.
             sum += data[i].statsThatDay
@@ -85,17 +88,56 @@ function runAnalysis() {
                 numberOfDaysActive++;
             }
             data[i].dayBreakdown.forEach(e => {
-                subData.push({...e});
+                dayData.push({...e})
             })
+            let wkday = daysOfTheWeek[date.getDay()]
+            subData[wkday] = {}
+            subData[wkday].details = dayData;
+            subData[wkday].value = data[i].statsThatDay
         
         } else {
+            dayData = []
             sum += data[i].statsThatDay
             if (data[i].statsThatDay > 0) {
                 numberOfDaysActive++;
             }
             data[i].dayBreakdown.forEach(e => {
-                subData.push({...e});
+                dayData.push({...e})
             })
+            let wkday = daysOfTheWeek[date.getDay()]
+            subData[wkday] = {}
+            subData[wkday].details = dayData;
+            subData[wkday].value = data[i].statsThatDay
+        }
+
+        if (i === data.length-1) {
+            // if it's the last datapoint, submit.
+            let title;
+            if (duration === "weekly") {
+                let closestMonday;
+                if (date.getDay() > 0) {
+                    closestMonday = new Date(Date.parse(date) - ((date.getDay() - 1) * 86400000))
+                } else {
+                    // if it's a Sunday.
+                    closestMonday = new Date(Date.parse(date) - (6 * 86400000))
+                }
+                title = (closestMonday.getMonth() + 1) + "/" + closestMonday.getDate() + "/" + closestMonday.getFullYear().toString().substring(2) + "-"
+                
+            } else if (duration === "monthly") {
+                title = date.getMonth() + 1 + "/" + date.getFullYear()
+            }
+            
+            if (calculationMethod === "cumulative") {
+                // add the cumulative.
+                analyzedData.push({title: title, value: sum.toFixed(currentUnitInfo.totalDecimalPlaces), daysActive: numberOfDaysActive, activities: subData})
+            } else {
+                // add the average per day.
+                if (numberOfDaysActive == 0) {
+                    analyzedData.push({title: title, value: 0, daysActive: numberOfDaysActive, activities: subData})
+                } else {
+                    analyzedData.push({title: title, value: (sum/numberOfDaysActive).toFixed(currentUnitInfo.avgDecimalPlaces), daysActive: numberOfDaysActive, activities: subData})
+                }
+            }
         }
     }
     console.log("------------------------------------------------")
@@ -135,14 +177,19 @@ function createBreakdown(array, uInfo) {
             o.style.width = (100/maxArrayLength) +"%"
             document.getElementById("analysisBarChartHolder").style.overflowX = "scroll"
         }
+
+        const calculatedPosition = (array[i].value / (maximum));
+        const r = (clr1.r + (clr2.r - clr1.r) * calculatedPosition)
+        const g = (clr1.g + (clr2.g - clr1.g) * calculatedPosition)
+        const b = (clr1.b + (clr2.b - clr1.b) * calculatedPosition)
         
         document.getElementById("analysisBarChartHolder").appendChild(o);
 
         const verticalHolder = document.createElement("div");
         verticalHolder.className = "analysisVerticalHolder";
-        verticalHolder.id = "analysisBar" + i
+        verticalHolder.id = "analysisBar-" + i + "-" + rgbToHex(Math.round(r), Math.round(g), Math.round(b))
         verticalHolder.style.height =  (window.innerHeight * 0.3) + "px"
-        // verticalHolder.addEventListener("click", showMoreStats);
+        verticalHolder.addEventListener("click", showBreakdown);
         document.getElementsByClassName("analysisVerticalOuterContainer")[i].appendChild(verticalHolder);
 
         var verticalHolderBelow = document.createElement("p");
@@ -161,6 +208,9 @@ function createBreakdown(array, uInfo) {
             } else {
                 verticalHolderStat.innerHTML = array[i].value
             }
+            if (i === array.length - 1) {
+                verticalHolderStat.style.color = "rgb(" + r + ", " + g + ", " + b + ")"
+            }
         }else{
             verticalHolderStat.innerHTML = ""
             verticalHolderStat.style.fontSize = "0px";
@@ -175,18 +225,26 @@ function createBreakdown(array, uInfo) {
                 verticalHolderStatTop.innerHTML = array[i].value
             }
             verticalHolderStatTop.style.bottom = ((array[i].value / maximum) * (window.innerHeight * 0.3)) + "px"
+            if (i === array.length - 1) {
+                verticalHolderStatTop.style.color = "rgb(" + r + ", " + g + ", " + b + ")"
+            }
             document.getElementsByClassName("analysisVerticalHolder")[i].appendChild(verticalHolderStatTop);
         }
-        
-        calculatedPosition = (array[i].value / (maximum * 0.85));
-        const r = (clr1.r + (clr2.r - clr1.r) * calculatedPosition)
-        const g = (clr1.g + (clr2.g - clr1.g) * calculatedPosition)
-        const b = (clr1.b + (clr2.b - clr1.b) * calculatedPosition)
 
-        verticalHolderStat.style.background = "linear-gradient(to top, rgb(" + clr1.r + ", " + clr1.g + ", " + clr1.b + "), rgb(" + r + ", " + g + ", " + b + ")"
+        if (i === array.length - 1) {
+            verticalHolderStat.style.border = "3px dotted rgb(" + r + ", " + g + ", " + b + ")"
+            verticalHolderStat.style.borderBottom = "none"
+        } else {
+            verticalHolderStat.style.background = "linear-gradient(to top, rgb(" + clr1.r + ", " + clr1.g + ", " + clr1.b + "), rgb(" + r + ", " + g + ", " + b + ")"
+        }
+        
         verticalHolderStat.style.height = ((array[i].value / maximum) * (window.innerHeight * 0.3)) + "px";
         verticalHolderStat.style.marginTop = (((maximum - array[i].value) / maximum) * (window.innerHeight * 0.3)) + "px";
         verticalHolderStat.style.width = "100%";
         document.getElementsByClassName("analysisVerticalHolder")[i].appendChild(verticalHolderStat);
     }
+}
+
+function showBreakdown() {
+    console.log(this.id)
 }

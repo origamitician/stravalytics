@@ -6,7 +6,14 @@
 .analysisVerticalHolder {
     position: relative;
     width: 100%;
-    
+}
+
+.analysisVerticalHolder:hover {
+    background-color: grey;
+    cursor: pointer;
+    box-sizing: border-box;
+    border: 2px dotted black;
+    filter: brightness(1.5);
 }
 
 .analysisVerticalOuterContainer {
@@ -21,6 +28,10 @@
     /* transform: rotate(-90deg);
     border: 1px solid black;
     margin-top: 10%; */
+}
+
+.verticalHolderStat {
+    box-sizing: border-box
 }
 
 .analysisVerticalHolderStat {

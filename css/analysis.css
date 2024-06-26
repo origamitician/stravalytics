@@ -59,6 +59,53 @@
     font-size: 110%;
 }
 
+#analysisInfoMainStatistic {
+    font-size: 225%;
+    margin: 0 0 1% 0
+}
+
+#analysisInfoMainStatisticUnit {
+    font-size: 100%;
+    opacity: 0.8;
+    margin: 0;
+}
+
+#analysisInfoMainStatisticHolder {
+    padding: 1% 0 1.25% 2.5%;
+    margin-bottom: 2.5%;
+}
+
+#analysisInfoMainStatistic b {
+    font-size: 110%;
+    opacity: 1.0;
+}
+
+#analysisInfoMainFlexLeft {
+    width: 100%;
+}
+
+#summaryAnalysisTable {
+    width: 100%;
+    border-color: black;
+    border-collapse: collapse;
+}
+
+#summaryAnalysisTable th, #summaryAnalysisTable td {
+    border: 1px solid black;
+    width: 14.2857%;
+}
+
+#summaryAnalysisTable th {
+    font-weight: normal;
+    font-size: 120%;
+}
+
+.weeklyChartCell {
+    text-align: center;
+    font-weight: bold;
+    font-size: 155%;
+}
+
 @media only screen and (orientation: portrait) {
     .analysisVerticalOuterContainer {
         width: 12.5%;

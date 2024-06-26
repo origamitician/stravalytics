@@ -1,9 +1,30 @@
 let analyzedData = [];
 
+const unitInfo = [
+    {value: 'distance', display: 'Distance', unit: 'mi', canBeTotaled: true, totalDecimalPlaces: 2, avgDecimalPlaces: 2}, 
+    {value: 'time', display: 'Moving Time', unit: '', canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 0},
+    {value: 'elapsedTime', display: 'Elapsed Time', unit: '', canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 0},
+    {value: 'uptime', display: 'Uptime', unit: "%", avgDecimalPlaces: 2},
+    {value: 'elevation', display: 'Elevation Gain', unit: "ft", canBeTotaled: true, decimalPlaces: 1, avgDecimalPlaces: 2},
+    {value: 'incline', display: 'Incline', unit: "%", avgDecimalPlaces: 3},
+    {value: 'pace', display: 'Pace', unit: "/mi", avgDecimalPlaces: 2},
+    {value: 'kudos', display: 'Kudos', unit: "", canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 2},
+    {value: 'maxPace', display: 'Maximum Pace', unit: "/mi", avgDecimalPlaces: 2},
+    {value: 'cadence', display: 'Cadence', unit: "spm", avgDecimalPlaces: 1},
+    {value: 'stepsPerMile', display: 'Steps / mile', unit: " steps/mi", avgDecimalPlaces: 0},
+    {value: 'strideLength', display: 'Stride length', unit: "ft", avgDecimalPlaces: 3},
+]
+const unitValues = unitInfo.map(e => e.value)
+let variableToAnalyze
+let calculationMethod
+let duration
+let currentUnitInfo;
+let maximum;
+
 function runAnalysis() {
-    let variableToAnalyze = document.getElementsByName('analysisVariable')[0].value
-    let calculationMethod = document.getElementsByName('analysisVariableSetting')[0].value
-    let duration = document.getElementsByName('analysisVariableDuration')[0].value
+    variableToAnalyze = document.getElementsByName('analysisVariable')[0].value
+    calculationMethod = document.getElementsByName('analysisVariableSetting')[0].value
+    duration = document.getElementsByName('analysisVariableDuration')[0].value
     let data;
     if (calculationMethod === "cumulative") {
         data = processAllActivitiesByDayAndProperty(allActivities, variableToAnalyze).data
@@ -12,28 +33,12 @@ function runAnalysis() {
     }
     
     // sort by week.
-    analyzedData = [];
-    const unitInfo = [
-        {value: 'distance', display: 'Distance', unit: 'mi', canBeTotaled: true, totalDecimalPlaces: 2, avgDecimalPlaces: 2}, 
-        {value: 'time', display: 'Moving Time', unit: '', canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 0},
-        {value: 'elapsedTime', display: 'Elapsed Time', unit: '', canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 0},
-        {value: 'uptime', display: 'Uptime', unit: "%", avgDecimalPlaces: 2},
-        {value: 'elevation', display: 'Elevation Gain', unit: "ft", canBeTotaled: true, decimalPlaces: 1, avgDecimalPlaces: 2},
-        {value: 'incline', display: 'Incline', unit: "%", avgDecimalPlaces: 3},
-        {value: 'pace', display: 'Pace', unit: "/mi", avgDecimalPlaces: 2},
-        {value: 'kudos', display: 'Kudos', unit: "", canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 2},
-        {value: 'maxPace', display: 'Maximum Pace', unit: "/mi", avgDecimalPlaces: 2},
-        {value: 'cadence', display: 'Cadence', unit: "steps/min", avgDecimalPlaces: 1},
-        {value: 'stepsPerMile', display: 'Steps / mile', unit: "steps/mi", avgDecimalPlaces: 0},
-        {value: 'strideLength', display: 'Stride length', unit: "ft", avgDecimalPlaces: 3},
-    ]
-
-    const unitValues = unitInfo.map(e => e.value)
-    const currentUnitInfo = unitInfo[unitValues.indexOf(variableToAnalyze)]
+    analyzedData = []
+    currentUnitInfo = unitInfo[unitValues.indexOf(variableToAnalyze)]
 
     let sum = 0;
     let numberOfDaysActive = 0;
-    let subData = {};
+    let subData = [];
     let dayData = [];
     let daysOfTheWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     for (let i = 0; i < data.length; i++) {
@@ -79,7 +84,7 @@ function runAnalysis() {
             // reset
             sum = 0
             numberOfDaysActive = 0;
-            subData = {}
+            subData = []
             dayData = [];
 
             // add if needed.
@@ -90,10 +95,16 @@ function runAnalysis() {
             data[i].dayBreakdown.forEach(e => {
                 dayData.push({...e})
             })
-            let wkday = daysOfTheWeek[date.getDay()]
-            subData[wkday] = {}
-            subData[wkday].details = dayData;
-            subData[wkday].value = data[i].statsThatDay
+            let day = (date.getMonth() + 1) + "-" + (date.getDate()) + "-" + (date.getFullYear())
+            let obj = {}
+            obj.day = day;
+            obj.details = dayData;
+            if (calculationMethod === "cumulative") {
+                obj.value = data[i].statsThatDay.toFixed(currentUnitInfo.totalDecimalPlaces)
+            } else {
+                obj.value = data[i].statsThatDay.toFixed(currentUnitInfo.avgDecimalPlaces)
+            }
+            subData.push(obj)
         
         } else {
             dayData = []
@@ -104,10 +115,16 @@ function runAnalysis() {
             data[i].dayBreakdown.forEach(e => {
                 dayData.push({...e})
             })
-            let wkday = daysOfTheWeek[date.getDay()]
-            subData[wkday] = {}
-            subData[wkday].details = dayData;
-            subData[wkday].value = data[i].statsThatDay
+            let day = (date.getMonth() + 1) + "-" + (date.getDate()) + "-" + (date.getFullYear())
+            let obj = {}
+            obj.day = day;
+            obj.details = dayData;
+            if (calculationMethod === "cumulative") {
+                obj.value = data[i].statsThatDay.toFixed(currentUnitInfo.totalDecimalPlaces)
+            } else {
+                obj.value = data[i].statsThatDay.toFixed(currentUnitInfo.avgDecimalPlaces)
+            }
+            subData.push(obj)
         }
 
         if (i === data.length-1) {
@@ -145,6 +162,16 @@ function runAnalysis() {
     createBreakdown(analyzedData, currentUnitInfo)
 }
 
+function getIntermediateColor(percentage) {
+    const clr1 = hexToRgb(document.getElementsByName("trendsColor1")[0].value)
+    const clr2 = hexToRgb(document.getElementsByName("trendsColor2")[0].value)
+
+    const r = (clr1.r + (clr2.r - clr1.r) * percentage)
+    const g = (clr1.g + (clr2.g - clr1.g) * percentage)
+    const b = (clr1.b + (clr2.b - clr1.b) * percentage)
+    return {r: r, g: g, b: b}
+}
+
 function createBreakdown(array, uInfo) {
     var paras = document.getElementsByClassName('analysisVerticalOuterContainer');
 
@@ -157,7 +184,7 @@ function createBreakdown(array, uInfo) {
 
     console.log(array)
     const weeklyValues = array.map(e => e.value)
-    const maximum = Math.max(...weeklyValues);
+    maximum = Math.max(...weeklyValues);
     console.log("maximum is: " + maximum)
 
     for (let i = 0; i < array.length; i++) {
@@ -179,9 +206,10 @@ function createBreakdown(array, uInfo) {
         }
 
         const calculatedPosition = (array[i].value / (maximum));
-        const r = (clr1.r + (clr2.r - clr1.r) * calculatedPosition)
-        const g = (clr1.g + (clr2.g - clr1.g) * calculatedPosition)
-        const b = (clr1.b + (clr2.b - clr1.b) * calculatedPosition)
+        const intermediateColor = getIntermediateColor(calculatedPosition)
+        const r = intermediateColor.r
+        const g = intermediateColor.g
+        const b = intermediateColor.b
         
         document.getElementById("analysisBarChartHolder").appendChild(o);
 
@@ -246,5 +274,69 @@ function createBreakdown(array, uInfo) {
 }
 
 function showBreakdown() {
+    paras = document.getElementsByClassName('weeklyChartCell');
+    while(paras[0]) {
+        paras[0].parentNode.removeChild(paras[0]);
+    }
+
     console.log(this.id)
+    const index = Number(this.id.split('-')[1])
+    const toRender = analyzedData[index];
+
+    const summaryElem = document.getElementById("analysisInfoMainStatistic")
+    let displayStr = "";
+    let summaryStr = "";
+
+    if (calculationMethod === "average") {
+        displayStr = "Avg " + currentUnitInfo.display.toLowerCase() + "/day for " + toRender.title + ""
+    } else {
+        displayStr = currentUnitInfo.display + " for " + toRender.title + ""
+    }
+    document.getElementById("analysisInfoMainStatisticUnit").innerHTML = displayStr
+
+    if (calculationMethod === "cumulative") {
+        summaryStr = "<b>" + toRender.value + currentUnitInfo.unit + " </b>" 
+    } else {
+        summaryStr = "<b>" + toRender.value + currentUnitInfo.unit + " </b>" 
+    }
+    summaryElem.innerHTML = summaryStr
+
+    let clr = this.id.split('-')[2]
+    let outerSummaryElem = document.getElementById("analysisInfoMainStatisticHolder")
+    outerSummaryElem.style.borderLeft = "6px solid " + clr
+    summaryElem.getElementsByTagName('b')[0].style.color = clr
+
+    // show the chart.
+    if (duration === "weekly") {
+        for (let i = 0; i < toRender.activities.length; i++) {
+            let calculatedPosition;
+            if (calculationMethod === "cumulative") {
+                calculatedPosition = (Number(toRender.activities[i].value) / ((toRender.value / toRender.daysActive)*1.5));
+            } else {
+                calculatedPosition = (Number(toRender.activities[i].value) / (toRender.value*1.5));
+            }
+            const intermediateColor = getIntermediateColor(calculatedPosition)
+            const r = intermediateColor.r
+            const g = intermediateColor.g
+            const b = intermediateColor.b
+
+            let cell = document.createElement('td');
+            cell.className = "weeklyChartCell";
+            // cell.style.backgroundColor = "rgb(" + r + ", " + g + ", " + b + ")"
+            if (Number(toRender.activities[i].value) != 0) {
+                cell.style.backgroundColor = "rgb(" + r + ", " + g + ", " + b + ")"
+            }
+            
+            let display = document.createElement('p');
+            display.className = "weeklyChartCellDisplay"
+            display.innerHTML = "<b>" + toRender.activities[i].value + currentUnitInfo.unit + "</b>"
+            // display.style.color = "white"
+            if (Number(toRender.activities[i].value) != 0) {
+                display.style.color = "white"
+            }
+            cell.appendChild(display);
+
+            document.getElementById("weeklyChartRow").appendChild(cell)
+        }
+    }
 }

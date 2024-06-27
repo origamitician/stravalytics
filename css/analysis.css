@@ -93,6 +93,7 @@
 #summaryAnalysisTable th, #summaryAnalysisTable td {
     border: 1px solid black;
     width: 14.2857%;
+    vertical-align: baseline;
 }
 
 #summaryAnalysisTable th {
@@ -100,10 +101,20 @@
     font-size: 120%;
 }
 
-.weeklyChartCell {
+.weeklyChartCellDisplay {
     text-align: center;
     font-weight: bold;
-    font-size: 155%;
+    font-size: 145%;
+    width: 100%;
+    padding-top: 4%;
+    padding-bottom: 4%;
+    margin: 0 0 2% 0;
+    box-sizing: border-box;
+}
+
+.weeklyChartActivityInfo {
+    font-size: 90%;
+    word-break: break-word;
 }
 
 @media only screen and (orientation: portrait) {

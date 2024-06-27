@@ -268,7 +268,7 @@ function processAllActivitiesByDayAndProperty(array, property, numberOfDays, ave
                 if (unitsThatCanBeTotaled.includes(property)) {
                     cum += array[currIndex][property]
                 }
-                activityDetailThatDay.push({activityID: array[currIndex].id, activityIndex: currIndex, activityStat: array[currIndex][property]})
+                activityDetailThatDay.push({activityTitle: array[currIndex].name, activityID: array[currIndex].id, activityIndex: currIndex, activityStat: array[currIndex][property]})
             } else {
                 currentVal += 0
                 cum += 0

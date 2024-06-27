@@ -11,7 +11,7 @@ const unitInfo = [
     {value: 'kudos', display: 'Kudos', unit: "", canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 2},
     {value: 'maxPace', display: 'Maximum Pace', unit: "/mi", avgDecimalPlaces: 2},
     {value: 'cadence', display: 'Cadence', unit: "spm", avgDecimalPlaces: 1},
-    {value: 'stepsPerMile', display: 'Steps / mile', unit: " steps/mi", avgDecimalPlaces: 0},
+    {value: 'stepsPerMile', display: 'Steps / mile', unit: "👟/mi", avgDecimalPlaces: 0},
     {value: 'strideLength', display: 'Stride length', unit: "ft", avgDecimalPlaces: 3},
 ]
 const unitValues = unitInfo.map(e => e.value)
@@ -229,6 +229,8 @@ function createBreakdown(array, uInfo) {
         var verticalHolderStat = document.createElement("p");
         verticalHolderStat.className= "analysisVerticalHolderStat";
         if(array[i].value / maximum > 0.2){
+            verticalHolderStat.innerHTML = convertBasedOnVariable(array[i].value)
+            /*
             if (uInfo.value === "pace" || uInfo.value === "maxPace") {
                 verticalHolderStat.innerHTML = convert(array[i].value, uInfo.avgDecimalPlaces)
             } else if (uInfo.value === "time" || uInfo.value === "elapsedTime") {
@@ -236,6 +238,7 @@ function createBreakdown(array, uInfo) {
             } else {
                 verticalHolderStat.innerHTML = array[i].value
             }
+                */
             if (i === array.length - 1) {
                 verticalHolderStat.style.color = "rgb(" + r + ", " + g + ", " + b + ")"
             }
@@ -245,13 +248,15 @@ function createBreakdown(array, uInfo) {
             //creating overflow text on the top of the
             var verticalHolderStatTop = document.createElement("p");
             verticalHolderStatTop.className = "analysisVerticalHolderStatTop";
+            verticalHolderStatTop.innerHTML = convertBasedOnVariable(array[i].value)
+            /*
             if (uInfo.value === "pace" || uInfo.value === "maxPace") {
                 verticalHolderStatTop.innerHTML = convert(array[i].value, uInfo.avgDecimalPlaces)
             } else if (uInfo.value === "time" || uInfo.value === "elapsedTime") {
                 verticalHolderStatTop.innerHTML = convert(array[i].value)
             } else {
                 verticalHolderStatTop.innerHTML = array[i].value
-            }
+            }*/
             verticalHolderStatTop.style.bottom = ((array[i].value / maximum) * (window.innerHeight * 0.3)) + "px"
             if (i === array.length - 1) {
                 verticalHolderStatTop.style.color = "rgb(" + r + ", " + g + ", " + b + ")"
@@ -271,6 +276,19 @@ function createBreakdown(array, uInfo) {
         verticalHolderStat.style.width = "100%";
         document.getElementsByClassName("analysisVerticalHolder")[i].appendChild(verticalHolderStat);
     }
+}
+
+function convertBasedOnVariable(val) {
+    let toReturn;
+    if (currentUnitInfo.value === "pace" || currentUnitInfo.value === "maxPace") {
+        toReturn = convert(val, currentUnitInfo.avgDecimalPlaces)
+    } else if (currentUnitInfo.value === "time" || currentUnitInfo.value === "elapsedTime") {
+        toReturn = convert(val)
+    } else {
+        toReturn = val
+    }
+
+    return toReturn;
 }
 
 function showBreakdown() {
@@ -295,9 +313,9 @@ function showBreakdown() {
     document.getElementById("analysisInfoMainStatisticUnit").innerHTML = displayStr
 
     if (calculationMethod === "cumulative") {
-        summaryStr = "<b>" + toRender.value + currentUnitInfo.unit + " </b>" 
+        summaryStr = "<b>" + convertBasedOnVariable(toRender.value) + currentUnitInfo.unit + " </b>" 
     } else {
-        summaryStr = "<b>" + toRender.value + currentUnitInfo.unit + " </b>" 
+        summaryStr = "<b>" + convertBasedOnVariable(toRender.value) + currentUnitInfo.unit + " </b>" 
     }
     summaryElem.innerHTML = summaryStr
 
@@ -313,7 +331,7 @@ function showBreakdown() {
             if (calculationMethod === "cumulative") {
                 calculatedPosition = (Number(toRender.activities[i].value) / ((toRender.value / toRender.daysActive)*1.5));
             } else {
-                calculatedPosition = (Number(toRender.activities[i].value) / (toRender.value*1.5));
+                calculatedPosition = (Number(toRender.activities[i].value) / maximum);
             }
             const intermediateColor = getIntermediateColor(calculatedPosition)
             const r = intermediateColor.r
@@ -322,19 +340,27 @@ function showBreakdown() {
 
             let cell = document.createElement('td');
             cell.className = "weeklyChartCell";
-            // cell.style.backgroundColor = "rgb(" + r + ", " + g + ", " + b + ")"
-            if (Number(toRender.activities[i].value) != 0) {
-                cell.style.backgroundColor = "rgb(" + r + ", " + g + ", " + b + ")"
-            }
-            
+ 
             let display = document.createElement('p');
             display.className = "weeklyChartCellDisplay"
-            display.innerHTML = "<b>" + toRender.activities[i].value + currentUnitInfo.unit + "</b>"
+            
+            display.innerHTML = "<b>" + convertBasedOnVariable(toRender.activities[i].value) + currentUnitInfo.unit + "</b>"
             // display.style.color = "white"
             if (Number(toRender.activities[i].value) != 0) {
                 display.style.color = "white"
+                display.style.backgroundColor = "rgb(" + r + ", " + g + ", " + b + ")"
             }
+            
             cell.appendChild(display);
+
+            // create the activity breakdown
+            toRender.activities[i].details.forEach(act => {
+                let activityHolder = document.createElement("p")
+                activityHolder.id = act.activityID;
+                activityHolder.className = "weeklyChartActivityInfo"
+                activityHolder.innerHTML = "<span>" + act.activityTitle + " </span><b>(" + convertBasedOnVariable(act.activityStat.toFixed(2)) + currentUnitInfo.unit + ")</b>" 
+                cell.appendChild(activityHolder);
+            })
 
             document.getElementById("weeklyChartRow").appendChild(cell)
         }

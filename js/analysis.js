@@ -355,10 +355,50 @@ function showBreakdown() {
 
             // create the activity breakdown
             toRender.activities[i].details.forEach(act => {
-                let activityHolder = document.createElement("p")
+                // get the sidebar color.
+                if (calculationMethod === "cumulative") {
+                    calculatedPosition = (Number(act.activityStat) / ((toRender.value / toRender.daysActive)*1.5));
+                } else {
+                    calculatedPosition = (Number(act.activityStat) / maximum);
+                }
+                const intermediateColor = getIntermediateColor(calculatedPosition)
+                const r = intermediateColor.r
+                const g = intermediateColor.g
+                const b = intermediateColor.b
+
+                let activityHolder = document.createElement("div")
                 activityHolder.id = act.activityID;
-                activityHolder.className = "weeklyChartActivityInfo"
-                activityHolder.innerHTML = "<span>" + act.activityTitle + " </span><b>(" + convertBasedOnVariable(act.activityStat.toFixed(2)) + currentUnitInfo.unit + ")</b>" 
+                activityHolder.className = "weeklyChartActivityInfoHolder"
+                activityHolder.addEventListener('click', () => createRunLookup(act.activityID))
+                /* activityHolder.addEventListener('mouseenter', (e) => {
+                    e.target.style.backgroundColor = "rgb(" + r + ", " + g + ", " + b + ")"
+                    e.target.style.color = "white"
+                })
+                activityHolder.addEventListener('mouseleave', (e) => {
+                    e.target.style.backgroundColor = "white"
+                    e.target.style.color = "rgb(" + r + ", " + g + ", " + b + ")"
+                }) */
+                activityHolder.style.borderLeft = "3px solid rgb(" + r + ", " + g + ", " + b + ")"
+                
+                let dailyStat = document.createElement("b")
+                dailyStat.className = "weeklyChartActivityStat"
+                if (calculationMethod === "cumulative") {
+                    dailyStat.innerHTML = convertBasedOnVariable(act.activityStat.toFixed(currentUnitInfo.totalDecimalPlaces)) + currentUnitInfo.unit
+                } else if (calculationMethod === "average") {
+                    dailyStat.innerHTML = convertBasedOnVariable(act.activityStat.toFixed(currentUnitInfo.avgDecimalPlaces)) + currentUnitInfo.unit
+                }
+                dailyStat.style.color = "rgb(" + r + ", " + g + ", " + b + ")"
+                activityHolder.appendChild(dailyStat);
+
+                let dailyStatName = document.createElement("p")
+                dailyStatName.className = "weeklyChartActivityName"
+                /* if (act.activityTitle.length > 50) {
+                    dailyStatName.innerHTML = act.activityTitle.substring(0, 47) + "..."
+                } else {
+                    dailyStatName.innerHTML = act.activityTitle
+                } */
+                dailyStatName.innerHTML = act.activityTitle
+                activityHolder.appendChild(dailyStatName);
                 cell.appendChild(activityHolder);
             })
 

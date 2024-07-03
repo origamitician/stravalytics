@@ -11,7 +11,7 @@ const unitInfo = [
     {value: 'kudos', display: 'Kudos', unit: "", canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 2},
     {value: 'maxPace', display: 'Maximum Pace', unit: "/mi", avgDecimalPlaces: 2},
     {value: 'cadence', display: 'Cadence', unit: "spm", avgDecimalPlaces: 1},
-    {value: 'stepsPerMile', display: 'Steps / mile', unit: "👟/mi", avgDecimalPlaces: 0},
+    {value: 'stepsPerMile', display: 'Steps / mile', unit: "👟", avgDecimalPlaces: 0},
     {value: 'strideLength', display: 'Stride length', unit: "ft", avgDecimalPlaces: 3},
 ]
 const unitValues = unitInfo.map(e => e.value)
@@ -325,84 +325,107 @@ function showBreakdown() {
     summaryElem.getElementsByTagName('b')[0].style.color = clr
 
     // show the chart.
-    if (duration === "weekly") {
-        for (let i = 0; i < toRender.activities.length; i++) {
-            let calculatedPosition;
+    const firstDay = new Date(toRender.activities[0].day)
+    let dayToStart = firstDay.getDay()
+    if (dayToStart === 0) {
+        // if it's a Sunday.
+        dayToStart = 6
+    } else {
+        dayToStart -=1
+    }
+
+    let calendarIndex = 0;
+
+    for (let i = 0; i < toRender.activities.length; i++) {
+        if (calendarIndex % 7 === 0) {
+            // create a new row.
+            let week = document.createElement("tr");
+            week.id = "weeklyChartRow" + Math.floor(calendarIndex / 7)
+            week.className = "weeklyChartRow"
+            document.getElementById("summaryAnalysisTable").appendChild(week)
+        }
+
+        for (let j = 0; j < dayToStart && i == 0; j++) {
+            // for weeks/months not starting on a Monday, create the "indent." Only run on the 1st iteration.
+            let cell = document.createElement('td');
+            cell.className = "weeklyChartCell";
+            document.getElementById("weeklyChartRow" + Math.floor(calendarIndex / 7)).appendChild(cell)
+            calendarIndex++;
+        }
+
+        let calculatedPosition;
+        if (calculationMethod === "cumulative") {
+            calculatedPosition = (Number(toRender.activities[i].value) / ((toRender.value / toRender.daysActive)*1.5));
+        } else {
+            calculatedPosition = (Number(toRender.activities[i].value) / maximum);
+        }
+        const intermediateColor = getIntermediateColor(calculatedPosition)
+        const r = intermediateColor.r
+        const g = intermediateColor.g
+        const b = intermediateColor.b
+
+        let cell = document.createElement('td');
+        cell.className = "weeklyChartCell";
+        
+        let weekDayDisplay = document.createElement('p')
+        weekDayDisplay.innerHTML = "<b>" + (i+1) + "</b>";
+        weekDayDisplay.className = "chartWeekDayDisplay"
+
+        let display = document.createElement('span');
+        display.className = "weeklyChartCellDisplay"
+        
+        display.innerHTML = convertBasedOnVariable(toRender.activities[i].value) + currentUnitInfo.unit
+        // display.style.color = "white"
+        if (Number(toRender.activities[i].value) != 0) {
+            display.style.color = "white"
+            display.style.backgroundColor = "rgb(" + r + ", " + g + ", " + b + ")"
+        }
+        
+        weekDayDisplay.appendChild(display);
+        cell.appendChild(weekDayDisplay)
+
+        // create the activity breakdown
+        toRender.activities[i].details.forEach(act => {
+            // get the sidebar color.
             if (calculationMethod === "cumulative") {
-                calculatedPosition = (Number(toRender.activities[i].value) / ((toRender.value / toRender.daysActive)*1.5));
+                calculatedPosition = (Number(act.activityStat) / ((toRender.value / toRender.daysActive)*1.5));
             } else {
-                calculatedPosition = (Number(toRender.activities[i].value) / maximum);
+                calculatedPosition = (Number(act.activityStat) / maximum);
             }
             const intermediateColor = getIntermediateColor(calculatedPosition)
             const r = intermediateColor.r
             const g = intermediateColor.g
             const b = intermediateColor.b
 
-            let cell = document.createElement('td');
-            cell.className = "weeklyChartCell";
- 
-            let display = document.createElement('p');
-            display.className = "weeklyChartCellDisplay"
+            let activityHolder = document.createElement("div")
+            activityHolder.id = act.activityID;
+            activityHolder.className = "weeklyChartActivityInfoHolder"
+            activityHolder.addEventListener('click', () => createRunLookup(act.activityID))
+            activityHolder.style.borderLeft = "3px solid rgb(" + r + ", " + g + ", " + b + ")"
             
-            display.innerHTML = "<b>" + convertBasedOnVariable(toRender.activities[i].value) + currentUnitInfo.unit + "</b>"
-            // display.style.color = "white"
-            if (Number(toRender.activities[i].value) != 0) {
-                display.style.color = "white"
-                display.style.backgroundColor = "rgb(" + r + ", " + g + ", " + b + ")"
+            let dailyStat = document.createElement("b")
+            dailyStat.className = "weeklyChartActivityStat"
+            if (calculationMethod === "cumulative") {
+                dailyStat.innerHTML = convertBasedOnVariable(act.activityStat.toFixed(currentUnitInfo.totalDecimalPlaces)) + currentUnitInfo.unit
+            } else if (calculationMethod === "average") {
+                dailyStat.innerHTML = convertBasedOnVariable(act.activityStat.toFixed(currentUnitInfo.avgDecimalPlaces)) + currentUnitInfo.unit
             }
-            
-            cell.appendChild(display);
+            dailyStat.style.color = "rgb(" + r + ", " + g + ", " + b + ")"
+            activityHolder.appendChild(dailyStat);
 
-            // create the activity breakdown
-            toRender.activities[i].details.forEach(act => {
-                // get the sidebar color.
-                if (calculationMethod === "cumulative") {
-                    calculatedPosition = (Number(act.activityStat) / ((toRender.value / toRender.daysActive)*1.5));
-                } else {
-                    calculatedPosition = (Number(act.activityStat) / maximum);
-                }
-                const intermediateColor = getIntermediateColor(calculatedPosition)
-                const r = intermediateColor.r
-                const g = intermediateColor.g
-                const b = intermediateColor.b
-
-                let activityHolder = document.createElement("div")
-                activityHolder.id = act.activityID;
-                activityHolder.className = "weeklyChartActivityInfoHolder"
-                activityHolder.addEventListener('click', () => createRunLookup(act.activityID))
-                /* activityHolder.addEventListener('mouseenter', (e) => {
-                    e.target.style.backgroundColor = "rgb(" + r + ", " + g + ", " + b + ")"
-                    e.target.style.color = "white"
-                })
-                activityHolder.addEventListener('mouseleave', (e) => {
-                    e.target.style.backgroundColor = "white"
-                    e.target.style.color = "rgb(" + r + ", " + g + ", " + b + ")"
-                }) */
-                activityHolder.style.borderLeft = "3px solid rgb(" + r + ", " + g + ", " + b + ")"
-                
-                let dailyStat = document.createElement("b")
-                dailyStat.className = "weeklyChartActivityStat"
-                if (calculationMethod === "cumulative") {
-                    dailyStat.innerHTML = convertBasedOnVariable(act.activityStat.toFixed(currentUnitInfo.totalDecimalPlaces)) + currentUnitInfo.unit
-                } else if (calculationMethod === "average") {
-                    dailyStat.innerHTML = convertBasedOnVariable(act.activityStat.toFixed(currentUnitInfo.avgDecimalPlaces)) + currentUnitInfo.unit
-                }
-                dailyStat.style.color = "rgb(" + r + ", " + g + ", " + b + ")"
-                activityHolder.appendChild(dailyStat);
-
-                let dailyStatName = document.createElement("p")
-                dailyStatName.className = "weeklyChartActivityName"
-                /* if (act.activityTitle.length > 50) {
-                    dailyStatName.innerHTML = act.activityTitle.substring(0, 47) + "..."
-                } else {
-                    dailyStatName.innerHTML = act.activityTitle
-                } */
+            let dailyStatName = document.createElement("p")
+            dailyStatName.className = "weeklyChartActivityName"
+            /* if (act.activityTitle.length > 50) {
+                dailyStatName.innerHTML = act.activityTitle.substring(0, 47) + "..."
+            } else {
                 dailyStatName.innerHTML = act.activityTitle
-                activityHolder.appendChild(dailyStatName);
-                cell.appendChild(activityHolder);
-            })
-
-            document.getElementById("weeklyChartRow").appendChild(cell)
-        }
+            } */
+            dailyStatName.innerHTML = act.activityTitle
+            activityHolder.appendChild(dailyStatName);
+            cell.appendChild(activityHolder);
+        })
+        
+        document.getElementById("weeklyChartRow" + Math.floor(calendarIndex / 7)).appendChild(cell)
+        calendarIndex++;
     }
 }

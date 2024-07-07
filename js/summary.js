@@ -222,7 +222,7 @@ function totalFromDate(array, startIndex, endIndex, countingDays) {
 
 function processAllActivitiesByDayAndProperty(array, property, numberOfDays, average) {
     // a function that takes allActivities (array), and process them into the property. numberOfDays (int) and average (boolean) is optional.
-    const unitsThatCanBeTotaled = ["kudos", "distance", "elevation", "time", "elapsedTime"]
+    const unitsThatCanBeTotaled = ["kudos", "distance", "elevation", "time", "elapsedTime", "totalSteps"]
     const allActivitiesByDay = [];
     const chartData = [];
     // sort allActivities by date.

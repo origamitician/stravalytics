@@ -14,6 +14,7 @@ const unitInfo = [
     {value: 'cadence', display: 'Cadence', unit: "spm", avgDecimalPlaces: 1, comparative: "Higher", extremeLow: "Lower spm", extremeHigh: "Higher spm"},
     {value: 'stepsPerMile', display: 'Steps / mile', unit: "👟", avgDecimalPlaces: 0, comparative: "Greater", extremeLow: "Less", extremeHigh: "More"},
     {value: 'strideLength', display: 'Stride length', unit: "ft", avgDecimalPlaces: 3, comparative: "Longer", extremeLow: "Shorter", extremeHigh: "Longer"},
+    {value: 'totalSteps', display: 'Steps', unit: "👟", avgDecimalPlaces: 0, comparative: "Greater", extremeLow: "Less", extremeHigh: "More"},
 ]
 const unitValues = unitInfo.map(e => e.value)
 let variableToAnalyze
@@ -336,7 +337,7 @@ function showBreakdown() {
     // add the gradient info.
     console.log('-----------------------------')
     console.log(analyzedDataInOrder.indexOf(toRender))
-    let proportion = ((analyzedDataInOrder.indexOf(toRender) / analyzedDataInOrder.length)*100).toFixed(2)
+    let proportion = (100 - ((analyzedDataInOrder.indexOf(toRender) / analyzedDataInOrder.length)*100)).toFixed(2)
     let adjustedProportion = ((analyzedDataInOrder.indexOf(toRender) / (analyzedDataInOrder.length - 1))*100).toFixed(2)
     document.getElementById('analysisInfoRanking').innerHTML = currentUnitInfo.comparative  + " than <b> " + analyzedDataInOrder.indexOf(toRender) + "</b> (of " + analyzedDataInOrder.length + ") weeks [Top <b>" + proportion + "%</b>  of weeks]"
     document.getElementById("analysisExtremeLow").innerHTML = currentUnitInfo.extremeLow;

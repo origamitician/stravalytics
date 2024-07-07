@@ -1,18 +1,19 @@
 let analyzedData = [];
+let analyzedDataInOrder = [];
 
 const unitInfo = [
-    {value: 'distance', display: 'Distance', unit: 'mi', canBeTotaled: true, totalDecimalPlaces: 2, avgDecimalPlaces: 2}, 
-    {value: 'time', display: 'Moving Time', unit: '', canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 0},
-    {value: 'elapsedTime', display: 'Elapsed Time', unit: '', canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 0},
-    {value: 'uptime', display: 'Uptime', unit: "%", avgDecimalPlaces: 2},
-    {value: 'elevation', display: 'Elevation Gain', unit: "ft", canBeTotaled: true, decimalPlaces: 1, avgDecimalPlaces: 2},
-    {value: 'incline', display: 'Incline', unit: "%", avgDecimalPlaces: 3},
-    {value: 'pace', display: 'Pace', unit: "/mi", avgDecimalPlaces: 2},
-    {value: 'kudos', display: 'Kudos', unit: "", canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 2},
-    {value: 'maxPace', display: 'Maximum Pace', unit: "/mi", avgDecimalPlaces: 2},
-    {value: 'cadence', display: 'Cadence', unit: "spm", avgDecimalPlaces: 1},
-    {value: 'stepsPerMile', display: 'Steps / mile', unit: "👟", avgDecimalPlaces: 0},
-    {value: 'strideLength', display: 'Stride length', unit: "ft", avgDecimalPlaces: 3},
+    {value: 'distance', display: 'Distance', unit: 'mi', canBeTotaled: true, totalDecimalPlaces: 2, avgDecimalPlaces: 2, comparative: "Longer", extremeLow: "Shorter", extremeHigh: "Longer"}, 
+    {value: 'time', display: 'Moving Time', unit: '', canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 0, comparative: "Longer", extremeLow: "Shorter", extremeHigh: "Longer"},
+    {value: 'elapsedTime', display: 'Elapsed Time', unit: '', canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 0, comparative: "Longer", extremeLow: "Shorter", extremeHigh: "Longer"},
+    {value: 'uptime', display: 'Uptime', unit: "%", avgDecimalPlaces: 2, comparative: "More", extremeLow: "Less", extremeHigh: "More"},
+    {value: 'elevation', display: 'Elevation Gain', unit: "ft", canBeTotaled: true, decimalPlaces: 1, avgDecimalPlaces: 2, comparative: "Higher", extremeLow: "Lower", extremeHigh: "Higher"},
+    {value: 'incline', display: 'Incline', unit: "%", avgDecimalPlaces: 3, comparative: "Greater", extremeLow: "Lighter grade", extremeHigh: "Steeper grade"},
+    {value: 'pace', display: 'Pace', unit: "/mi", avgDecimalPlaces: 2, comparative: "Faster", extremeLow: "Slower", extremeHigh: "Faster"},
+    {value: 'kudos', display: 'Kudos', unit: "", canBeTotaled: true, decimalPlaces: 0, avgDecimalPlaces: 2, comparative: "Greater", extremeLow: "Less", extremeHigh: "More"},
+    {value: 'maxPace', display: 'Maximum Pace', unit: "/mi", avgDecimalPlaces: 2, comparative: "Faster", extremeLow: "Slower", extremeHigh: "Faster"},
+    {value: 'cadence', display: 'Cadence', unit: "spm", avgDecimalPlaces: 1, comparative: "Higher", extremeLow: "Lower spm", extremeHigh: "Higher spm"},
+    {value: 'stepsPerMile', display: 'Steps / mile', unit: "👟", avgDecimalPlaces: 0, comparative: "Greater", extremeLow: "Less", extremeHigh: "More"},
+    {value: 'strideLength', display: 'Stride length', unit: "ft", avgDecimalPlaces: 3, comparative: "Longer", extremeLow: "Shorter", extremeHigh: "Longer"},
 ]
 const unitValues = unitInfo.map(e => e.value)
 let variableToAnalyze
@@ -230,15 +231,6 @@ function createBreakdown(array, uInfo) {
         verticalHolderStat.className= "analysisVerticalHolderStat";
         if(array[i].value / maximum > 0.2){
             verticalHolderStat.innerHTML = convertBasedOnVariable(array[i].value)
-            /*
-            if (uInfo.value === "pace" || uInfo.value === "maxPace") {
-                verticalHolderStat.innerHTML = convert(array[i].value, uInfo.avgDecimalPlaces)
-            } else if (uInfo.value === "time" || uInfo.value === "elapsedTime") {
-                verticalHolderStat.innerHTML = convert(array[i].value)
-            } else {
-                verticalHolderStat.innerHTML = array[i].value
-            }
-                */
             if (i === array.length - 1) {
                 verticalHolderStat.style.color = "rgb(" + r + ", " + g + ", " + b + ")"
             }
@@ -249,14 +241,6 @@ function createBreakdown(array, uInfo) {
             var verticalHolderStatTop = document.createElement("p");
             verticalHolderStatTop.className = "analysisVerticalHolderStatTop";
             verticalHolderStatTop.innerHTML = convertBasedOnVariable(array[i].value)
-            /*
-            if (uInfo.value === "pace" || uInfo.value === "maxPace") {
-                verticalHolderStatTop.innerHTML = convert(array[i].value, uInfo.avgDecimalPlaces)
-            } else if (uInfo.value === "time" || uInfo.value === "elapsedTime") {
-                verticalHolderStatTop.innerHTML = convert(array[i].value)
-            } else {
-                verticalHolderStatTop.innerHTML = array[i].value
-            }*/
             verticalHolderStatTop.style.bottom = ((array[i].value / maximum) * (window.innerHeight * 0.3)) + "px"
             if (i === array.length - 1) {
                 verticalHolderStatTop.style.color = "rgb(" + r + ", " + g + ", " + b + ")"
@@ -276,6 +260,18 @@ function createBreakdown(array, uInfo) {
         verticalHolderStat.style.width = "100%";
         document.getElementsByClassName("analysisVerticalHolder")[i].appendChild(verticalHolderStat);
     }
+
+    analyzedDataInOrder = [...analyzedData]
+    for (let i = 1; i < analyzedDataInOrder.length; i++) {
+        let currentElement = analyzedDataInOrder[i];
+        let lastIndex = i - 1;
+  
+        while (lastIndex >= 0 && Number(analyzedDataInOrder[lastIndex].value) > Number(currentElement.value)) {
+            analyzedDataInOrder[lastIndex + 1] = analyzedDataInOrder[lastIndex];
+            lastIndex--;
+        }
+        analyzedDataInOrder[lastIndex + 1] = currentElement;
+    }
 }
 
 function convertBasedOnVariable(val) {
@@ -292,6 +288,7 @@ function convertBasedOnVariable(val) {
 }
 
 function showBreakdown() {
+    // show breakdown.
     paras = document.getElementsByClassName('weeklyChartCell');
     while(paras[0]) {
         paras[0].parentNode.removeChild(paras[0]);
@@ -301,6 +298,8 @@ function showBreakdown() {
     const index = Number(this.id.split('-')[1])
     const toRender = analyzedData[index];
 
+    // sort analyzedData in ascending order.
+    
     const summaryElem = document.getElementById("analysisInfoMainStatistic")
     let displayStr = "";
     let summaryStr = "";
@@ -320,7 +319,7 @@ function showBreakdown() {
     summaryElem.innerHTML = summaryStr
 
     let clr = this.id.split('-')[2]
-    let outerSummaryElem = document.getElementById("analysisInfoMainStatisticHolder")
+    let outerSummaryElem = document.getElementById("analysisInfoFlexLeft")
     outerSummaryElem.style.borderLeft = "6px solid " + clr
     summaryElem.getElementsByTagName('b')[0].style.color = clr
 
@@ -334,8 +333,17 @@ function showBreakdown() {
         dayToStart -=1
     }
 
-    let calendarIndex = 0;
+    // add the gradient info.
+    console.log('-----------------------------')
+    console.log(analyzedDataInOrder.indexOf(toRender))
+    let proportion = ((analyzedDataInOrder.indexOf(toRender) / analyzedDataInOrder.length)*100).toFixed(2)
+    let adjustedProportion = ((analyzedDataInOrder.indexOf(toRender) / (analyzedDataInOrder.length - 1))*100).toFixed(2)
+    document.getElementById('analysisInfoRanking').innerHTML = currentUnitInfo.comparative  + " than <b> " + analyzedDataInOrder.indexOf(toRender) + "</b> (of " + analyzedDataInOrder.length + ") weeks [Top <b>" + proportion + "%</b>  of weeks]"
+    document.getElementById("analysisExtremeLow").innerHTML = currentUnitInfo.extremeLow;
+    document.getElementById("analysisExtremeHigh").innerHTML = currentUnitInfo.extremeHigh;
+    document.getElementById("analysisInfoSpectrumBar").style.left = Number(adjustedProportion) + "%"
 
+    let calendarIndex = 0;
     for (let i = 0; i < toRender.activities.length; i++) {
         if (calendarIndex % 7 === 0) {
             // create a new row.
@@ -415,11 +423,6 @@ function showBreakdown() {
 
             let dailyStatName = document.createElement("p")
             dailyStatName.className = "weeklyChartActivityName"
-            /* if (act.activityTitle.length > 50) {
-                dailyStatName.innerHTML = act.activityTitle.substring(0, 47) + "..."
-            } else {
-                dailyStatName.innerHTML = act.activityTitle
-            } */
             dailyStatName.innerHTML = act.activityTitle
             activityHolder.appendChild(dailyStatName);
             cell.appendChild(activityHolder);

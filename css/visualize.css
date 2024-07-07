@@ -432,6 +432,13 @@ body{
     box-sizing: border-box;
 }
 
+#runLookupStravaLink {
+    display: block;
+    margin: 0;
+    font-size: 95%;
+    color: orange;
+}
+
 #runLookupDivFlex {
     display: flex;
     position: sticky;
@@ -445,9 +452,16 @@ body{
     display: relative;
 }
 
-#runLookupDivTitle {
+#runLookupDivLeft {
     margin-left: 2.5%;
+    margin-top: 2.5%;
+    margin-bottom: 2.5%;
     width: 80%;
+}
+
+#runLookupDivTitle {
+    margin-top:0;
+    margin-bottom: 1%;
 }
 
 #runLookupDivFlex button {

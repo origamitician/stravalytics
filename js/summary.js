@@ -230,7 +230,7 @@ function processAllActivitiesByDayAndProperty(array, property, numberOfDays, ave
         let currentElement = array[i];
         let lastIndex = i - 1;
   
-        while (lastIndex >= 0 && allActivities[lastIndex].parsedNumericalDate > currentElement.parsedNumericalDate) {
+        while (lastIndex >= 0 && array[lastIndex].parsedNumericalDate > currentElement.parsedNumericalDate) {
             array[lastIndex + 1] = array[lastIndex];
             lastIndex--;
         }

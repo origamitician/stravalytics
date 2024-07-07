@@ -219,7 +219,11 @@
                 <div id = "runLookupDiv">
                     <div id = "runLookupDivContainer">
                         <div id = 'runLookupDivFlex'>
-                            <h1 id = 'runLookupDivTitle'></h1>
+                            <div id = 'runLookupDivLeft'>
+                                 <h1 id = 'runLookupDivTitle'></h1>
+                                 <a href="" id = "runLookupStravaLink">View On Strava</a>
+                            </div>
+                           
                             <button onclick="closeRunLookup()">Close</button>
                         </div>
                         
@@ -523,27 +527,33 @@
                 <br><br>
                 <div id = "analysisInfoFlex">
                     <div id = "analysisInfoFlexLeft">
-                        <div id = "analysisInfoMainStatisticHolder">
-                            <p id = "analysisInfoMainStatistic"></p>
-                            <p id = "analysisInfoMainStatisticUnit"></p>
-                        </div>
-                        
-                        <table id = "summaryAnalysisTable">
-                            <tr id = "summaryAnalysisTableHeader">
-                                <th>Mon</th>
-                                <th>Tue</th>
-                                <th>Wed</th>
-                                <th>Thu</th>
-                                <th>Fri</th>
-                                <th>Sat</th>
-                                <th>Sun</th>
-                            </tr>
-                        </table>
+                        <p id = "analysisInfoMainStatistic"></p>
+                        <p id = "analysisInfoMainStatisticUnit"></p>
                     </div>
+                        
                     <div id = "analysisInfoFlexRight">
-
+                        <div id = "analysisInfoSpectrum">
+                            <div id = "analysisInfoSpectrumBar"></div>
+                        </div>
+                        <div id = "analysisInfoExtremes">
+                            <p id = "analysisExtremeLow" class = "analysisExtremeValue"></p>
+                            <p id = "analysisExtremeHigh" class = "analysisExtremeValue"></p>
+                        </div>
+                        <p id = "analysisInfoRanking"></p>
                     </div>
                 </div>
+
+                <table id = "summaryAnalysisTable">
+                    <tr id = "summaryAnalysisTableHeader">
+                        <th>Mon</th>
+                        <th>Tue</th>
+                        <th>Wed</th>
+                        <th>Thu</th>
+                        <th>Fri</th>
+                        <th>Sat</th>
+                        <th>Sun</th>
+                    </tr>
+                </table>
             </section>
         </div>
     </div>

@@ -731,6 +731,7 @@ function createRunLookup (id) {
     while(info[0]) {
         info[0].parentNode.removeChild(info[0]);
     }
+    document.getElementById("runLookupStravaLink").setAttribute('href', 'https://strava.com/activities/' + id)
 
     for (let i = 0; i < propertiesToParse.length; i++) {
         // sort all activities and rank them.
@@ -766,7 +767,7 @@ function createRunLookup (id) {
                 const b = (clr1.b + (clr2.b - clr1.b) * (calculatedPosition))
                 textColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';
             }
-            
+
             // the big number.
             const statDiv = document.createElement('div');
             statDiv.className = 'indivRunLookupDiv';

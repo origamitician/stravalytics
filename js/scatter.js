@@ -82,9 +82,29 @@ function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
-function show(){
-    console.log("alsdfjlkdsjaf;ljsd;lfjsad;lkj")
-    console.log(JSON.stringify(refArray[this.id]))
+let minX = 9223372036854775807;
+let minY = 9223372036854775807;
+let minZ = 9223372036854775807;
+let maxX = -1;
+let maxY = -1;
+let maxZ = -1;
+
+
+function showScatterActivity(property1, property2, id){
+    const index = Number(id.split('_')[0])
+    console.log(refArray)
+    console.log(JSON.stringify(refArray[index]))
+    console.log(id)
+
+    let leftMargin = ((refArray[index][property1] - minX) / (maxX - minX))*100
+    let bottomMargin = ((refArray[index][property2] - minY) / (maxY - minY))*100
+
+    document.getElementById('predictionDiv').style.display = 'block';
+    document.getElementById('predictionDiv').style.bottom = Number(bottomMargin) + 5 + "%"
+    document.getElementById('predictionDiv').style.left= Number(leftMargin) + 2 + "%"
+
+    document.getElementById('predictionTxtX').innerHTML = getVariableDisplayInfo(property1).display + ": " + processPredictionIntoReadableForm(property1, refArray[index][property1], getVariableDisplayInfo(property1).unit);
+    document.getElementById('predictionTxtY').innerHTML = getVariableDisplayInfo(property2).display + ": " + processPredictionIntoReadableForm(property2, refArray[index][property2], getVariableDisplayInfo(property2).unit);
 }
 
 function renderScatterplot(arr, prop1, prop2, tertiaryProp){
@@ -104,7 +124,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     }
 
     /* find the upper and lower bounds of the scatterplot. */
-
     let topX
     let bottomX
     let topY
@@ -136,13 +155,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         topY = processString(document.getElementsByName('yAxisMax')[0].value)
     }
 
-    console.log("bottomX is: " + bottomX);
-    console.log("topX is: " + topX);
-    console.log("bottomY is: " + bottomY);
-    console.log("topX is: " + topY);
-
-    console.log("BEFORE FILTER");
-    console.log(arr);
     const array = [];
 
     let toleranceX;
@@ -161,25 +173,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
 
     arr.forEach(i => {
         const item = {...i};
-        /*item.distance /= 1609
-        item.elevation *= 3.28;
-        item.incline = parseFloat(((item.elevation / (item.distance * 5280))*100).toFixed(2))
-        item.pace = 1609 / item.pace;
-        item.cadence = 2 * item.cadence
-        item.uptime = parseFloat(((item.time / item.elapsedTime)*100).toFixed(2))
-        item.maxPace = 1609 / item.maxPace;*/
         item.startDate = Date.parse(item.startDate) / 1000
-        /*if (item.cadence) {
-            item.stepsPerMile = item.cadence * (item.pace / 60) 
-            item.strideLength = 5280 / item.stepsPerMile
-        } else {
-            item.stepsPerMile = null;
-            item.strideLength = null;
-        }*/
-
-        /* if the plot fits within the confines of the upper and lower bounds, add to scatter plot. TODO add a tolerance of 0.01*/
-        // console.log("testing object with X: " + item[prop1] + " and Y: " + item[prop2] + " against X bound (" + bottomX + ", " + topX + ") w/ tolerance " + toleranceX + " against Y bound (" + bottomY + ", " + topY + ") w/ tolerance " + toleranceY)
-        //if it meets the bounds set by the user, as well as tolerances for rounding, add.
         if((item[prop1] >= bottomX || Math.abs(item[prop1] - bottomX) <= toleranceX) && 
         (item[prop1] <= topX || Math.abs(item[prop1] - topX) <= toleranceX) && 
         (item[prop2] >= bottomY || Math.abs(item[prop2] - bottomY) <= toleranceY) && 
@@ -190,7 +184,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     })
 
     console.log("AFTER FILTER");
-    console.log(array);
 
     // enable placeholders when the initial scatterplot is drawn.
     const var1Info = getVariableDisplayInfo(document.getElementsByName('variable1')[0].value)
@@ -214,13 +207,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     document.getElementsByClassName('yPredictionVarName')[1].innerHTML = unprocessed2Info;
 
     //console.log("running!")
-    let minX = 9223372036854775807;
-    let minY = 9223372036854775807;
-    let minZ = 9223372036854775807;
-    let maxX = -1;
-    let maxY = -1;
-    let maxZ = -1;
-
     const fixedArray = [];
     const regressionArray = [];
     array.forEach(item => {
@@ -308,11 +294,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     topX = parseFloat(topX);
     bottomY = parseFloat(bottomY);
     topY = parseFloat(topY);
-
-    /*console.log("bottomX is: " + bottomX + " and type is: " + typeof bottomX);
-    console.log("topX is: " + topX + " and type is: " + typeof topX);
-    console.log("bottomY is: " + bottomY + " and type is: " + typeof topY);
-    console.log("topX is: " + topY + " and type is: " + typeof bottomY);*/
     
     if(tertiaryProp){
         document.getElementById('spectrum').style.display = 'block';
@@ -328,38 +309,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         
     } else {
         document.getElementById('spectrum').style.display = 'none';
-    }
-
-    // draw the plots.
-    for(var i = 0; i < fixedArray.length; i++){
-        regressionArray.push([fixedArray[i].x, fixedArray[i].y])
-        var plot = document.createElement('p');
-        plot.className = 'plot';
-        plot.style.left = ((fixedArray[i].x - bottomX) / (topX - bottomX))*100 + '%';
-        plot.style.bottom = ((fixedArray[i].y - bottomY) / (topY- bottomY))*100 -3 + '%';
-        if(tertiaryProp) {
-            // if user selects a tertiary prop
-            if(fixedArray[i].z < bottomZ) {
-                plot.style.backgroundColor = document.getElementsByName('scatterColor1')[0].value
-            } else if (fixedArray[i].z > topZ) {
-                plot.style.backgroundColor = document.getElementsByName('scatterColor2')[0].value
-            } else {
-                const clr1 = hexToRgb(document.getElementsByName('scatterColor1')[0].value)
-                const clr2 = hexToRgb(document.getElementsByName('scatterColor2')[0].value)
-                const red = (clr1.r + (clr2.r - clr1.r) * ((fixedArray[i].z - bottomZ) / (topZ - bottomZ)))
-                const green = (clr1.g + (clr2.g - clr1.g) * ((fixedArray[i].z - bottomZ) / (topZ - bottomZ)))
-                const blue = (clr1.b + (clr2.b - clr1.b) * ((fixedArray[i].z - bottomZ) / (topZ - bottomZ)))
-                const gradientClr = 'rgb(' + red + ', ' + green + ', ' + blue + ')'
-                plot.style.backgroundColor = gradientClr;
-            }
-        } else {
-            plot.style.backgroundColor = document.getElementsByName('plotColor')[0].value
-        }
-        plot.id = i;
-        plot.addEventListener('click', show)
-        plot.style.height = document.getElementsByName('plotSize')[0].value + "px";
-        plot.style.width = document.getElementsByName('plotSize')[0].value + "px";
-        document.getElementById('scatterPlot').appendChild(plot)
     }
 
     const verticalIncrement = document.getElementsByName('incrementsY')[0].value;
@@ -405,11 +354,50 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
                 }else{
                     xDisplay.innerHTML = (bottomX + (j+1)*(((topX - bottomX) / horizontalIncrement))).toFixed(2);
                 }
-                
                 grid.append(xDisplay)
             }
             document.getElementById('scatterPlot').appendChild(grid)
         }
+    }
+
+    // draw the plots.
+    console.log(fixedArray)
+    for(var i = 0; i < fixedArray.length; i++){
+        regressionArray.push([fixedArray[i].x, fixedArray[i].y])
+        const plot = document.createElement('p');
+        plot.className = 'plot';
+        plot.style.left = ((fixedArray[i].x - bottomX) / (topX - bottomX))*100 + '%';
+        plot.style.bottom = ((fixedArray[i].y - bottomY) / (topY- bottomY))*100 -3 + '%';
+        if(tertiaryProp) {
+            // if user selects a tertiary prop
+            if (fixedArray[i].z == null) {
+                plot.style.backgroundColor = "grey";
+            } else if (fixedArray[i].z < bottomZ) {
+                plot.style.backgroundColor = document.getElementsByName('scatterColor1')[0].value
+            } else if (fixedArray[i].z > topZ) {
+                plot.style.backgroundColor = document.getElementsByName('scatterColor2')[0].value
+            } else {
+                const clr1 = hexToRgb(document.getElementsByName('scatterColor1')[0].value)
+                const clr2 = hexToRgb(document.getElementsByName('scatterColor2')[0].value)
+                const red = (clr1.r + (clr2.r - clr1.r) * ((fixedArray[i].z - bottomZ) / (topZ - bottomZ)))
+                const green = (clr1.g + (clr2.g - clr1.g) * ((fixedArray[i].z - bottomZ) / (topZ - bottomZ)))
+                const blue = (clr1.b + (clr2.b - clr1.b) * ((fixedArray[i].z - bottomZ) / (topZ - bottomZ)))
+                const gradientClr = 'rgb(' + red + ', ' + green + ', ' + blue + ')'
+                plot.style.backgroundColor = gradientClr;
+            }
+        } else {
+            plot.style.backgroundColor = document.getElementsByName('plotColor')[0].value
+        }
+        plot.id = i;
+        console.log(i)
+        const id = i+"_activity"
+        plot.addEventListener('mouseover', () => showScatterActivity(prop1, prop2, id))
+        // plot.addEventListener('mouseover', () => showPrediction(prop1, prop2, newID))
+        
+        plot.addEventListener('mouseout', hidePrediction)
+        plot.style.height = document.getElementsByName('plotSize')[0].value + "px";
+        plot.style.width = document.getElementsByName('plotSize')[0].value + "px";
+        document.getElementById('scatterPlot').appendChild(plot)
     }
 
     // calculate the best line / curve of fit
@@ -508,7 +496,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         const calculatedY = calculatePrediction(calculatedX, regressionType, calibCoefficients);
         c.fillStyle = 'orange';
 
-        plot = document.createElement('p');
+        const plot = document.createElement('p');
         plot.className = 'plot';
         const left = ((calculatedX - bottomX) / (topX - bottomX))*100
         plot.style.left = left + '%';
@@ -576,6 +564,7 @@ function processPredictionIntoReadableForm(prop, val, unit) {
 
 // when the curve of best fit is hovered.
 function showPrediction(property1, property2, id){ 
+    console.log(id)
     const breakdown = id.split('_')
     // id is in the form of prediction_<xvalue>_<yvalue>_<xPosOnCanvas>_<yPosOnCanvas>
 

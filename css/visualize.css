@@ -644,7 +644,8 @@ input::-webkit-inner-spin-button {
 
 .scatterGrid{
     position: absolute;
-    border: 1px dotted black;
+    border-top: 1px dotted lightgray;
+    border-right: 1px dotted lightgray;
 }
 
 .yScatterDisplay{

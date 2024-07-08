@@ -108,7 +108,12 @@ if (indexOfAuthorization == -1) {
                 item.incline = parseFloat(((item.elevation / (item.distance * 5280))*100).toFixed(2))
                 item.pace = 1609 / item.pace;
                 item.uptime = parseFloat(((item.time / item.elapsedTime)*100).toFixed(2))
-                item.maxPace = 1609 / item.maxPace;
+                if (item.maxPace) {
+                    item.maxPace = 1609 / item.maxPace;
+                } else {
+                    item.maxPace = null;
+                }
+                
                 item.parsedNumericalDate = Date.parse(item.startDate) / 1000;
                 /*item.startDate = Date.parse(item.startDate) / 1000*/
                 if (item.cadence) {

@@ -33,16 +33,27 @@ const variableDisplay = [
     {value: 'startDate', display: 'Date', placeholder: 'mm-dd-yyyy'},
 ]
 
-function getVariableDisplayInfo(value) {
+variableDisplay.forEach(e => {
+    e.defaultMinimum = 9223372036854775807
+    e.userMinimum = null;
+    e.defaultMaximum = -1
+    e.userMaximum = null;
+})
+
+function getVariableDisplayInfo(value, index) {
     for(let i = 0; i < variableDisplay.length; i++) {
         if (variableDisplay[i].value === value) {
-            return variableDisplay[i]
+            if (index) {
+                return i
+            } else {
+                return variableDisplay[i]
+            }
         }
     }
     return {};
 }
 
-function processString(val){
+function processStringToValue(val){
     let resultantString;
     if (val.includes(":")) {
         const breakPoint = val.indexOf(":");
@@ -57,11 +68,18 @@ function processString(val){
         }
     } else if (val.includes("-") && val.substring(0, 1) != "-") {
         resultantString = Date.parse(val) / 1000
-        // console.log(resultantString)
     } else {
-        resultantString = val
+        resultantString = parseFloat(val)
     }
     return resultantString;
+}
+
+function processValueToString(val, prop) {
+    if (prop == 'pace' || prop == 'elapsedTime' || prop == 'time' || prop == 'maxPace') {
+        return convert(parseFloat(val))
+    } else {
+        return parseFloat(val).toFixed(2)
+    }
 }
 
 function hexToRgb(hex) {
@@ -82,15 +100,11 @@ function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
-let minX = 9223372036854775807;
-let minY = 9223372036854775807;
 let minZ = 9223372036854775807;
-let maxX = -1;
-let maxY = -1;
 let maxZ = -1;
 
-
 function showScatterActivity(property1, property2, id){
+    /* 
     const index = Number(id.split('_')[0])
     console.log(refArray)
     console.log(JSON.stringify(refArray[index]))
@@ -104,7 +118,8 @@ function showScatterActivity(property1, property2, id){
     document.getElementById('predictionDiv').style.left= Number(leftMargin) + 2 + "%"
 
     document.getElementById('predictionTxtX').innerHTML = getVariableDisplayInfo(property1).display + ": " + processPredictionIntoReadableForm(property1, refArray[index][property1], getVariableDisplayInfo(property1).unit);
-    document.getElementById('predictionTxtY').innerHTML = getVariableDisplayInfo(property2).display + ": " + processPredictionIntoReadableForm(property2, refArray[index][property2], getVariableDisplayInfo(property2).unit);
+    document.getElementById('predictionTxtY').innerHTML = getVariableDisplayInfo(property2).display + ": " + processPredictionIntoReadableForm(property2, refArray[index][property2], getVariableDisplayInfo(property2).unit); 
+    */
 }
 
 function renderScatterplot(arr, prop1, prop2, tertiaryProp){
@@ -123,37 +138,54 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         paras[0].parentNode.removeChild(paras[0]);
     }
 
-    /* find the upper and lower bounds of the scatterplot. */
-    let topX
+    // constraint variables to filter out by.
     let bottomX
-    let topY
+    let topX
     let bottomY
-    let topZ
+    let topY
     let bottomZ
+    let topZ
+    let isXRaw;
+    let isYRaw;
 
-    if (document.getElementsByName('xAxisMin')[0].value == '') {
-        bottomX = 0;
+    let variableXInfo = variableDisplay[getVariableDisplayInfo(prop1, true)]
+    let variableYInfo = variableDisplay[getVariableDisplayInfo(prop2, true)]
+
+    if (variableXInfo.userMaximum == null && variableXInfo.userMinimum == null) {
+        bottomX = document.getElementsByName('xAxisMin')[0].value == "" ? -1 : processStringToValue(document.getElementsByName('xAxisMin')[0].value)
+        topX = document.getElementsByName('xAxisMax')[0].value == "" ? 9223372036854775807 : processStringToValue(document.getElementsByName('xAxisMax')[0].value)
+
+        if (document.getElementsByName('xAxisMin')[0].value == "" && document.getElementsByName('xAxisMax')[0].value == "") {
+            isXRaw = true
+        } else{
+            isXRaw = false
+        }
     } else {
-        bottomX =  processString(document.getElementsByName('xAxisMin')[0].value)
+        bottomX = variableXInfo.userMinimum
+        topX = variableXInfo.userMaximum
+        isXRaw = false
     }
 
-    if (document.getElementsByName('xAxisMax')[0].value == '') {
-        topX = 9223372036854775807;
+    if (variableYInfo.userMaximum == null && variableYInfo.userMinimum == null) {
+        // issue: value is never "" due to it being autofilled.
+        bottomY = document.getElementsByName('yAxisMin')[0].value == "" ? -1 : processStringToValue(document.getElementsByName('yAxisMin')[0].value)
+        topY = document.getElementsByName('yAxisMax')[0].value == "" ? 9223372036854775807 : processStringToValue(document.getElementsByName('yAxisMax')[0].value)
+
+        if (document.getElementsByName('yAxisMin')[0].value == "" && document.getElementsByName('yAxisMax')[0].value == "") {
+            isYRaw = true
+        } else{
+            isYRaw = false
+        }
     } else {
-        topX = processString(document.getElementsByName('xAxisMax')[0].value)
+        bottomY = variableXInfo.userMinimum
+        topY = variableXInfo.userMaximum
+        isYRaw = false
     }
 
-    if (document.getElementsByName('yAxisMin')[0].value == '') {
-        bottomY = 0;
-    } else {
-        bottomY = processString(document.getElementsByName('yAxisMin')[0].value)
-    }
-
-    if (document.getElementsByName('yAxisMax')[0].value == '') {
-        topY = 9223372036854775807;
-    } else {
-        topY = processString(document.getElementsByName('yAxisMax')[0].value)
-    }
+    console.log("bottomX is: " + bottomX)
+    console.log("topX is: " + topX)
+    console.log("bottomY is: " + bottomY)
+    console.log("topY is: " + topY)
 
     const array = [];
 
@@ -183,11 +215,9 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         }
     })
 
-    console.log("AFTER FILTER");
-
     // enable placeholders when the initial scatterplot is drawn.
-    const var1Info = getVariableDisplayInfo(document.getElementsByName('variable1')[0].value)
-    const var2Info = getVariableDisplayInfo(document.getElementsByName('variable2')[0].value)
+    const var1Info = getVariableDisplayInfo(prop1)
+    const var2Info = getVariableDisplayInfo(prop2)
     document.getElementsByName('xInput')[0].placeholder = var1Info.placeholder
     document.getElementsByName('yInput')[0].placeholder = var2Info.placeholder
     document.getElementsByClassName('xPredictionVarName')[0].innerHTML = var1Info.display.toLowerCase() + "(x)";
@@ -198,7 +228,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     }
 
     document.getElementsByClassName('xPredictionVarName')[1].innerHTML = unprocessed1Info
-
     document.getElementsByClassName('yPredictionVarName')[0].innerHTML = var2Info.display.toLowerCase() + "(y)";
     let unprocessed2Info= var2Info.display.toLowerCase()
     if (var2Info.unit) {
@@ -210,6 +239,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     const fixedArray = [];
     const regressionArray = [];
     array.forEach(item => {
+        console.log("adding item to array")
         if(item[prop1] != null && item[prop2] != null && item[prop1] != null && item[prop2] !=null) {
             if(tertiaryProp) {
                 fixedArray.push({x: item[prop1], y: item[prop2], z: item[tertiaryProp]})
@@ -217,15 +247,24 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
                 fixedArray.push({x: item[prop1], y: item[prop2]})
             }
             
-            if(item[prop1] < minX){
-                minX = item[prop1]
-            }else if(item[prop1] > maxX){
-                maxX = item[prop1]
+            if (isXRaw) {
+                console.log("x is raw")
+                // if the x variable is unfiltered (happens when analyzing a variable for the first time - the default maximums and minimums are not set.)
+                if(item[prop1] < variableXInfo.defaultMinimum){
+                    console.log("this is smaller.")
+                    variableXInfo.defaultMinimum = item[prop1]
+                }else if(item[prop1] > variableXInfo.defaultMaximum){
+                    variableXInfo.defaultMaximum = item[prop1]
+                }
             }
-            if(item[prop2] < minY){
-                minY= item[prop2]
-            }else if(item[prop2] > maxY){
-                maxY = item[prop2]
+            
+            if (isYRaw) {
+                // if the y variable is unfiltered (happens when analyzing a variable for the first time - the default maximums and minimums are not set.)
+                if(item[prop2] < variableYInfo.defaultMinimum){
+                    variableYInfo.defaultMinimum= item[prop2]
+                }else if(item[prop2] > variableYInfo.defaultMaximum){
+                    variableYInfo.defaultMaximum = item[prop2]
+                }
             }
 
             if(tertiaryProp && item[tertiaryProp]) {
@@ -234,14 +273,14 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
                     if(document.getElementsByName('zAxisMin')[0].value == ''){
                         bottomZ = minZ
                     } else {
-                        bottomZ = processString(document.getElementsByName('zAxisMin')[0].value)
+                        bottomZ = processStringToValue(document.getElementsByName('zAxisMin')[0].value)
                     }
                 }else if(item[tertiaryProp] > maxZ){
                     maxZ = item[tertiaryProp]
                     if(document.getElementsByName('zAxisMax')[0].value == ''){
                         topZ = maxZ
                     } else {
-                        topZ = processString(document.getElementsByName('zAxisMax')[0].value)
+                        topZ = processStringToValue(document.getElementsByName('zAxisMax')[0].value)
                     }
                 } 
             }
@@ -249,44 +288,36 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
     })
 
     /* autocomplete if fields are blank */
-    if(prop1 == 'pace' || prop1 == 'elapsedTime' || prop1 == 'time' || prop1 == 'maxPace'){
-        if (document.getElementsByName('xAxisMin')[0].value == "") {
-            document.getElementsByName('xAxisMin')[0].value=convert(parseFloat(minX))
-            bottomX = minX;
-        }
-        if (document.getElementsByName('xAxisMax')[0].value == "") {
-            document.getElementsByName('xAxisMax')[0].value=convert(parseFloat(maxX))
-            topX = maxX;
-        }
+    if (document.getElementsByName('xAxisMin')[0].value == "") {
+        document.getElementsByName('xAxisMin')[0].value=processValueToString(variableXInfo.defaultMinimum)
+        bottomX = variableXInfo.defaultMinimum
+        variableXInfo.userMinimum = variableXInfo.defaultMinimum
     } else {
-        if (document.getElementsByName('xAxisMin')[0].value == "") {
-            document.getElementsByName('xAxisMin')[0].value=(parseFloat(minX)).toFixed(2)
-            bottomX = minX;
-        }
-        if (document.getElementsByName('xAxisMax')[0].value == "") {
-            document.getElementsByName('xAxisMax')[0].value=(parseFloat(maxX)).toFixed(2)
-            topX = maxX;
-        }
+        variableXInfo.userMinimum = processStringToValue(document.getElementsByName('xAxisMin')[0].value)
+    }
+
+    if (document.getElementsByName('xAxisMax')[0].value == "") {
+        document.getElementsByName('xAxisMax')[0].value=processValueToString(variableXInfo.defaultMaximum)
+        topX = variableXInfo.defaultMaximum
+        variableXInfo.userMaximum = variableXInfo.defaultMaximum
+    } else {
+        variableXInfo.userMaximum = processStringToValue(document.getElementsByName('xAxisMax')[0].value)
     }
     
-    if(prop2 == 'pace' || prop2 == 'elapsedTime' || prop2 == 'time' || prop2 == 'maxPace'){
-        if (document.getElementsByName('yAxisMin')[0].value == "") {
-            document.getElementsByName('yAxisMin')[0].value=convert(parseFloat(minY))
-            bottomY = minY;
-        }
-        if (document.getElementsByName('yAxisMax')[0].value == "") {
-            document.getElementsByName('yAxisMax')[0].value=convert(parseFloat(maxY))
-            topY = maxY;
-        }
+    if (document.getElementsByName('yAxisMin')[0].value == "") {
+        document.getElementsByName('yAxisMin')[0].value=processValueToString(variableYInfo.defaultMinimum)
+        bottomY = variableYInfo.defaultMinimum
+        variableYInfo.userMinimum = variableYInfo.defaultMinimum
     } else {
-        if (document.getElementsByName('yAxisMin')[0].value == "") {
-            document.getElementsByName('yAxisMin')[0].value=(parseFloat(minY)).toFixed(2) 
-            bottomY = minY;
-        }
-        if (document.getElementsByName('yAxisMax')[0].value == "") {
-            document.getElementsByName('yAxisMax')[0].value=(parseFloat(maxY)).toFixed(2)
-            topY = maxY;
-        }
+        variableYInfo.userMinimum = processStringToValue(document.getElementsByName('yAxisMin')[0].value)
+    }
+
+    if (document.getElementsByName('yAxisMax')[0].value == "") {
+        document.getElementsByName('yAxisMax')[0].value=convert(parseFloat(variableYInfo.defaultMaximum))
+        topY = variableYInfo.defaultMaximum
+        variableYInfo.userMaximum = variableYInfo.defaultMaximum
+    } else {
+        variableYInfo.userMaximum = processStringToValue(document.getElementsByName('yAxisMax')[0].value)
     }
 
     // convert everything into a float
@@ -360,6 +391,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         }
     }
 
+    console.log(variableDisplay)
     // draw the plots.
     console.log(fixedArray)
     for(var i = 0; i < fixedArray.length; i++){
@@ -490,7 +522,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp){
         equation.innerHTML = "y=" + coefficientArray[0] + "x<sup>" + coefficientArray[1] + "</sup>"
     }
 
-    console.log("MaxX: " + maxX + " MinX: " +  minX + " MaxY: " + maxY + " MinY: " + minY)
+    // console.log("MaxX: " + maxX + " MinX: " +  minX + " MaxY: " + maxY + " MinY: " + minY)
     for (let i = 0; i < scrubbingRate; i++) {
         const calculatedX = i * ((topX - bottomX) / scrubbingRate) + bottomX
         const calculatedY = calculatePrediction(calculatedX, regressionType, calibCoefficients);
@@ -578,7 +610,7 @@ function showPrediction(property1, property2, id){
 
 // when the user inputs into the x axis prediction field in an attempt to predict the y axis.
 function showInputPrediction() {
-    const processedXInput = parseFloat(processString(document.getElementsByName('xInput')[0].value));
+    const processedXInput = parseFloat(processStringToValue(document.getElementsByName('xInput')[0].value));
     const yOutput = calculatePrediction(processedXInput, regressionType, calibCoefficients);
     const processedYOutput = processPredictionIntoReadableForm (document.getElementsByName('variable2')[0].value, yOutput); // no units added
 

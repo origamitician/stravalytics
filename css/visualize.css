@@ -20,6 +20,7 @@ body{
     align-self: flex-start;
     top: 0%;
     display: none;
+    background-color: lightgrey;
 }
 
 #mobileApplicationMenu {

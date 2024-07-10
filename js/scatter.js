@@ -106,14 +106,13 @@ let minZ = 9223372036854775807;
 let maxZ = -1;
 
 function showScatterActivity(property1, property2, id){
-    /* 
     const index = Number(id.split('_')[0])
-    console.log(refArray)
-    console.log(JSON.stringify(refArray[index]))
-    console.log(id)
 
-    let leftMargin = ((refArray[index][property1] - minX) / (maxX - minX))*100
-    let bottomMargin = ((refArray[index][property2] - minY) / (maxY - minY))*100
+    let variableXInfo = variableDisplay[getVariableDisplayInfo(property1, true)]
+    let variableYInfo = variableDisplay[getVariableDisplayInfo(property2, true)]
+
+    let leftMargin = ((refArray[index][property1] - variableXInfo.userMinimum) / (variableXInfo.userMaximum - variableXInfo.userMinimum))*100
+    let bottomMargin = ((refArray[index][property2] - variableYInfo.userMinimum) / (variableYInfo.userMaximum - variableYInfo.userMinimum))*100
 
     document.getElementById('predictionDiv').style.display = 'block';
     document.getElementById('predictionDiv').style.bottom = Number(bottomMargin) + 5 + "%"
@@ -121,7 +120,6 @@ function showScatterActivity(property1, property2, id){
 
     document.getElementById('predictionTxtX').innerHTML = getVariableDisplayInfo(property1).display + ": " + processPredictionIntoReadableForm(property1, refArray[index][property1], getVariableDisplayInfo(property1).unit);
     document.getElementById('predictionTxtY').innerHTML = getVariableDisplayInfo(property2).display + ": " + processPredictionIntoReadableForm(property2, refArray[index][property2], getVariableDisplayInfo(property2).unit); 
-    */
 }
 
 function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
@@ -147,8 +145,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
     let topY
     let bottomZ
     let topZ
-    let isXRaw = false;
-    let isYRaw = false;
+    let variableZInfo;
 
     let variableXInfo = variableDisplay[getVariableDisplayInfo(prop1, true)]
     let variableYInfo = variableDisplay[getVariableDisplayInfo(prop2, true)]
@@ -178,27 +175,28 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
         variableYInfo.userMaximum = MAXIMUM_EXTREME
     }
 
-    if (variableXInfo.userMinimum == -1 && variableXInfo.userMaximum == MAXIMUM_EXTREME) {
-        isXRaw = true
+    if (tertiaryProp) {
+        variableZInfo = variableDisplay[getVariableDisplayInfo(tertiaryProp, true)]
+        if (document.getElementsByName('zAxisMin')[0].value != "") {
+            variableZInfo.userMinimum = processStringToValue(document.getElementsByName('zAxisMin')[0].value)
+        } else if (!changedVariable || !changedVariable.includes(3)) {
+            variableZInfo.userMinimum = MINIMUM_EXTREME
+        }
+        
+        if (document.getElementsByName('zAxisMax')[0].value != "") {
+            variableZInfo.userMaximum = processStringToValue(document.getElementsByName('zAxisMax')[0].value)
+        } else if (!changedVariable || !changedVariable.includes(3)) {
+            variableZInfo.userMaximum = MAXIMUM_EXTREME
+        }
+        bottomZ = variableZInfo.userMinimum
+        topZ = variableZInfo.userMaximum
     }
-
-    if (variableYInfo.userMinimum == -1 && variableYInfo.userMaximum == MAXIMUM_EXTREME) {
-        isYRaw = true
-    }
-
-    console.log("userMinimum " + variableXInfo.userMinimum)
-    console.log("userMaximum " + variableXInfo.userMaximum)
 
     bottomX = variableXInfo.userMinimum
     topX = variableXInfo.userMaximum
     bottomY = variableYInfo.userMinimum
     topY = variableYInfo.userMaximum
-
-    console.log("bottomX is: " + bottomX)
-    console.log("topX is: " + topX)
-    console.log("bottomY is: " + bottomY)
-    console.log("topY is: " + topY)
-
+    
     const array = [];
 
     let toleranceX;
@@ -220,16 +218,16 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
         item.startDate = Date.parse(item.startDate) / 1000
 
         // if the x variable is unfiltered (happens when analyzing a variable for the first time - the default maximums and minimums are not set.)
-        if(item[prop1] < variableXInfo.defaultMinimum && variableXInfo.userMinimum == MINIMUM_EXTREME){
+        if(item[prop1]!=null && item[prop1] < variableXInfo.defaultMinimum && variableXInfo.userMinimum == MINIMUM_EXTREME){
             variableXInfo.defaultMinimum = item[prop1]
-        }else if(item[prop1] > variableXInfo.defaultMaximum && variableXInfo.userMaximum == MAXIMUM_EXTREME){
+        }else if(item[prop1]!=null && item[prop1] > variableXInfo.defaultMaximum && variableXInfo.userMaximum == MAXIMUM_EXTREME){
             variableXInfo.defaultMaximum = item[prop1]
         }
 
         // if the y variable is unfiltered (happens when analyzing a variable for the first time - the default maximums and minimums are not set.)
-        if(item[prop2] < variableYInfo.defaultMinimum && variableYInfo.userMinimum == MINIMUM_EXTREME){
+        if(item[prop2]!=null && item[prop2] < variableYInfo.defaultMinimum && variableYInfo.userMinimum == MINIMUM_EXTREME){
             variableYInfo.defaultMinimum= item[prop2]
-        }else if(item[prop2] > variableYInfo.defaultMaximum && variableYInfo.userMaximum == MAXIMUM_EXTREME){
+        }else if(item[prop2]!=null && item[prop2] > variableYInfo.defaultMaximum && variableYInfo.userMaximum == MAXIMUM_EXTREME){
             variableYInfo.defaultMaximum = item[prop2]
         }
 
@@ -273,22 +271,12 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
                 fixedArray.push({x: item[prop1], y: item[prop2]})
             }
 
-            if(tertiaryProp && item[tertiaryProp]) {
-                if(item[tertiaryProp] < minZ){
-                    minZ= item[tertiaryProp]
-                    if(document.getElementsByName('zAxisMin')[0].value == ''){
-                        bottomZ = minZ
-                    } else {
-                        bottomZ = processStringToValue(document.getElementsByName('zAxisMin')[0].value)
-                    }
-                }else if(item[tertiaryProp] > maxZ){
-                    maxZ = item[tertiaryProp]
-                    if(document.getElementsByName('zAxisMax')[0].value == ''){
-                        topZ = maxZ
-                    } else {
-                        topZ = processStringToValue(document.getElementsByName('zAxisMax')[0].value)
-                    }
-                } 
+            if(tertiaryProp && item[tertiaryProp] != null) {
+                if(item[tertiaryProp] < variableZInfo.defaultMinimum && variableZInfo.userMinimum == MINIMUM_EXTREME){
+                    variableZInfo.defaultMinimum = item[tertiaryProp]
+                }else if(item[tertiaryProp] > variableZInfo.defaultMaximum && variableZInfo.userMaximum == MAXIMUM_EXTREME){
+                    variableZInfo.defaultMaximum = item[tertiaryProp]
+                }
             }
         }
     })
@@ -322,13 +310,21 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
         variableYInfo.userMaximum = bool ? variableYInfo.defaultMaximum : variableYInfo.userMaximum
     }
 
-    // convert everything into a float
-    bottomX = parseFloat(bottomX);
-    topX = parseFloat(topX);
-    bottomY = parseFloat(bottomY);
-    topY = parseFloat(topY);
+    if (tertiaryProp) {
+        if (document.getElementsByName('zAxisMin')[0].value == "") {
+            const bool = (variableZInfo.userMinimum == MINIMUM_EXTREME)
+            document.getElementsByName('zAxisMin')[0].value = bool ? processValueToString(variableZInfo.defaultMinimum, tertiaryProp) : processValueToString(variableZInfo.userMinimum, tertiaryProp)
+            bottomZ = bool ? variableZInfo.defaultMinimum : variableZInfo.userMinimum
+            variableZInfo.userMinimum = bool ? variableZInfo.defaultMinimum : variableZInfo.userMinimum
+        }
     
-    if(tertiaryProp){
+        if (document.getElementsByName('zAxisMax')[0].value == "") {
+            const bool = (variableZInfo.userMaximum == MAXIMUM_EXTREME)
+            document.getElementsByName('zAxisMax')[0].value = bool ? processValueToString(variableZInfo.defaultMaximum, tertiaryProp) : processValueToString(variableZInfo.userMaximum, tertiaryProp)
+            topZ = bool ? variableZInfo.defaultMaximum : variableZInfo.userMaximum
+            variableZInfo.userMaximum = bool ? variableZInfo.defaultMaximum : variableZInfo.userMaximum
+        }
+
         document.getElementById('spectrum').style.display = 'block';
         document.getElementById('spectrum').style.background = 'linear-gradient(to right, ' + document.getElementsByName('scatterColor1')[0].value + ', ' + document.getElementsByName('scatterColor2')[0].value + ')'
         if(tertiaryProp == 'pace' || tertiaryProp == 'elapsedTime' || tertiaryProp == 'time' || tertiaryProp == 'maxPace'){
@@ -339,10 +335,15 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
             document.getElementById('spectrumLowerBound').innerHTML = parseFloat(bottomZ).toFixed(2)
             document.getElementById('spectrumUpperBound').innerHTML = parseFloat(topZ).toFixed(2)
         }
-        
     } else {
         document.getElementById('spectrum').style.display = 'none';
     }
+
+    // convert everything into a float
+    bottomX = parseFloat(bottomX);
+    topX = parseFloat(topX);
+    bottomY = parseFloat(bottomY);
+    topY = parseFloat(topY);
 
     const verticalIncrement = document.getElementsByName('incrementsY')[0].value;
     const horizontalIncrement = document.getElementsByName('incrementsX')[0].value;
@@ -424,7 +425,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
             plot.style.backgroundColor = document.getElementsByName('plotColor')[0].value
         }
         plot.id = i;
-        const id = i+"_activity"
+        const id = i+"_activity_"+plot.style.backgroundColor
         plot.addEventListener('mouseover', () => showScatterActivity(prop1, prop2, id))
         // plot.addEventListener('mouseover', () => showPrediction(prop1, prop2, newID))
         

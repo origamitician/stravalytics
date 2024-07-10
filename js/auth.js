@@ -76,7 +76,7 @@ function changeDates(){
         if (allActivities.length !== 0) {
             createSummaryPage();
             renderGraph();
-            renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value)
+            renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value, null, [1, 2])
             document.getElementById("displayNumRuns").innerHTML = "Displaying <b>" + allActivities.length + "</b> runs from (timestamp " + startDate + " to " + endDate + ")"
             runTrends();
             runAnalysis();
@@ -135,7 +135,7 @@ if (indexOfAuthorization == -1) {
             if (allActivities.length !== 0) {
                 createSummaryPage();
                 renderGraph(); //histograms
-                renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
+                renderScatterplot(allActivities, 'distance', 'pace', null, [1, 2]); //scatterplot
                 runTrends();
                 runAnalysis();
             } 
@@ -254,7 +254,7 @@ function generateRandomData(){
     document.getElementById('applicationBody').style.display = 'block';
     createSummaryPage();
     renderGraph(); //histograms
-    renderScatterplot(allActivities, 'distance', 'pace'); //scatterplot
+    renderScatterplot(allActivities, 'distance', 'pace', null,  [1, 2]); //scatterplot
     runTrends(); //create trends page
     runAnalysis();
 }

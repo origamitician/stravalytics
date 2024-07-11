@@ -48,6 +48,7 @@ function processTrendData() {
         {value: 'cadence', display: 'Cadence', unit: "steps/min"},
         {value: 'stepsPerMile', display: 'Steps / mile', unit: "steps/mi"},
         {value: 'strideLength', display: 'Stride length', unit: "ft"},
+        {value: 'totalSteps', display: 'Steps taken', unit: "steps", canBeTotaled: true},
     ]
 
     // determine whether it's yearly, monthly, or historical by seeing which div is purple.
@@ -59,7 +60,7 @@ function processTrendData() {
         }
     }
 
-    const canBeTotaled = ["distance", "time", "elapsedTime", "elevation", "kudos"];
+    const canBeTotaled = ["distance", "time", "elapsedTime", "elevation", "kudos", "totalSteps"];
     if (variableStatus == "cumulative" || variableStatus == "cumulativeMoving") {
         // disable most variables.
         for (let i = 0; i < unitInfo.length; i++) {

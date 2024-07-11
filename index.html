@@ -245,8 +245,11 @@
                     <div id="scatterPlot">
                         <canvas id = 'scatterCanv' style="width: 100%;height: 80vh;"></canvas>
                         <div id = 'predictionDiv'>
+                            <h3 id = 'predictionRunTitle'></h1>
                             <p id = 'predictionTxtX'></p>
                             <p id = 'predictionTxtY'></p>
+                            <p id = 'predictionTxtZ'></p>
+                            <p id = 'clickToSeeMore'>Click to see details!</p>
                         </div>
                         <div id = 'spectrum'>
                             <p id = 'spectrumLowerBound'></p>
@@ -290,7 +293,7 @@
                                 <option value="cadence">Cadence (steps/min)</option>
                                 <option value="stepsPerMile">Steps per mile</option>
                                 <option value="strideLength">Stride length</option>
-                                <option value="startDate">Date (mm-dd-yyyy)</option>
+                                <option value="totalSteps">Steps taken</option>
                             </select>
                             <div class = 'subScatterInputLabelsFlex'>   
                                 <label for="xAxisMin" class = 'subScatterInputLabels'>Lower Bound</label>
@@ -322,7 +325,7 @@
                                 <option value="cadence">Cadence (steps/min)</option>
                                 <option value="stepsPerMile">Steps per mile</option>
                                 <option value="strideLength">Stride length</option>
-                                <option value="startDate">Date (mm-dd-yyyy)</option>
+                                <option value="totalSteps">Steps taken</option>
                             </select>
                             <div class = 'subScatterInputLabelsFlex'>   
                                 <p for="yAxisMin" class = 'subScatterInputLabels'>Lower Bound</p>
@@ -355,7 +358,7 @@
                                 <option value="cadence">Cadence (steps/min)</option>
                                 <option value="stepsPerMile">Steps per mile</option>
                                 <option value="strideLength">Stride length</option>
-                                <option value="startDate">Date (mm-dd-yyyy)</option>
+                                <option value="totalSteps">Steps taken</option>
                             </select>
                             <div class = 'subScatterInputLabelsFlex'>   
                                 <input type="color" name = "scatterColor1" value = "#ff0000" class = 'scatterColorPickers' onChange = "updateScatterDrawings()">
@@ -382,7 +385,7 @@
                             </div>
                             <div class = 'subScatterInputLabelsFlex'>
                                 <label for="curveSize" class = 'subScatterInputLabelsBig'>Size (0 = hide curve)</label>
-                                <input type="number" name="curveSize" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value = "13">
+                                <input type="number" name="curveSize" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value = "0">
                             </div>
                         </div>
                         <br>
@@ -442,6 +445,7 @@
                                 <option value="cadence">Cadence (steps/min)</option>
                                 <option value="stepsPerMile">Steps per mile</option>
                                 <option value="strideLength">Stride length</option>
+                                <option value="totalSteps">Steps taken</option>
                             </select>
                             <br><br>
                             <label for="trendsCumVariableSetting">Calculate by</label>

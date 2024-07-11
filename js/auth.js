@@ -105,7 +105,7 @@ if (indexOfAuthorization == -1) {
                 let item = {...d}
                 item.distance /= 1609
                 item.elevation *= 3.28;
-                item.incline = parseFloat(((item.elevation / (item.distance * 5280))*100).toFixed(2))
+                item.incline = parseFloat(((item.elevation / (item.distance * 5280))*100).toFixed(3))
                 item.pace = 1609 / item.pace;
                 item.uptime = parseFloat(((item.time / item.elapsedTime)*100).toFixed(2))
                 if (item.maxPace) {

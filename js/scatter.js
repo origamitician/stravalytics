@@ -20,19 +20,19 @@ function getNumberOfColons(str) {
 
 //variable names that are referenced by the values of the dropdown.
 const variableDisplay = [
-    {value: 'distance', display: 'Distance', placeholder: 'Distance (mi)', unit: 'mi'}, 
-    {value: 'time', display: 'Moving Time', placeholder: 'h:mm:ss / mm:ss', unit: ''},
-    {value: 'elapsedTime', display: 'Elapsed Time', placeholder: 'h:mm:ss / mm:ss', unit: ''},
-    {value: 'uptime', display: 'Uptime', placeholder: '% uptime (0-100)', unit: "%"},
-    {value: 'elevation', display: 'Elevation Gain', placeholder: 'Gain (ft)', unit: "ft"},
-    {value: 'incline', display: 'Incline', placeholder: '% incline', unit: "%"},
-    {value: 'pace', display: 'Pace', placeholder: 'm:ss', unit: "/mi"},
-    {value: 'kudos', display: 'Kudos', placeholder: '# kudos', unit: ""},
-    {value: 'maxPace', display: 'Maximum Pace', placeholder: 'm:ss', unit: "/mi"},
-    {value: 'cadence', display: 'Cadence', placeholder: 'steps per min', unit: "steps/min"},
-    {value: 'stepsPerMile', display: 'Steps / mile', placeholder: 'steps per mile', unit: "steps/mi"},
-    {value: 'strideLength', display: 'Stride length', placeholder: 'length in ft', unit: "ft"},
-    {value: 'startDate', display: 'Date', placeholder: 'mm-dd-yyyy'},
+    {value: 'distance', display: 'Distance', placeholder: 'Distance (mi)', unit: 'mi', displayDecimalPoints: 2, predDecimalPoints: 2}, 
+    {value: 'time', display: 'Moving Time', placeholder: 'h:mm:ss / mm:ss', unit: '', displayDecimalPoints: 0, predDecimalPoints: 0},
+    {value: 'elapsedTime', display: 'Elapsed Time', placeholder: 'h:mm:ss / mm:ss', unit: '', displayDecimalPoints: 0, predDecimalPoints: 0},
+    {value: 'uptime', display: 'Uptime', placeholder: '% uptime (0-100)', unit: "%", displayDecimalPoints: 2, predDecimalPoints: 2},
+    {value: 'elevation', display: 'Elevation Gain', placeholder: 'Gain (ft)', unit: "ft", displayDecimalPoints: 2, predDecimalPoints: 2},
+    {value: 'incline', display: 'Incline', placeholder: '% incline', unit: "%", displayDecimalPoints: 3, predDecimalPoints: 3},
+    {value: 'pace', display: 'Pace', placeholder: 'm:ss', unit: "/mi", displayDecimalPoints: 2, predDecimalPoints: 2},
+    {value: 'kudos', display: 'Kudos', placeholder: '# kudos', unit: "", displayDecimalPoints: 0, predDecimalPoints: 2},
+    {value: 'maxPace', display: 'Maximum Pace', placeholder: 'm:ss', unit: "/mi", displayDecimalPoints: 2, predDecimalPoints: 2},
+    {value: 'cadence', display: 'Cadence', placeholder: 'steps per min', unit: "steps/min", displayDecimalPoints: 1, predDecimalPoints: 2},
+    {value: 'stepsPerMile', display: 'Steps / mile', placeholder: 'steps per mile', unit: "steps/mi", displayDecimalPoints: 0, predDecimalPoints: 2},
+    {value: 'strideLength', display: 'Stride length', placeholder: 'length in ft', unit: "ft", displayDecimalPoints: 3, predDecimalPoints: 3},
+    {value: 'totalSteps', display: 'Steps taken', placeholder: '', unit: "steps", displayDecimalPoints: 0, predDecimalPoints: 2},
 ]
 
 variableDisplay.forEach(e => {
@@ -105,8 +105,11 @@ function rgbToHex(r, g, b) {
 let minZ = 9223372036854775807;
 let maxZ = -1;
 
-function showScatterActivity(property1, property2, id){
+function showScatterActivity(property1, property2, tertiaryProp, id){
     const index = Number(id.split('_')[0])
+    const color = id.split('_')[2]
+
+    document.getElementById("scatter_" + index).style.opacity = 0.7;
 
     let variableXInfo = variableDisplay[getVariableDisplayInfo(property1, true)]
     let variableYInfo = variableDisplay[getVariableDisplayInfo(property2, true)]
@@ -114,12 +117,27 @@ function showScatterActivity(property1, property2, id){
     let leftMargin = ((refArray[index][property1] - variableXInfo.userMinimum) / (variableXInfo.userMaximum - variableXInfo.userMinimum))*100
     let bottomMargin = ((refArray[index][property2] - variableYInfo.userMinimum) / (variableYInfo.userMaximum - variableYInfo.userMinimum))*100
 
-    document.getElementById('predictionDiv').style.display = 'block';
-    document.getElementById('predictionDiv').style.bottom = Number(bottomMargin) + 5 + "%"
-    document.getElementById('predictionDiv').style.left= Number(leftMargin) + 2 + "%"
+    predictionDiv = document.getElementById('predictionDiv')
+    predictionDiv.style.display = 'block';
+    predictionDiv.style.border = '4px solid ' + color
+    predictionDiv.style.bottom = Number(bottomMargin) + 5 + "%"
+    predictionDiv.style.left= Number(leftMargin) + 2 + "%"
 
-    document.getElementById('predictionTxtX').innerHTML = getVariableDisplayInfo(property1).display + ": " + processPredictionIntoReadableForm(property1, refArray[index][property1], getVariableDisplayInfo(property1).unit);
-    document.getElementById('predictionTxtY').innerHTML = getVariableDisplayInfo(property2).display + ": " + processPredictionIntoReadableForm(property2, refArray[index][property2], getVariableDisplayInfo(property2).unit); 
+    document.getElementById('predictionTxtX').innerHTML = "> " + getVariableDisplayInfo(property1).display + ": <b>" + processPredictionIntoReadableForm(property1, refArray[index][property1], getVariableDisplayInfo(property1).unit) + "</b>";
+    document.getElementById('predictionTxtY').innerHTML = "> " + getVariableDisplayInfo(property2).display + ": <b>" + processPredictionIntoReadableForm(property2, refArray[index][property2], getVariableDisplayInfo(property2).unit) + "</b>"; 
+    document.getElementById('predictionRunTitle').innerHTML = refArray[index].name
+    if (tertiaryProp) {
+        if (refArray[index][tertiaryProp] != null) {
+            document.getElementById('predictionTxtZ').innerHTML = "> " + getVariableDisplayInfo(tertiaryProp).display + ": <b>" + processPredictionIntoReadableForm(tertiaryProp, refArray[index][tertiaryProp], getVariableDisplayInfo(tertiaryProp).unit) + "</b>"; 
+        } else {
+            document.getElementById('predictionTxtZ').innerHTML = "> No info available for " + getVariableDisplayInfo(tertiaryProp).display.toLowerCase()
+        }
+
+        document.getElementById('predictionTxtZ').style.color = color;
+        document.getElementById('predictionTxtZ').style.display = "block";
+    } else {
+        document.getElementById('predictionTxtZ').style.display = "none";
+    }
 }
 
 function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
@@ -260,7 +278,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
     }
     document.getElementsByClassName('yPredictionVarName')[1].innerHTML = unprocessed2Info;
 
-    //console.log("running!")
     const fixedArray = [];
     const regressionArray = [];
     array.forEach(item => {
@@ -394,10 +411,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
         }
     }
 
-    console.log("post filter")
-    console.log(variableDisplay)
-    // draw the plots.
-    console.log(fixedArray)
     for(var i = 0; i < fixedArray.length; i++){
         regressionArray.push([fixedArray[i].x, fixedArray[i].y])
         const plot = document.createElement('p');
@@ -424,9 +437,9 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
         } else {
             plot.style.backgroundColor = document.getElementsByName('plotColor')[0].value
         }
-        plot.id = i;
+        plot.id = "scatter_" + i;
         const id = i+"_activity_"+plot.style.backgroundColor
-        plot.addEventListener('mouseover', () => showScatterActivity(prop1, prop2, id))
+        plot.addEventListener('mouseover', () => showScatterActivity(prop1, prop2, tertiaryProp, id))
         // plot.addEventListener('mouseover', () => showPrediction(prop1, prop2, newID))
         
         plot.addEventListener('mouseout', hidePrediction)
@@ -435,9 +448,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
         document.getElementById('scatterPlot').appendChild(plot)
     }
 
-    // calculate the best line / curve of fit
-
-    // find the best way of regression by finding the greatest r squared values
     let maxRSquared = -2;
     let calib;
 
@@ -517,7 +527,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
         equation.innerHTML = "y=" + coefficientArray[0] + "x<sup>" + coefficientArray[1] + "</sup>"
     }
 
-    // console.log("MaxX: " + maxX + " MinX: " +  minX + " MaxY: " + maxY + " MinY: " + minY)
     for (let i = 0; i < scrubbingRate; i++) {
         const calculatedX = i * ((topX - bottomX) / scrubbingRate) + bottomX
         const calculatedY = calculatePrediction(calculatedX, regressionType, calibCoefficients);
@@ -547,6 +556,7 @@ function updateScatterDrawings() {
     renderScatterplot(allActivities, document.getElementsByName('variable1')[0].value, document.getElementsByName('variable2')[0].value, document.getElementsByName('variable3')[0].value)
 }
 
+// >> to be used in a future update.
 function calculatePrediction(calculatedX, regressionType, equation) {
     let calculatedY;
     if(regressionType == 'linear') {
@@ -588,7 +598,7 @@ function processPredictionIntoReadableForm(prop, val, unit) {
     return processedVal;
 }
 
-// when the curve of best fit is hovered.
+// >> when the curve of best fit is hovered. To be used in a future update.
 function showPrediction(property1, property2, id){ 
     const breakdown = id.split('_')
     // id is in the form of prediction_<xvalue>_<yvalue>_<xPosOnCanvas>_<yPosOnCanvas>
@@ -612,6 +622,11 @@ function showInputPrediction() {
 
 function hidePrediction(){
     document.getElementById('predictionDiv').style.display = 'none';
+    for (index = 0; index < document.getElementsByClassName("plot").length; index++) {
+        if (document.getElementById("scatter_" + index)) {
+            document.getElementById("scatter_" + index).style.opacity = 1.0;
+        }
+    }
 }
 
 function updateScatterDrawingsInResponseToVariableChange(callerID) {

@@ -122,6 +122,7 @@ function showScatterActivity(property1, property2, tertiaryProp, id){
     predictionDiv.style.border = '4px solid ' + color
     predictionDiv.style.bottom = Number(bottomMargin) + 5 + "%"
     predictionDiv.style.left= Number(leftMargin) + 2 + "%"
+    document.getElementById('clickToSeeMore').style.display = "block";
 
     document.getElementById('predictionTxtX').innerHTML = "> " + getVariableDisplayInfo(property1).display + ": <b>" + processPredictionIntoReadableForm(property1, refArray[index][property1], getVariableDisplayInfo(property1).unit) + "</b>";
     document.getElementById('predictionTxtY').innerHTML = "> " + getVariableDisplayInfo(property2).display + ": <b>" + processPredictionIntoReadableForm(property2, refArray[index][property2], getVariableDisplayInfo(property2).unit) + "</b>"; 
@@ -486,6 +487,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
         calibCoefficients = calib.equation
     }
 
+    console.log("max R squared is: " + maxRSquared)
     let canvHeight;
     if(myCanvas.getBoundingClientRect().width == 0) {
         canvWidth = window.innerWidth *0.8;
@@ -498,7 +500,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
     c.beginPath();
     c.lineWidth = 4;
     c.strokeStyle = "orange";
-    const scrubbingRate = 201
+    const scrubbingRate = 301
 
     c.moveTo(0, canvHeight)
 
@@ -577,6 +579,7 @@ function calculatePrediction(calculatedX, regressionType, equation) {
 }
 
 function processPredictionIntoReadableForm(prop, val, unit) {
+    let variableInfo = variableDisplay[getVariableDisplayInfo(prop, true)]
     // prop = property of the value (e.g. elapsed time); 
     // val = value to be processed; 
     // unit = if it should include units or not.
@@ -589,7 +592,7 @@ function processPredictionIntoReadableForm(prop, val, unit) {
     } else if (prop == "elapsedTime" || prop == "time") {
         processedVal = convert(parseFloat(val));
     } else {
-        processedVal = parseFloat(val).toFixed(2);
+        processedVal = parseFloat(val).toFixed(variableInfo.displayDecimalPoints);
         if (unit) {
             processedVal += (" " + unit);
         }
@@ -603,12 +606,17 @@ function showPrediction(property1, property2, id){
     const breakdown = id.split('_')
     // id is in the form of prediction_<xvalue>_<yvalue>_<xPosOnCanvas>_<yPosOnCanvas>
 
-    document.getElementById('predictionDiv').style.display = 'block';
-    document.getElementById('predictionDiv').style.bottom = parseFloat(breakdown[4]) + 5 + "%"
-    document.getElementById('predictionDiv').style.left= parseFloat(breakdown[3]) + 2 + "%"
+    const predictionDiv = document.getElementById('predictionDiv');
+    predictionDiv.style.display = 'block';
+    predictionDiv.style.bottom = parseFloat(breakdown[4]) + 5 + "%"
+    predictionDiv.style.left= parseFloat(breakdown[3]) + 2 + "%"
+    predictionDiv.style.border = '4px solid ' + document.getElementsByName("curveColor")[0].value
 
-    document.getElementById('predictionTxtX').innerHTML = getVariableDisplayInfo(property1).display + ": " + processPredictionIntoReadableForm(property1, breakdown[1], getVariableDisplayInfo(property1).unit);
-    document.getElementById('predictionTxtY').innerHTML = getVariableDisplayInfo(property2).display + ": " + processPredictionIntoReadableForm(property2, breakdown[2], getVariableDisplayInfo(property2).unit);
+    document.getElementById('predictionRunTitle').innerHTML = "[Prediction]"
+    document.getElementById('predictionTxtX').innerHTML = "> " + getVariableDisplayInfo(property1).display + ": " + processPredictionIntoReadableForm(property1, breakdown[1], getVariableDisplayInfo(property1).unit);
+    document.getElementById('predictionTxtY').innerHTML = "> Best fit " + getVariableDisplayInfo(property2).display.toLowerCase() + ": " + processPredictionIntoReadableForm(property2, breakdown[2], getVariableDisplayInfo(property2).unit);
+    document.getElementById('predictionTxtZ').style.display = "none";
+    document.getElementById('clickToSeeMore').style.display = "none";
 }
 
 // when the user inputs into the x axis prediction field in an attempt to predict the y axis.

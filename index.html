@@ -239,37 +239,43 @@
                     <h1>Scatterplot</h1>
                     <p>Edit the increments.</p>
                 </div>
-                <br><br>
+                <br>
                 <section id = 'scatterplotDiv'>
                     <!--the actual scatterplot-->
-                    <div id="scatterPlot">
-                        <canvas id = 'scatterCanv' style="width: 100%;height: 80vh;"></canvas>
-                        <div id = 'predictionDiv'>
-                            <h3 id = 'predictionRunTitle'></h1>
-                            <p id = 'predictionTxtX'></p>
-                            <p id = 'predictionTxtY'></p>
-                            <p id = 'predictionTxtZ'></p>
-                            <p id = 'clickToSeeMore'>Click to see details!</p>
+                    <div id = "scatterPlotHolder">
+                        <h2 id = "scatterPlotTitle"></h2>
+                        <p id = "scatterYAxisTitle"></p>
+                        <div id="scatterPlot">
+                            <div id = 'predictionDiv'>
+                                <h3 id = 'predictionRunTitle'></h3>
+                                <p id = 'predictionTxtX'></p>
+                                <p id = 'predictionTxtY'></p>
+                                <p id = 'predictionTxtZ'></p>
+                                <p id = 'clickToSeeMore'>Click to see details!</p>
+                            </div>
                         </div>
+                        <p id = "scatterXAxisTitle"></p>
+
                         <div id = 'spectrum'>
                             <p id = 'spectrumLowerBound'></p>
                             <p id = 'spectrumUpperBound'></p>
                         </div>
-                        <hr width="50%">
-                        <p id = "curveText">Curve of best fit: <span id = "curveEquation"></span></p>
-                        <div style="width: 100%; font-size: 125%;">
-                            <p id = "">Enter <b class = "xPredictionVarName" style = "color: orange;"></b> to predict <b class = "yPredictionVarName" style = "color: orange;"></b> based on best fit.</p>
-                            <div class = 'subScatterInputLabelsFlex'>   
-                                <label for="xInput" class = 'subScatterInputLabels'>Input <span class = "xPredictionVarName"></span></label>
-                                <input type="text" name="xInput" class = "scatterBoundInput" onchange = "showInputPrediction()">
-                            </div>
-                            <div class = 'subScatterInputLabelsFlex'>   
-                                <label for="yInput" class = 'subScatterInputLabels'>Predicted <span class = "yPredictionVarName"></span></label>
-                                <input type="text" name="yInput" class = "scatterBoundInput">
+                        <div id = "curveInfo">
+                            <p id = "curveText">Curve of best fit: <span id = "curveEquation"></span></p>
+                            <div style="width: 100%; font-size: 125%;">
+                                <p id = "">Enter <b class = "xPredictionVarName" style = "color: orange;"></b> to predict <b class = "yPredictionVarName" style = "color: orange;"></b> based on best fit.</p>
+                                <div class = 'subScatterInputLabelsFlex'>   
+                                    <label for="xInput" class = 'subScatterInputLabels'>Input <span class = "xPredictionVarName"></span></label>
+                                    <input type="text" name="xInput" class = "scatterBoundInput" onchange = "showInputPrediction()">
+                                </div>
+                                <div class = 'subScatterInputLabelsFlex'>   
+                                    <label for="yInput" class = 'subScatterInputLabels'>Predicted <span class = "yPredictionVarName"></span></label>
+                                    <input type="text" name="yInput" class = "scatterBoundInput">
+                                </div>
                             </div>
                         </div>
                     </div>
-
+                    
                     <!--settings-->
                     <div id = 'scatterSettingsHolder'>
                         <div class = 'scatterInputLabelsFlex'>

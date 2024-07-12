@@ -1,6 +1,3 @@
-const myCanvas = document.getElementById("scatterCanv");
-const c = myCanvas.getContext("2d");
-
 var MINIMUM_EXTREME = -1
 var MAXIMUM_EXTREME = 4294967296
 // is a global variable because functions outside of renderScatterPlot need access to it.
@@ -30,9 +27,9 @@ const variableDisplay = [
     {value: 'kudos', display: 'Kudos', placeholder: '# kudos', unit: "", displayDecimalPoints: 0, predDecimalPoints: 2},
     {value: 'maxPace', display: 'Maximum Pace', placeholder: 'm:ss', unit: "/mi", displayDecimalPoints: 2, predDecimalPoints: 2},
     {value: 'cadence', display: 'Cadence', placeholder: 'steps per min', unit: "steps/min", displayDecimalPoints: 1, predDecimalPoints: 2},
-    {value: 'stepsPerMile', display: 'Steps / mile', placeholder: 'steps per mile', unit: "steps/mi", displayDecimalPoints: 0, predDecimalPoints: 2},
+    {value: 'stepsPerMile', display: 'Steps / mile', placeholder: 'steps per mile', unit: "", displayDecimalPoints: 0, predDecimalPoints: 2},
     {value: 'strideLength', display: 'Stride length', placeholder: 'length in ft', unit: "ft", displayDecimalPoints: 3, predDecimalPoints: 3},
-    {value: 'totalSteps', display: 'Steps taken', placeholder: '', unit: "steps", displayDecimalPoints: 0, predDecimalPoints: 2},
+    {value: 'totalSteps', display: 'Steps taken', placeholder: '', unit: "", displayDecimalPoints: 0, predDecimalPoints: 2},
 ]
 
 variableDisplay.forEach(e => {
@@ -80,7 +77,7 @@ function processValueToString(val, prop) {
     if (prop == 'pace' || prop == 'elapsedTime' || prop == 'time' || prop == 'maxPace') {
         return convert(parseFloat(val))
     } else {
-        return parseFloat(val).toFixed(2)
+        return parseFloat(val).toFixed(getVariableDisplayInfo(prop).displayDecimalPoints)
     }
 }
 
@@ -144,7 +141,13 @@ function showScatterActivity(property1, property2, tertiaryProp, id){
 function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
     document.getElementsByName("xInput")[0].value = "";
     document.getElementsByName("yInput")[0].value = "";
-    c.clearRect(0, 0, c.width, c.height);
+    let variableXInfo = variableDisplay[getVariableDisplayInfo(prop1, true)]
+    let variableYInfo = variableDisplay[getVariableDisplayInfo(prop2, true)]
+
+    document.getElementById("scatterPlotTitle").innerHTML = variableXInfo.display + " (" + variableXInfo.unit + ") vs " + variableYInfo.display + " (" + variableYInfo.unit + ")"
+    document.getElementById("scatterYAxisTitle").innerHTML = variableYInfo.display + " (" + variableYInfo.unit + ")"
+    document.getElementById("scatterXAxisTitle").innerHTML = variableXInfo.display + " (" + variableXInfo.unit + ")"
+
     refArray = [];
     var paras = document.getElementsByClassName('plot');
 
@@ -165,9 +168,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
     let bottomZ
     let topZ
     let variableZInfo;
-
-    let variableXInfo = variableDisplay[getVariableDisplayInfo(prop1, true)]
-    let variableYInfo = variableDisplay[getVariableDisplayInfo(prop2, true)]
 
     if (document.getElementsByName('xAxisMin')[0].value != "") {
         variableXInfo.userMinimum = processStringToValue(document.getElementsByName('xAxisMin')[0].value)
@@ -383,12 +383,9 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
                 let yDisplay = document.createElement('p');
                 yDisplay.className = 'yScatterDisplay';
                 if(prop2 == 'pace' || prop2 == 'elapsedTime' || prop2 == 'time' || prop2 == 'maxPace'){
-                    yDisplay.innerHTML = convert(topY - i*(((topY - bottomY) / verticalIncrement)))
-                } else if (prop2 == 'startDate'){
-                    const convertedDate = (topY - i*(((topY - bottomY) / verticalIncrement)))*1000
-                    yDisplay.innerHTML = new Date(convertedDate).toLocaleString('en-US').split(', ')[0]
+                    yDisplay.innerHTML = convert(topY - i*(((topY - bottomY) / verticalIncrement))) + "&nbsp;&nbsp;&nbsp;"
                 } else {
-                    yDisplay.innerHTML = (topY - i*(((topY - bottomY) / verticalIncrement))).toFixed(2)
+                    yDisplay.innerHTML = (topY - i*(((topY - bottomY) / verticalIncrement))).toFixed(variableYInfo.displayDecimalPoints) + "&nbsp;&nbsp;&nbsp;"
                 }
                 
                 grid.append(yDisplay)
@@ -400,11 +397,8 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
                 xDisplay.className = 'xScatterDisplay';
                 if(prop1 == 'pace' || prop1 == 'elapsedTime' || prop1 == 'time' || prop1 == 'maxPace'){
                     xDisplay.innerHTML = convert(bottomX + (j+1)*(((topX - bottomX) / horizontalIncrement)))
-                }else if (prop1 == 'startDate'){
-                    const convertedDate = (bottomX + (j+1)*(((topX - bottomX) / horizontalIncrement)))*1000
-                    xDisplay.innerHTML = new Date(convertedDate).toLocaleString('en-US').split(', ')[0]
-                }else{
-                    xDisplay.innerHTML = (bottomX + (j+1)*(((topX - bottomX) / horizontalIncrement))).toFixed(2);
+                } else {
+                    xDisplay.innerHTML = (bottomX + (j+1)*(((topX - bottomX) / horizontalIncrement))).toFixed(variableXInfo.displayDecimalPoints);
                 }
                 grid.append(xDisplay)
             }
@@ -488,6 +482,8 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
     }
 
     console.log("max R squared is: " + maxRSquared)
+
+    /*
     let canvHeight;
     if(myCanvas.getBoundingClientRect().width == 0) {
         canvWidth = window.innerWidth *0.8;
@@ -503,6 +499,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
     const scrubbingRate = 301
 
     c.moveTo(0, canvHeight)
+    */
 
     const coefficientArray = []; // to house negative coefficents, if needed
     for (let i = 0; i < calibCoefficients.length; i++) {
@@ -532,7 +529,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
     for (let i = 0; i < scrubbingRate; i++) {
         const calculatedX = i * ((topX - bottomX) / scrubbingRate) + bottomX
         const calculatedY = calculatePrediction(calculatedX, regressionType, calibCoefficients);
-        c.fillStyle = 'orange';
 
         const plot = document.createElement('p');
         plot.className = 'plot';

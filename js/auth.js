@@ -120,7 +120,7 @@ if (indexOfAuthorization == -1) {
                     item.cadence = 2 * item.cadence
                     item.stepsPerMile = item.cadence * (item.pace / 60) 
                     item.strideLength = 5280 / item.stepsPerMile
-                    item.totalSteps = item.cadence * (item.time / 60)
+                    item.totalSteps = Math.round(item.cadence * (item.time / 60))
                 } else {
                     item.cadence = null;
                     item.stepsPerMile = null;

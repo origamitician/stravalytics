@@ -20,7 +20,6 @@ body{
     align-self: flex-start;
     top: 0%;
     display: none;
-    background-color: lightgrey;
 }
 
 #mobileApplicationMenu {
@@ -652,6 +651,12 @@ input::-webkit-inner-spin-button {
     border-right: 1px dotted lightgray;
 }
 
+#scatterZAxisTitle {
+    font-size: 110%;
+    opacity: 0.8;
+    font-weight: bold;
+}
+
 #scatterYAxisTitle {
     width: 25%;
     margin: 1% 0 1% -12.5%;
@@ -690,11 +695,16 @@ input::-webkit-inner-spin-button {
 
 #spectrum{
     border: 1px solid black;
-    margin-top: 7%;
-    height: 5vh;
+    height: 4vh;
     width: 80%;
     position: relative;
     padding: 0;
+}
+
+#spectrumDiv {
+    width: 100%;
+    display: none;
+    justify-content: right;
 }
 
 #curveInfo {

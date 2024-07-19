@@ -2,6 +2,34 @@
 var allActivities = []; // actual, dynamically changing activities list upon filtering.
 const allActivitiesRef = []; // FIXED activities list. All lifetime activities are stored in here so that no unneccessary API calls are made.
 
+const randomSubtitles = [
+    "Follow me on Strava - @infigral",
+    "As you can tell I'm addicted to gradients.",
+    "This site can be slower than a recovery run.",
+    "Vanilla JS is faster than a tempo run!",
+    "NaN == NaN returns False!",
+    "the github repository for this is 'origamitician/stravalytics'.",
+    "Rizz wanted",
+    "I took so long to create this app b/c <insert reason here>",
+    "Only in Ohio!",
+    "The toilet is not skibidi pls help",
+    "Not sigma, but sigma^2",
+    "THE TAX IS NOT FANUM",
+    "Go run some miles.",
+    "Go catch those endorphins.",
+    "I have a yt channel! https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    "4000+ lines of code!",
+    "Something happened along the way, and a long run was all we had",
+    "Is this the real pace, is it just fantasy?",
+    "I should have used React.js for this",
+    "AHHHHHHHHHHHHH!!!!!!11!11!1!!1!11!!",
+    "idk I can't think of any more subtitles",
+    "thank you for all my Strava kudoers <3",
+    "Do not look at the source code if you want to preserve your sanity.",
+    "Attempting a sub 4 mile!",
+    "Erm what the sigma",
+    "Inspired by Smashrun and other Strava visualizers!"
+]
 // for asthetics
 const sectionColors = ['blue', 'cornflowerblue', 'green', 'purple', 'orange', 'maroon'];
 for (let i = 0; i < sectionColors.length; i++){
@@ -81,6 +109,8 @@ function changeDates(){
             runTrends();
             runAnalysis();
         }
+
+        document.getElementById("randomSubTitle").innerHTML = randomSubtitles[Math.floor(Math.random()*randomSubtitles.length)]
         
     /* } /*catch (err){
         alert("Invalid date! " + err)
@@ -131,7 +161,7 @@ if (indexOfAuthorization == -1) {
                 allActivitiesRef.push(item);
             })
             document.getElementById("applicationBody").style.display = "block";
-            
+            document.getElementById("randomSubTitle").innerHTML = randomSubtitles[Math.floor(Math.random()*randomSubtitles.length)]
             if (allActivities.length !== 0) {
                 createSummaryPage();
                 renderGraph(); //histograms

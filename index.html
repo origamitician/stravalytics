@@ -58,6 +58,7 @@
     <div id = 'applicationMain'>
         <div id = 'applicationMenu'>
             <h1 id = "title">Stravalytics</h1>
+            <code id = "randomSubTitle"></code>
             <div id = "flexDateHolder">
                 <div id = "flexDateHolderLeft">
                     <div class = "innerLabel">
@@ -244,6 +245,14 @@
                     <!--the actual scatterplot-->
                     <div id = "scatterPlotHolder">
                         <h2 id = "scatterPlotTitle"></h2>
+                        <div id = "spectrumDiv">
+                            <p id = "scatterZAxisTitle"></p>
+                            <div id = 'spectrum'>
+                                <p id = 'spectrumLowerBound'></p>
+                                <p id = 'spectrumUpperBound'></p>
+                            </div>
+                        </div>
+                        
                         <p id = "scatterYAxisTitle"></p>
                         <div id="scatterPlot">
                             <div id = 'predictionDiv'>
@@ -256,10 +265,6 @@
                         </div>
                         <p id = "scatterXAxisTitle"></p>
 
-                        <div id = 'spectrum'>
-                            <p id = 'spectrumLowerBound'></p>
-                            <p id = 'spectrumUpperBound'></p>
-                        </div>
                         <div id = "curveInfo">
                             <p id = "curveText">Curve of best fit: <span id = "curveEquation"></span></p>
                             <div style="width: 100%; font-size: 125%;">

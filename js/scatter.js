@@ -143,10 +143,13 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
     document.getElementsByName("yInput")[0].value = "";
     let variableXInfo = variableDisplay[getVariableDisplayInfo(prop1, true)]
     let variableYInfo = variableDisplay[getVariableDisplayInfo(prop2, true)]
-
     document.getElementById("scatterPlotTitle").innerHTML = variableXInfo.display + " (" + variableXInfo.unit + ") vs " + variableYInfo.display + " (" + variableYInfo.unit + ")"
     document.getElementById("scatterYAxisTitle").innerHTML = variableYInfo.display + " (" + variableYInfo.unit + ")"
     document.getElementById("scatterXAxisTitle").innerHTML = variableXInfo.display + " (" + variableXInfo.unit + ")"
+    if (tertiaryProp){
+        let variableZInfo = variableDisplay[getVariableDisplayInfo(tertiaryProp, true)]
+        document.getElementById("scatterZAxisTitle").innerHTML = variableZInfo.display
+    }
 
     refArray = [];
     var paras = document.getElementsByClassName('plot');
@@ -343,7 +346,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
             variableZInfo.userMaximum = bool ? variableZInfo.defaultMaximum : variableZInfo.userMaximum
         }
 
-        document.getElementById('spectrum').style.display = 'block';
+        document.getElementById('spectrumDiv').style.display = 'block';
         document.getElementById('spectrum').style.background = 'linear-gradient(to right, ' + document.getElementsByName('scatterColor1')[0].value + ', ' + document.getElementsByName('scatterColor2')[0].value + ')'
         if(tertiaryProp == 'pace' || tertiaryProp == 'elapsedTime' || tertiaryProp == 'time' || tertiaryProp == 'maxPace'){
             // yDisplay.innerHTML = convert(maxY - i*(((maxY - minY) / verticalIncrement))).split('.')[0]
@@ -354,7 +357,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
             document.getElementById('spectrumUpperBound').innerHTML = parseFloat(topZ).toFixed(2)
         }
     } else {
-        document.getElementById('spectrum').style.display = 'none';
+        document.getElementById('spectrumDiv').style.display = 'none';
     }
 
     // convert everything into a float

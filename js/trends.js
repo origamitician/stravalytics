@@ -36,19 +36,19 @@ function processTrendData() {
     const dayHistory = parseInt(document.getElementsByName('movingAvgDays')[0].value);
 
     const unitInfo = [
-        {value: 'distance', display: 'Distance', unit: 'mi', canBeTotaled: true}, 
-        {value: 'time', display: 'Moving Time', unit: '', canBeTotaled: true},
-        {value: 'elapsedTime', display: 'Elapsed Time', unit: '', canBeTotaled: true},
-        {value: 'uptime', display: 'Uptime', unit: "%"},
-        {value: 'elevation', display: 'Elevation Gain', unit: "ft", canBeTotaled: true},
-        {value: 'incline', display: 'Incline', unit: "%"},
-        {value: 'pace', display: 'Pace', unit: "/mi"},
-        {value: 'kudos', display: 'Kudos', unit: "", canBeTotaled: true},
-        {value: 'maxPace', display: 'Maximum Pace', unit: "/mi"},
-        {value: 'cadence', display: 'Cadence', unit: "steps/min"},
-        {value: 'stepsPerMile', display: 'Steps / mile', unit: "steps/mi"},
-        {value: 'strideLength', display: 'Stride length', unit: "ft"},
-        {value: 'totalSteps', display: 'Steps taken', unit: "steps", canBeTotaled: true},
+        {value: 'distance', display: 'Distance', unit: 'mi', totalDecimalPoints: 2, avgDecimalPoints: 2}, 
+        {value: 'time', display: 'Moving Time', unit: '', totalDecimalPoints: 0, avgDecimalPoints: 0},
+        {value: 'elapsedTime', display: 'Elapsed Time', unit: '', totalDecimalPoints: 0, avgDecimalPoints: 0},
+        {value: 'uptime', display: 'Uptime', unit: "%", totalDecimalPoints: 2, avgDecimalPoints: 2},
+        {value: 'elevation', display: 'Elevation Gain', unit: "ft", totalDecimalPoints: 2, avgDecimalPoints: 2},
+        {value: 'incline', display: 'Incline', unit: "%", totalDecimalPoints: 3, avgDecimalPoints: 3},
+        {value: 'pace', display: 'Pace', unit: "/mi", totalDecimalPoints: 2, avgDecimalPoints: 2},
+        {value: 'kudos', display: 'Kudos', unit: "", totalDecimalPoints: 0, avgDecimalPoints: 2},
+        {value: 'maxPace', display: 'Maximum Pace', unit: "/mi", totalDecimalPoints: 2, avgDecimalPoints: 2},
+        {value: 'cadence', display: 'Cadence', unit: "steps/min", totalDecimalPoints: 1, avgDecimalPoints: 2},
+        {value: 'stepsPerMile', display: 'Steps / mile', unit: "", totalDecimalPoints: 0, avgDecimalPoints: 0},
+        {value: 'strideLength', display: 'Stride length', unit: "ft", totalDecimalPoints: 3, avgDecimalPoints: 3},
+        {value: 'totalSteps', display: 'Steps taken', unit: "", totalDecimalPoints: 0, avgDecimalPoints: 0},
     ]
 
     // determine whether it's yearly, monthly, or historical by seeing which div is purple.
@@ -117,7 +117,7 @@ function processTrendData() {
     } else if (variableToParse == "pace" || variableToParse == "maxPace") {
         document.getElementById("trendInfoHighlight").innerHTML = convert(disp, 2) + unitDisplayer
     } else {
-        document.getElementById("trendInfoHighlight").innerHTML = disp.toFixed(2) + unitDisplayer
+        document.getElementById("trendInfoHighlight").innerHTML = (variableStatus === "cumulative" || variableStatus === "cumulativeMoving") ? disp.toFixed(important.totalDecimalPoints) + unitDisplayer : disp.toFixed(important.avgDecimalPoints) + unitDisplayer   
     }
     document.getElementById("trendInfoUnitDisplay").innerHTML = extra;
     
@@ -140,6 +140,8 @@ function processTrendData() {
             prev = convert(prev, 2);
         } else if (variableToParse == "time" || variableToParse == "elapsedTime" ) {
             prev = convert(prev);
+        } else {
+            prev = (variableStatus === "cumulative" || variableStatus === "cumulativeMoving") ? Number(prev).toFixed(important.totalDecimalPoints): Number(prev).toFixed(important.avgDecimalPoints)
         }
         
         if (percentage > 0) {
@@ -308,7 +310,7 @@ function drawTrendGraph() {
     let titles = trendObj.dataTitles;
     var dataSet = anychart.data.set(data);
     const series = [];
-    const seriesColors = ['red', 'cornflowerblue', 'seagreen', 'orange', 'darkblue', 'gold', 'lime', 'black', 'grey', 'purple', 'skyblue', 'black']
+    const seriesColors = ['red', 'cornflowerblue', 'seagreen', 'orange', 'darkblue', 'gold', 'lime','purple']
 
     if (data[0].length > seriesColors.length) {
         const tempDataTitles = [...titles];
@@ -359,14 +361,14 @@ function drawTrendGraph() {
         const ser = chart.line(series[i]);
         if (trendObj.unitInfo.value == "elapsedTime" || trendObj.unitInfo.value == "time") {
             ser.name(titles[i]).stroke(lineStroke + ' ' + seriesColors[i % seriesColors.length]).tooltip().format(function (e){
-                return titles[i] + ': ' + convert(this.value)
-            }); 
+                return titles[i] + ' (' + seriesColors[i % seriesColors.length] + '): ' + convert(this.value)
+            })
         } else if (trendObj.unitInfo.value == "pace") {
             ser.name(titles[i]).stroke(lineStroke + ' ' + seriesColors[i % seriesColors.length]).tooltip().format(function (e){
-                return titles[i] + ': ' + convert(this.value, 2)
-            }); 
+                return titles[i] + ' (' + seriesColors[i % seriesColors.length] + '): ' + convert(this.value, 2)
+            })
         } else {
-            ser.name(titles[i]).stroke(lineStroke + ' ' + seriesColors[i % seriesColors.length]).tooltip().format(titles[i] + ": {%value} " + trendObj.unitInfo.unit);
+            ser.name(titles[i]).stroke(lineStroke + ' ' + seriesColors[i % seriesColors.length]).tooltip().format(titles[i] + ' (' + seriesColors[i % seriesColors.length] + '): {%value} ' + trendObj.unitInfo.unit)
         }
     }
 
@@ -375,7 +377,6 @@ function drawTrendGraph() {
 
     // set the container id for the line chart
     chart.container('yearTrendDiv');
-
     // draw the line chart
     chart.draw();
 }

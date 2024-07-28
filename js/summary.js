@@ -344,7 +344,7 @@ async function createCumulativeTrends() {
         }
     }*/ // commenting this out do to removal of option on the home page.
 
-    graphDetail = 200; // <------- CHANGE THIS !!!!
+    graphDetail = 125; // <------- CHANGE THIS !!!!
 
     // -- found out graph detail - creating new elements -- //
 

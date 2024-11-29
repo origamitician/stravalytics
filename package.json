@@ -13,7 +13,7 @@
   "license": "ISC",
   "devDependencies": {
     "gulp": "^3.9.1",
-    "nodemon": "^3.1.0",
+    "nodemon": "^3.1.7",
     "pack": "^2.2.0",
     "web": "^0.0.2"
   },

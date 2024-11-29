@@ -223,6 +223,9 @@ function totalFromDate(array, startIndex, endIndex, countingDays) {
 function processAllActivitiesByDayAndProperty(array, property, numberOfDays, average) {
     // a function that takes allActivities (array), and process them into the property. numberOfDays (int) and average (boolean) is optional.
     const unitsThatCanBeTotaled = ["kudos", "distance", "elevation", "time", "elapsedTime", "totalSteps"]
+
+    const weightedUnitsInfo = {uptime: "elapsedTime", incline: "distance", pace: "distance", maxPace: "distance", stepsPerMile: "distance", strideLength: "totalSteps", cadence: "time"}
+    
     const allActivitiesByDay = [];
     const chartData = [];
     // sort allActivities by date.
@@ -239,84 +242,120 @@ function processAllActivitiesByDayAndProperty(array, property, numberOfDays, ave
 
     // process data
     let currIndex = 0;
-    let cum = 0;
+    let movingCum = 0;
+    let totalMovingWeight = 0;
+    let weightToTrack = null
+    let activitiesThatDay = 0;
+    let activityDetailThatDay = [];
+
+    if (!unitsThatCanBeTotaled.includes(property)) {
+        // the property being analyzed can't be totaled, and therefore would be weighted average.
+        weightToTrack = weightedUnitsInfo[property]
+    }
+
     let daysActive = 0;
     for (let start = array[0].parsedNumericalDate; /*start < Date.parse(document.getElementsByName("endDate")[0].value) / 1000*/ start < Date.now() / 1000; start+=86400) {
         let refDateObj = new Date(start * 1000);
         let activityDateObj = array[currIndex].startDate.split("T")[0];
-        
         let currentVal = 0; //only gets the total in one day, resets the next day.
+
         // one-day total variables for weighted pace & uptime.
-        let currentDistance = 0;
-        let currentMovingTime = 0;
-        let currentElapsedTime = 0;
-        let activitiesThatDay = 0;
-        let activityDetailThatDay = [];
+        activitiesThatDay = 0;
+        weightForThatDay = 0;
+        activityDetailThatDay = []
+
+        // loop that checks an entire day's worth of activities.
         while (activityDateObj.split("-")[0] == refDateObj.getFullYear() && activityDateObj.split("-")[1] - 1 == refDateObj.getMonth() && activityDateObj.split("-")[2] == refDateObj.getDate() && currIndex <= array.length) {
-            
-            if (array[currIndex][property]) {
-                /* if (property === "pace") {
-                    currentDistance += array[currIndex].distance
-                    currentMovingTime += array[currIndex].time
-                } else if (property === "uptime") {
-                    currentMovingTime += array[currIndex].time
-                    currentElapsedTime += array[currIndex].elapsedTime
-                } else {
-                    currentVal += array[currIndex][property]
-                } */
-                    currentVal += array[currIndex][property]
-                if (unitsThatCanBeTotaled.includes(property)) {
-                    cum += array[currIndex][property]
+            if (array[currIndex][property] && array[currIndex][property] > 0) {
+                if (weightToTrack){
+                    weightForThatDay += array[currIndex][weightToTrack];
                 }
-                activityDetailThatDay.push({activityTitle: array[currIndex].name, activityID: array[currIndex].id, activityIndex: currIndex, activityStat: array[currIndex][property]})
+                activityDetailThatDay.push({weight: array[currIndex][weightToTrack], activityStat: array[currIndex][property], activityTitle: array[currIndex].name, activityID: array[currIndex].id, activityIndex: currIndex})
+                activitiesThatDay++
             } else {
-                currentVal += 0
-                cum += 0
+                activityDetailThatDay.push({weight: null, activityStat: 0, activityTitle: null, activityID: null, activityIndex: null})
             }
             
-            activitiesThatDay ++;
             if (currIndex < array.length - 1) {
                 currIndex++;
                 activityDateObj = array[currIndex].startDate.split("T")[0];
             } else {
                 break;
-            }
+            } 
         }
 
-        if (average && activitiesThatDay > 0 && !unitsThatCanBeTotaled.includes(property)) {
-            currentVal /= activitiesThatDay;
-            cum+=currentVal;
-        }
-
-        if (currentVal > 0) {
-            daysActive ++;
-        }
-
-        allActivitiesByDay.push({date: refDateObj, distance: currentVal, cumulative: cum})
+        // now, given an array of the activities done in a single day, take into account the following:
         const refDateString = (refDateObj.getMonth()+1) + "-" + refDateObj.getDate() + "-" + refDateObj.getFullYear()
+        const daySummary = {date: refDateString, calculatedStat: null, totalWeight: weightForThatDay}
+        calculatedWeightedStat = 0
+        
+        if (!average && activitiesThatDay > 0) {
+            // the unit can be totaled.
+            activityDetailThatDay.forEach(activity => {
+                calculatedWeightedStat += activity.activityStat
+            })
+            daySummary.calculatedStat = calculatedWeightedStat
+            movingCum += calculatedWeightedStat
+            daysActive ++;
+
+        } else if (average && activitiesThatDay > 0 && unitsThatCanBeTotaled.includes(property)) {
+            // the unit can be totaled, and an average is requested.
+            activityDetailThatDay.forEach(activity => {
+                calculatedWeightedStat += activity.activityStat
+            })
+            daySummary.calculatedStat = calculatedWeightedStat
+            movingCum += calculatedWeightedStat
+            daysActive ++;
+
+        } else if (average && activitiesThatDay > 0 && !unitsThatCanBeTotaled.includes(property)) {
+            // the unit can't be totaled, and an average is requested (and thus must be weighted.)
+            activityDetailThatDay.forEach(activity => {
+                calculatedWeightedStat += activity.activityStat * (activity.weight / weightForThatDay)
+            })
+            daySummary.calculatedStat = calculatedWeightedStat
+            movingCum += calculatedWeightedStat * weightForThatDay
+            daysActive ++;
+        } else {
+            daySummary.calculatedStat = 0;
+        }
+
+        allActivitiesByDay.push(daySummary)
+        totalMovingWeight += weightForThatDay
         
         if(numberOfDays && chartData.length >= numberOfDays) {
-            // console.log("Subtracting cum by " + chartData[chartData.length - numberOfDays][2])
-            const removedFromMovingCalc = chartData[chartData.length - numberOfDays].statsThatDay
-            cum -= removedFromMovingCalc
-            if (removedFromMovingCalc > 0) {
+            const removedStatFromMovingCalc = chartData[chartData.length - numberOfDays].statsThatDay
+            const removedWeightFromMovingCalc = chartData[chartData.length - numberOfDays].weightThatDay
+            if (average && !unitsThatCanBeTotaled.includes(property)) {
+                // if the unit cant be totalled, remove the calculated weight.
+                movingCum -= removedStatFromMovingCalc * removedWeightFromMovingCalc
+            } else {
+                movingCum -= removedStatFromMovingCalc
+            }
+            
+            totalMovingWeight -= removedWeightFromMovingCalc
+            if (removedStatFromMovingCalc > 0) {
                 daysActive--;
             }
         }
-
+       
         if (average) {
             if (daysActive == 0) {
                 // chartData.push([refDateString, 0, currentVal])
-                chartData.push({date: refDateString, display: 0, statsThatDay: currentVal, dayBreakdown: []})
-            } else {
-                chartData.push({date: refDateString, display: (cum / daysActive).toFixed(2), statsThatDay: currentVal, dayBreakdown: activityDetailThatDay})
+                chartData.push({date: refDateString, display: 0, statsThatDay: daySummary.calculatedStat, weightThatDay: weightForThatDay, dayBreakdown: []})
+            } else if (daysActive > 0 && unitsThatCanBeTotaled.includes(property)){
+                // the unit can be totaled, and an average is requested.
+                chartData.push({date: refDateString, display: (movingCum / daysActive), statsThatDay: daySummary.calculatedStat, weightThatDay: weightForThatDay, dayBreakdown: activityDetailThatDay})
+            } else if (daysActive > 0 && !unitsThatCanBeTotaled.includes(property)){
+                // the unit CAN'T be totaled, and an average is requested (and thus must be weighted.) Recompute.
+                // movingCum in this case holds sum((weight1)(value1), (weight2)(value2), ..., (weightn)(valuen)).
+                chartData.push({date: refDateString, display: (movingCum / totalMovingWeight), statsThatDay: daySummary.calculatedStat, weightThatDay: weightForThatDay, dayBreakdown: activityDetailThatDay})
             }
         } else {
-            chartData.push({date: refDateString, display: cum.toFixed(2), statsThatDay: currentVal, dayBreakdown: activityDetailThatDay})
+            chartData.push({date: refDateString, display: movingCum.toFixed(2), statsThatDay: daySummary.calculatedStat, weightThatDay: weightForThatDay, dayBreakdown: activityDetailThatDay})
         }
     }
 
-    return {data: chartData, cumulative: cum, daysActive: daysActive};
+    return {data: chartData, cumulative: movingCum, daysActive: daysActive};
 }
 
 async function createCumulativeTrends() {

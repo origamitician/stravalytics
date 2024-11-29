@@ -49,7 +49,7 @@ function processTrendData() {
         {value: 'stepsPerMile', display: 'Steps / mile', unit: "", totalDecimalPoints: 0, avgDecimalPoints: 0},
         {value: 'strideLength', display: 'Stride length', unit: "ft", totalDecimalPoints: 3, avgDecimalPoints: 3},
         {value: 'totalSteps', display: 'Steps taken', unit: "", totalDecimalPoints: 0, avgDecimalPoints: 0},
-    ]
+    ] 
 
     // determine whether it's yearly, monthly, or historical by seeing which div is purple.
     for (let i = 0; i < document.getElementsByClassName('indivTrendLineOption').length; i++) {
@@ -108,7 +108,7 @@ function processTrendData() {
         processed = processAllActivitiesByDayAndProperty(allActivities, variableToParse, dayHistory, true).data;
         extra = `Avg ${important.display.toLowerCase()}/day, last ${dayHistory} days:`
     }
-
+    console.log(processed)
     // set the top variable and comparisons (if applicable)
     let disp = parseFloat(processed[processed.length - 1].display)
     let unitDisplayer = `<span>${important.unit}</span>`
@@ -353,10 +353,10 @@ function drawTrendGraph() {
 
     for (let i = 0; i < series.length; i++) {
         let lineStroke = 3;
-        if (titles[i] == new Date().getFullYear()) {
+        /* if (titles[i] == new Date().getFullYear()) {
             // if it's current.
             lineStroke = 5;
-        }
+        } */
         
         const ser = chart.line(series[i]);
         if (trendObj.unitInfo.value == "elapsedTime" || trendObj.unitInfo.value == "time") {

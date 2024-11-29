@@ -148,9 +148,9 @@ if (indexOfAuthorization == -1) {
                 /*item.startDate = Date.parse(item.startDate) / 1000*/
                 if (item.cadence) {
                     item.cadence = 2 * item.cadence
-                    item.stepsPerMile = item.cadence * (item.pace / 60) 
-                    item.strideLength = 5280 / item.stepsPerMile
                     item.totalSteps = Math.round(item.cadence * (item.time / 60))
+                    item.stepsPerMile = item.totalSteps / item.distance
+                    item.strideLength = 5280 / item.stepsPerMile
                 } else {
                     item.cadence = null;
                     item.stepsPerMile = null;

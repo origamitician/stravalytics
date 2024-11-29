@@ -16,6 +16,9 @@ const unitInfo = [
     {value: 'strideLength', display: 'Stride length', unit: "ft", avgDecimalPlaces: 3, comparative: "Longer", extremeLow: "Shorter", extremeHigh: "Longer"},
     {value: 'totalSteps', display: 'Steps', unit: "👟", avgDecimalPlaces: 0, comparative: "Greater", extremeLow: "Less", extremeHigh: "More"},
 ]
+
+const unitsThatCanBeTotaled = ["kudos", "distance", "elevation", "time", "elapsedTime", "totalSteps"]
+
 const unitValues = unitInfo.map(e => e.value)
 let variableToAnalyze
 let calculationMethod
@@ -31,14 +34,16 @@ function runAnalysis() {
     if (calculationMethod === "cumulative") {
         data = processAllActivitiesByDayAndProperty(allActivities, variableToAnalyze).data
     } else {
-        data = processAllActivitiesByDayAndProperty(allActivities, variableToAnalyze, 10000, true).data
+        data = processAllActivitiesByDayAndProperty(allActivities, variableToAnalyze, 30, true).data
     }
+    console.log(data)
     
     // sort by week.
     analyzedData = []
     currentUnitInfo = unitInfo[unitValues.indexOf(variableToAnalyze)]
 
     let sum = 0;
+    let movingWeight = 0;
     let numberOfDaysActive = 0;
     let subData = [];
     let dayData = [];
@@ -85,12 +90,20 @@ function runAnalysis() {
             
             // reset
             sum = 0
+            movingWeight = 0
             numberOfDaysActive = 0;
             subData = []
             dayData = [];
 
             // add if needed.
-            sum += data[i].statsThatDay
+            
+            if (!unitsThatCanBeTotaled.includes(variableToAnalyze)) {
+                movingWeight += data[i].weightThatDay
+                sum += data[i].statsThatDay * data[i].weightThatDay
+            } else {
+                sum += data[i].statsThatDay
+            }
+
             if (data[i].statsThatDay > 0) {
                 numberOfDaysActive++;
             }
@@ -110,7 +123,14 @@ function runAnalysis() {
         
         } else {
             dayData = []
-            sum += data[i].statsThatDay
+
+            if (!unitsThatCanBeTotaled.includes(variableToAnalyze)) {
+                movingWeight += data[i].weightThatDay
+                sum += data[i].statsThatDay * data[i].weightThatDay
+            } else {
+                sum += data[i].statsThatDay
+            }
+
             if (data[i].statsThatDay > 0) {
                 numberOfDaysActive++;
             }
@@ -153,8 +173,10 @@ function runAnalysis() {
                 // add the average per day.
                 if (numberOfDaysActive == 0) {
                     analyzedData.push({title: title, value: 0, daysActive: numberOfDaysActive, activities: subData})
-                } else {
+                } else if (unitsThatCanBeTotaled.includes(variableToAnalyze)) {
                     analyzedData.push({title: title, value: (sum/numberOfDaysActive).toFixed(currentUnitInfo.avgDecimalPlaces), daysActive: numberOfDaysActive, activities: subData})
+                } else {
+                    analyzedData.push({title: title, value: (sum/movingWeight).toFixed(currentUnitInfo.avgDecimalPlaces), daysActive: numberOfDaysActive, activities: subData})
                 }
             }
         }

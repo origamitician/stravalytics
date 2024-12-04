@@ -10,7 +10,7 @@ const randomSubtitles = [
     "NaN == NaN returns False!",
     "the github repository for this is 'origamitician/stravalytics'.",
     "Rizz wanted",
-    "I took so long to create this app b/c <insert reason here>",
+    "I took so long to create this app b/c (insert reason here)",
     "Only in Ohio!",
     "The toilet is not skibidi pls help",
     "Not sigma, but sigma^2",
@@ -27,7 +27,18 @@ const randomSubtitles = [
     "thank you for all my Strava kudoers <3",
     "Do not look at the source code if you want to preserve your sanity.",
     "Attempting a sub 4 mile!",
-    "Erm what the sigma",
+    "Attempting a sub 8 2 mile!",
+    "Attempting a sub 13 5k!",
+    "Attempting a sub 27 10k!",
+    "Attempting a sub 1 half marathon!",
+    "Attempting a sub 2 full marathon!",
+    "Why stay in Zone 2 when you can go Mach 2?",
+    "Stop wasting time looking at your run analytics. Do your homework!",
+    "Running shoes are overpriced",
+    "Yes.",
+    "No.",
+    "What?",
+    "Erm, what the sigma",
     "Inspired by Smashrun and other Strava visualizers!"
 ]
 // for asthetics

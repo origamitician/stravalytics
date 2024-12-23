@@ -176,6 +176,7 @@ function runAnalysis() {
                 } else if (unitsThatCanBeTotaled.includes(variableToAnalyze)) {
                     analyzedData.push({title: title, value: (sum/numberOfDaysActive).toFixed(currentUnitInfo.avgDecimalPlaces), daysActive: numberOfDaysActive, activities: subData})
                 } else {
+                    console.log("AVERAGING!")
                     analyzedData.push({title: title, value: (sum/movingWeight).toFixed(currentUnitInfo.avgDecimalPlaces), daysActive: numberOfDaysActive, activities: subData})
                 }
             }

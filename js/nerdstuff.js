@@ -1,7 +1,7 @@
 let accessToken;
-const semester1 = [{name:"Matthew C.",totalKudos:10},{name:"Myndee D.",totalKudos:11},{name:"Bobby T.",totalKudos:9},{name:"Peter L.",totalKudos:99},{name:"Gavin K.",totalKudos:58},{name:"Marcus R.",totalKudos:33},{name:"George L.",totalKudos:118},{name:"Izzy L.",totalKudos:94},{name:"Tony S.",totalKudos:83},{name:"Laurynn A.",totalKudos:94},{name:"Isaac P.",totalKudos:69},{name:"Nicolas A.",totalKudos:40},{name:"Dot C.",totalKudos:40},{name:"Savannah S.",totalKudos:4},{name:"Charlotte D.",totalKudos:38},{name:"Malachi C.",totalKudos:23},{name:"Jullien B.",totalKudos:2},{name:"Chris C.",totalKudos:19},{name:"jonathan F.",totalKudos:3},{name:"Ryan S.",totalKudos:2},{name:"Austin C.",totalKudos:33},{name:"Lainey F.",totalKudos:1},{name:"Christopher M.",totalKudos:3},{name:"Andrew M.",totalKudos:2},{name:"Ethan K.",totalKudos:4},{name:"Jai C.",totalKudos:16},{name:"Josh T.",totalKudos:4},{name:"Theresa L.",totalKudos:1},{name:"Ashten A.",totalKudos:1},{name:"reece K.",totalKudos:1},{name:"Andrea M.",totalKudos:2},{name:"Christian K.",totalKudos:1},{name:"Conor U.",totalKudos:6},{name:"Tobias P.",totalKudos:1},{name:"Dmitriy E.",totalKudos:1},{name:"Paul H.",totalKudos:1},{name:"Olivier A.",totalKudos:1},{name:"Michael C.",totalKudos:1},{name:"Riley H.",totalKudos:1}]
+const semester1 = [{name:"Peter L.",totalKudos:118},{name:"Laurynn A.",totalKudos:100},{name:"Izzy L.",totalKudos:95},{name:"Charlotte D.",totalKudos:69},{name:"George L.",totalKudos:126},{name:"Nicolas A.",totalKudos:66},{name:"Malachi C.",totalKudos:48},{name:"Gavin K.",totalKudos:17},{name:"Isaac P.",totalKudos:72},{name:"Dot C.",totalKudos:68},{name:"Chris C.",totalKudos:31},{name:"Ethan K.",totalKudos:13},{name:"Brandon R.",totalKudos:8},{name:"Marcus R.",totalKudos:2},{name:"Matthew C.",totalKudos:12},{name:"Ana N.",totalKudos:26},{name:"Abraham P.",totalKudos:5},{name:"Andrea M.",totalKudos:8},{name:"Theresa L.",totalKudos:6},{name:"Lainey F.",totalKudos:3},{name:"Savannah S.",totalKudos:2},{name:"Austin C.",totalKudos:4},{name:"Micah W.",totalKudos:1},{name:"Conor U.",totalKudos:4},{name:"jonathan F.",totalKudos:1},{name:"Caleb M.",totalKudos:14},{name:"Ryan T.",totalKudos:4},{name:"Mac R.",totalKudos:21},{name:"noah L.",totalKudos:10},{name:"Crishelle I.",totalKudos:19},{name:"Andrew M.",totalKudos:4},{name:"Jai C.",totalKudos:4},{name:"Matt L.",totalKudos:2},{name:"Ashten A.",totalKudos:1},{name:"Franklin H.",totalKudos:1},{name:"Jullien B.",totalKudos:3},{name:"B ❕.",totalKudos:1},{name:"Nicholas P.",totalKudos:1}]
 
-const semester2 =  [{name:"Ethan K.",totalKudos:12},{name:"Peter L.",totalKudos:91},{name:"Tony S.",totalKudos:41},{name:"Chris C.",totalKudos:25},{name:"Laurynn A.",totalKudos:74},{name:"Caleb M.",totalKudos:13},{name:"George L.",totalKudos:87},{name:"Malachi C.",totalKudos:28},{name:"Ana N.",totalKudos:16},{name:"Isaac P.",totalKudos:34},{name:"Nicolas A.",totalKudos:49},{name:"Izzy L.",totalKudos:70},{name:"Dot C.",totalKudos:62},{name:"Charlotte D.",totalKudos:49},{name:"Matthew C.",totalKudos:7},{name:"Andrea M.",totalKudos:5},{name:"Gavin K.",totalKudos:14},{name:"Mac R.",totalKudos:16},{name:"Conor U.",totalKudos:4},{name:"Brandon R.",totalKudos:8},{name:"Savannah S.",totalKudos:2},{name:"Theresa L.",totalKudos:6},{name:"Marcus R.",totalKudos:2},{name:"Lainey F.",totalKudos:2},{name:"Jai C.",totalKudos:4},{name:"Austin C.",totalKudos:3},{name:"Abraham P.",totalKudos:1},{name:"jonathan F.",totalKudos:1},{name:"Andrew M.",totalKudos:1},{name:"Micah W.",totalKudos:1},{name:"Nicholas P.",totalKudos:1}]
+const semester2 = [{name:"Crishelle I.",totalKudos:93},{name:"Isaac P.",totalKudos:106},{name:"Jullien B.",totalKudos:26},{name:"Laurynn A.",totalKudos:71},{name:"George L.",totalKudos:134},{name:"Chris C.",totalKudos:14},{name:"Malachi C.",totalKudos:51},{name:"Izzy L.",totalKudos:77},{name:"Dot C.",totalKudos:45},{name:"Nicolas A.",totalKudos:59},{name:"Abraham P.",totalKudos:39},{name:"Charlotte D.",totalKudos:39},{name:"Ana N.",totalKudos:34},{name:"Ryan T.",totalKudos:1},{name:"Andrew M.",totalKudos:11},{name:"Matthew C.",totalKudos:18},{name:"Brennan Y.",totalKudos:3},{name:"Peter L.",totalKudos:30},{name:"Matt L.",totalKudos:2},{name:"Josh T.",totalKudos:5},{name:"Matt C.",totalKudos:8},{name:"Mac R.",totalKudos:13},{name:"Conor U.",totalKudos:36},{name:"Christian K.",totalKudos:1},{name:"Ethan K.",totalKudos:45},{name:"Tai W.",totalKudos:72},{name:"Nik K.",totalKudos:24},{name:"James H.",totalKudos:76},{name:"John M.",totalKudos:47},{name:"Gavin K.",totalKudos:5},{name:"Lucy T.",totalKudos:20},{name:"Ashten A.",totalKudos:10},{name:"Austin C.",totalKudos:3},{name:"Macyann M.",totalKudos:13},{name:"Michael D.",totalKudos:8},{name:"jonathan F.",totalKudos:4},{name:"Micah K.",totalKudos:2},{name:"jasmine G.",totalKudos:39},{name:"Myndee D.",totalKudos:4},{name:"Josh S.",totalKudos:25},{name:"Marcus R.",totalKudos:4},{name:"William R.",totalKudos:9},{name:"Brandon R.",totalKudos:2},{name:"Andrea M.",totalKudos:4},{name:"Brock S.",totalKudos:12},{name:"Jacob M.",totalKudos:8},{name:"Albert J.",totalKudos:5},{name:"Jai C.",totalKudos:2},{name:"Carter B.",totalKudos:2},{name:"Theresa L.",totalKudos:1},{name:"Rasil M.",totalKudos:1},{name:"Ariana M.",totalKudos:1},{name:"Tomas S.",totalKudos:1},{name:"Boozy T.",totalKudos:1},{name:"Jesse W.",totalKudos:1},{name:"Alex G.",totalKudos:1},{name:"Andre K.",totalKudos:1},{name:"Sal  C.",totalKudos:1},{name:"Cory S.",totalKudos:1},{name:"Micah W.",totalKudos:1},{name:"Dr. Alyx B.",totalKudos:1}]
 
 const listOfNames = [] // {name: 'john smith', totalKudos: 5};
 const fragmentLength = 35; // the number of activities that will get processed before strava api hits rate limit.
@@ -12,10 +12,10 @@ console.log(listOfNames);
 
 function runKudoAnalysis() {
     const minIndex = 0;
-    const maxIndex = 190;
+    const maxIndex = 116;
     console.log('running kudo analysis')
     const numberOfFragments = Math.ceil(allActivities.length / fragmentLength);
-    fetch(`https://www.strava.com/api/v3/oauth/token?client_id=107318&client_secret=1bac185421708876ddd639fcef0a319d5896d3b1&refresh_token=d60bedf5f0e7d556687f0f277a02ee0c7a4de16f&grant_type=refresh_token`, {
+    fetch(`https://www.strava.com/api/v3/oauth/token?client_id=107318&client_secret=1bac185421708876ddd639fcef0a319d5896d3b1&refresh_token=48f138733218bdd7c10c586c704b8f104a5221f2&grant_type=refresh_token`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -43,8 +43,9 @@ function runKudoAnalysis() {
             }))
         }
         fragmentNum++;
-        combine();
+        // combine();
     })
+    console.log(JSON.stringify(listOfNames))
 }
 
 function getBatchKudos() {
@@ -87,7 +88,8 @@ async function fetchAPIData(id) {
 function combine() {
     const semester1parsed = [...semester1];
     const semester2parsed = [...semester2];
-    const combined = [{name:"Ethan K.",totalKudos:5},{name:"Micaiah C.",totalKudos:174},{name:"Kia'i T.",totalKudos:42},{name:"Peter L.",totalKudos:134},{name:"Isaac P.",totalKudos:100},{name:"Theresa L.",totalKudos:7},{name:"Josh T.",totalKudos:2},{name:"Austin C.",totalKudos:17},{name:"Ethan F.",totalKudos:1},{name:"Seita T.",totalKudos:7},{name:"Christian K.",totalKudos:1},{name:"Evan C.",totalKudos:1}]
+
+    // const combined = [{name:"Ethan K.",totalKudos:5},{name:"Micaiah C.",totalKudos:174},{name:"Kia'i T.",totalKudos:42},{name:"Peter L.",totalKudos:134},{name:"Isaac P.",totalKudos:100},{name:"Theresa L.",totalKudos:7},{name:"Josh T.",totalKudos:2},{name:"Austin C.",totalKudos:17},{name:"Ethan F.",totalKudos:1},{name:"Seita T.",totalKudos:7},{name:"Christian K.",totalKudos:1},{name:"Evan C.",totalKudos:1}]
     /* semester1.forEach(e => {
         semester1parsed.push(JSON.parse(e));
     })
@@ -95,7 +97,7 @@ function combine() {
         semester2parsed.push(JSON.parse(e));
     }) */
 
-    /* for (let i = 0; i < semester1parsed.length; i++) {
+    /*for (let i = 0; i < semester1parsed.length; i++) {
         const sem2names = semester2parsed.map(e => e.name)
         const index = sem2names.indexOf(semester1parsed[i].name)
         if (index == -1) {
@@ -113,6 +115,8 @@ function combine() {
             combined.push(semester2parsed[i]);
         }
     } */
+
+        const combined = [{name:"Nicolas A.",totalKudos:43},{name:"Crishelle I.",totalKudos:78},{name:"Isaac P.",totalKudos:90},{name:"Jullien B.",totalKudos:22},{name:"George L.",totalKudos:111},{name:"Izzy L.",totalKudos:70},{name:"Brennan Y.",totalKudos:3},{name:"Theresa L.",totalKudos:1},{name:"Malachi C.",totalKudos:33},{name:"Abraham P.",totalKudos:36},{name:"Peter L.",totalKudos:30},{name:"Andrew M.",totalKudos:10},{name:"Laurynn A.",totalKudos:57},{name:"Ana N.",totalKudos:28},{name:"Matt C.",totalKudos:8},{name:"Dot C.",totalKudos:39},{name:"Charlotte D.",totalKudos:36},{name:"Matthew C.",totalKudos:16},{name:"Josh T.",totalKudos:5},{name:"Mac R.",totalKudos:13},{name:"Matt L.",totalKudos:2},{name:"Gavin K.",totalKudos:5},{name:"Christian K.",totalKudos:1},{name:"Conor U.",totalKudos:36},{name:"Lucy T.",totalKudos:20},{name:"William R.",totalKudos:9},{name:"Nik K.",totalKudos:24},{name:"Tai W.",totalKudos:72},{name:"James H.",totalKudos:76},{name:"Ashten A.",totalKudos:10},{name:"Austin C.",totalKudos:3},{name:"Chris C.",totalKudos:10},{name:"Myndee D.",totalKudos:4},{name:"John M.",totalKudos:47},{name:"Macyann M.",totalKudos:13},{name:"Ethan K.",totalKudos:45},{name:"Micah K.",totalKudos:2},{name:"jonathan F.",totalKudos:4},{name:"jasmine G.",totalKudos:39},{name:"Michael D.",totalKudos:8},{name:"Josh S.",totalKudos:25},{name:"Brandon R.",totalKudos:2},{name:"Andrea M.",totalKudos:4},{name:"Albert J.",totalKudos:5},{name:"Jai C.",totalKudos:2},{name:"Jacob M.",totalKudos:8},{name:"Brock S.",totalKudos:12},{name:"Marcus R.",totalKudos:4},{name:"Carter B.",totalKudos:2},{name:"Rasil M.",totalKudos:1},{name:"Ariana M.",totalKudos:1},{name:"Tomas S.",totalKudos:1},{name:"Boozy T.",totalKudos:1},{name:"Jesse W.",totalKudos:1},{name:"Alex G.",totalKudos:1},{name:"Andre K.",totalKudos:1},{name:"Sal  C.",totalKudos:1},{name:"Cory S.",totalKudos:1},{name:"Micah W.",totalKudos:1},{name:"Dr. Alyx B.",totalKudos:1}]
 
     // sort allActivities by date.
     for (let i = 1; i < combined.length; i++) {
@@ -192,4 +196,33 @@ function combine() {
     document.getElementById('kudoGraphSummary').innerHTML = '<b>' + combined.length + '</b> unique people kudoed | <b>' + sumOfKudos + '</b> total kudos'
 }
 
-combine();
+// combine();
+
+function analyzeTitles() {
+    listOfWords = []
+    allActivities.forEach(e => {
+        const titleArr = e.name.split(" ")
+        titleArr.forEach(words => {
+            const index = listOfWords.map(a => a.word).indexOf(words.toLowerCase())
+            if (index == -1) {
+                // if there is no name in the listOfNames.
+                listOfWords.push({word: words.toLowerCase(), count: 1});
+            } else {
+                listOfWords[index].count++;
+            }
+        })
+    })
+
+    for (let i = 1; i < listOfWords.length; i++) {
+        let currentElement = listOfWords[i];
+        let lastIndex = i - 1;
+
+        while (lastIndex >= 0 && listOfWords[lastIndex].count < currentElement.count) {
+            listOfWords[lastIndex + 1] = listOfWords[lastIndex];
+            lastIndex--;
+        }
+        listOfWords[lastIndex + 1] = currentElement;
+    }
+
+    console.log(JSON.stringify(listOfWords));
+}

@@ -14,6 +14,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=National+Park:wght@200..800&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="css/visualize.css">
     <link rel="stylesheet" href="css/notloggedin.css">
@@ -112,7 +114,7 @@
                 </div>
                 <br><br><br>
             </section>
-            <h1>Test</h1>
+            
             <section id = "histogramDiv"  class="mainDiv">
                 <div class = 'quickOverviewTopDiv'>
                     <h1>Histograms</h1>
@@ -283,145 +285,164 @@
                     
                     <!--settings-->
                     <div id = 'scatterSettingsHolder'>
-                        <div class = 'scatterInputLabelsFlex'>
-                            <h2 class = 'scatterInputLabels'>X-Axis: &nbsp;&nbsp;</h2>
-                            <div class = 'scatterArrowHolder'>
-                                <h2 class = 'scatterArrow'>&gt;</h2>
+
+                        <div class = "scatterPropHolder">
+                            <div class = 'scatterInputLabelsFlex'>
+                                <h2 class = 'scatterInputLabels'>X-Axis: &nbsp;&nbsp;</h2>
+                                <div class = 'scatterArrowHolder'>
+                                    <h2 class = 'scatterArrow'>&gt;</h2>
+                                </div>
+                            </div>
+                            
+                            <div id = 'scatterSettingsHolderXaxis' class = 'scatterSettingsHolderSection'>
+                                <select name="variable1" id="scatterVariable1" onChange = "updateScatterDrawingsInResponseToVariableChange(1)">
+                                    <option value="distance" selected>Distance</option>
+                                    <option value="time">Moving Time</option>
+                                    <option value="elapsedTime">Elapsed Time</option>
+                                    <option value="uptime">Uptime (%)</option>
+                                    <option value="elevation">Elevation Gain</option>
+                                    <option value="incline">Incline</option>
+                                    <option value="pace">Pace</option>
+                                    <option value="kudos">Kudos</option>
+                                    <option value="maxPace">Top speed</option>
+                                    <option value="cadence">Cadence (steps/min)</option>
+                                    <option value="stepsPerMile">Steps per mile</option>
+                                    <option value="strideLength">Stride length</option>
+                                    <option value="totalSteps">Steps taken</option>
+                                </select>
+                                <div class = 'subScatterInputLabelsFlex'>   
+                                    <label for="xAxisMin" class = 'subScatterInputLabels'>Lower Bound</label>
+                                    <input type="text" name="xAxisMin" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+                                </div>
+                                <div class = 'subScatterInputLabelsFlex'>   
+                                    <label for="xAxisMax" class = 'subScatterInputLabels'>Upper Bound</label>
+                                    <input type="text" name="xAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+                                </div>
                             </div>
                         </div>
-                        
-                        <div id = 'scatterSettingsHolderXaxis' class = 'scatterSettingsHolderSection'>
-                            <select name="variable1" id="scatterVariable1" onChange = "updateScatterDrawingsInResponseToVariableChange(1)">
-                                <option value="distance" selected>Distance</option>
-                                <option value="time">Moving Time</option>
-                                <option value="elapsedTime">Elapsed Time</option>
-                                <option value="uptime">Uptime (%)</option>
-                                <option value="elevation">Elevation Gain</option>
-                                <option value="incline">Incline</option>
-                                <option value="pace">Pace</option>
-                                <option value="kudos">Kudos</option>
-                                <option value="maxPace">Top speed</option>
-                                <option value="cadence">Cadence (steps/min)</option>
-                                <option value="stepsPerMile">Steps per mile</option>
-                                <option value="strideLength">Stride length</option>
-                                <option value="totalSteps">Steps taken</option>
-                            </select>
-                            <div class = 'subScatterInputLabelsFlex'>   
-                                <label for="xAxisMin" class = 'subScatterInputLabels'>Lower Bound</label>
-                                <input type="text" name="xAxisMin" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
-                            </div>
-                            <div class = 'subScatterInputLabelsFlex'>   
-                                <label for="xAxisMax" class = 'subScatterInputLabels'>Upper Bound</label>
-                                <input type="text" name="xAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
-                            </div>
-                        </div>
+
                         <br>
-                        <div class = 'scatterInputLabelsFlex'>
-                            <h2 class = 'scatterInputLabels'>Y-Axis: &nbsp;&nbsp;</h2>
-                            <div class = 'scatterArrowHolder'>
-                                <h2 class = 'scatterArrow'>&gt;</h2>
+
+                        <div class = "scatterPropHolder">
+                            <div class = 'scatterInputLabelsFlex'>
+                                <h2 class = 'scatterInputLabels'>Y-Axis: &nbsp;&nbsp;</h2>
+                                <div class = 'scatterArrowHolder'>
+                                    <h2 class = 'scatterArrow'>&gt;</h2>
+                                </div>
+                            </div>
+                            <div id = 'scatterSettingsHolderYaxis' class = 'scatterSettingsHolderSection'>
+                                <select name="variable2" id="scatterVariable2" onChange = "updateScatterDrawingsInResponseToVariableChange(2)">
+                                    <option value="distance">Distance</option>
+                                    <option value="time">Moving Time</option>
+                                    <option value="elapsedTime">Elapsed Time</option>
+                                    <option value="uptime">Uptime (%)</option>
+                                    <option value="elevation">Elevation Gain</option>
+                                    <option value="incline">Incline</option>
+                                    <option value="pace" selected>Pace</option>
+                                    <option value="kudos">Kudos</option>
+                                    <option value="maxPace">Top speed</option>
+                                    <option value="cadence">Cadence (steps/min)</option>
+                                    <option value="stepsPerMile">Steps per mile</option>
+                                    <option value="strideLength">Stride length</option>
+                                    <option value="totalSteps">Steps taken</option>
+                                </select>
+                                <div class = 'subScatterInputLabelsFlex'>   
+                                    <p for="yAxisMin" class = 'subScatterInputLabels'>Lower Bound</p>
+                                    <input type="text" name="yAxisMin" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+                                </div>
+                                <div class = 'subScatterInputLabelsFlex'>
+                                    <p for="yAxisMax" class = 'subScatterInputLabels'>Upper Bound</p>
+                                    <input type="text" name="yAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+                                </div>
                             </div>
                         </div>
-                        <div id = 'scatterSettingsHolderYaxis' class = 'scatterSettingsHolderSection'>
-                            <select name="variable2" id="scatterVariable2" onChange = "updateScatterDrawingsInResponseToVariableChange(2)">
-                                <option value="distance">Distance</option>
-                                <option value="time">Moving Time</option>
-                                <option value="elapsedTime">Elapsed Time</option>
-                                <option value="uptime">Uptime (%)</option>
-                                <option value="elevation">Elevation Gain</option>
-                                <option value="incline">Incline</option>
-                                <option value="pace" selected>Pace</option>
-                                <option value="kudos">Kudos</option>
-                                <option value="maxPace">Top speed</option>
-                                <option value="cadence">Cadence (steps/min)</option>
-                                <option value="stepsPerMile">Steps per mile</option>
-                                <option value="strideLength">Stride length</option>
-                                <option value="totalSteps">Steps taken</option>
-                            </select>
-                            <div class = 'subScatterInputLabelsFlex'>   
-                                <p for="yAxisMin" class = 'subScatterInputLabels'>Lower Bound</p>
-                                <input type="text" name="yAxisMin" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
-                            </div>
-                            <div class = 'subScatterInputLabelsFlex'>
-                                <p for="yAxisMax" class = 'subScatterInputLabels'>Upper Bound</p>
-                                <input type="text" name="yAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
-                            </div>
-                        </div>
+
                         <br>
-                        <div class = 'scatterInputLabelsFlex'>
-                            <h2 class = 'scatterInputLabels'>Tertiary Variable &nbsp;&nbsp;</h2>
-                            <div class = 'scatterArrowHolder'>
-                                <h2 class = 'scatterArrow'>&gt;</h2>
+
+                        <div class = "scatterPropHolder">
+                            <div class = 'scatterInputLabelsFlex'>
+                                <h2 class = 'scatterInputLabels'>Tertiary Variable &nbsp;&nbsp;</h2>
+                                <div class = 'scatterArrowHolder'>
+                                    <h2 class = 'scatterArrow'>&gt;</h2>
+                                </div>
+                            </div>
+                            <div id = 'scatterSettingsHolderTertiary' class = 'scatterSettingsHolderSection'>
+                                <select name="variable3" id="scatterVariable3" onChange = "updateScatterDrawingsInResponseToVariableChange(3)">
+                                    <option value="" selected>None</option>
+                                    <option value="distance">Distance</option>
+                                    <option value="time">Moving Time</option>
+                                    <option value="elapsedTime">Elapsed Time</option>
+                                    <option value="uptime">Uptime (%)</option>
+                                    <option value="elevation">Elevation Gain</option>
+                                    <option value="incline">Incline</option>
+                                    <option value="pace">Pace</option>
+                                    <option value="kudos">Kudos</option>
+                                    <option value="maxPace">Top speed</option>
+                                    <option value="cadence">Cadence (steps/min)</option>
+                                    <option value="stepsPerMile">Steps per mile</option>
+                                    <option value="strideLength">Stride length</option>
+                                    <option value="totalSteps">Steps taken</option>
+                                </select>
+                                <div class = 'subScatterInputLabelsFlex'>   
+                                    <input type="color" name = "scatterColor1" value = "#ff0000" class = 'scatterColorPickers' onChange = "updateScatterDrawings()">
+                                    <label for="zAxisMin" class = 'subScatterInputLabelsColor'>L. Bound</label>
+                                    <input type="text" name="zAxisMin" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+                                </div>
+                                <div class = 'subScatterInputLabelsFlex'>
+                                    <input type="color" name = "scatterColor2" value = "#ffdd00" class = 'scatterColorPickers'  onChange = "updateScatterDrawings()" >
+                                    <label for="zAxisMax" class = 'subScatterInputLabelsColor'>U. Bound</label>
+                                    <input type="text" name="zAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
+                                </div>                
                             </div>
                         </div>
-                        <div id = 'scatterSettingsHolderTertiary' class = 'scatterSettingsHolderSection'>
-                            <select name="variable3" id="scatterVariable3" onChange = "updateScatterDrawingsInResponseToVariableChange(3)">
-                                <option value="" selected>None</option>
-                                <option value="distance">Distance</option>
-                                <option value="time">Moving Time</option>
-                                <option value="elapsedTime">Elapsed Time</option>
-                                <option value="uptime">Uptime (%)</option>
-                                <option value="elevation">Elevation Gain</option>
-                                <option value="incline">Incline</option>
-                                <option value="pace">Pace</option>
-                                <option value="kudos">Kudos</option>
-                                <option value="maxPace">Top speed</option>
-                                <option value="cadence">Cadence (steps/min)</option>
-                                <option value="stepsPerMile">Steps per mile</option>
-                                <option value="strideLength">Stride length</option>
-                                <option value="totalSteps">Steps taken</option>
-                            </select>
-                            <div class = 'subScatterInputLabelsFlex'>   
-                                <input type="color" name = "scatterColor1" value = "#ff0000" class = 'scatterColorPickers' onChange = "updateScatterDrawings()">
-                                <label for="zAxisMin" class = 'subScatterInputLabelsColor'>L. Bound</label>
-                                <input type="text" name="zAxisMin" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
-                            </div>
-                            <div class = 'subScatterInputLabelsFlex'>
-                                <input type="color" name = "scatterColor2" value = "#ffdd00" class = 'scatterColorPickers'  onChange = "updateScatterDrawings()" >
-                                <label for="zAxisMax" class = 'subScatterInputLabelsColor'>U. Bound</label>
-                                <input type="text" name="zAxisMax" class = "scatterBoundInput" onChange = "updateScatterDrawings()">
-                            </div>                
-                        </div>
+
                         <br>
-                        <div class = 'scatterInputLabelsFlex'>
-                            <h2 class = 'scatterInputLabels'>Curve of Best Fit</h2>
-                            <div class = 'scatterArrowHolder'>
-                                <h2 class = 'scatterArrow'>&gt;</h2>
+
+                        <div class = "scatterPropHolder">
+                            <div class = 'scatterInputLabelsFlex'>
+                                <h2 class = 'scatterInputLabels'>Curve of Best Fit</h2>
+                                <div class = 'scatterArrowHolder'>
+                                    <h2 class = 'scatterArrow'>&gt;</h2>
+                                </div>
+                            </div>
+                            <div id = 'scatterSettingsHolderCurve' class = 'scatterSettingsHolderSection'>
+                                <div class = 'subScatterInputLabelsFlex'>
+                                    <label for="curveColor" class = 'subScatterInputLabelsBig'>Curve Color</label>
+                                    <input type="color" name = "curveColor" value = "#00ff7b" class = 'scatterColorPickers'  onChange = "updateScatterDrawings()" >
+                                </div>
+                                <div class = 'subScatterInputLabelsFlex'>
+                                    <label for="curveSize" class = 'subScatterInputLabelsBig'>Size (0 = hide curve)</label>
+                                    <input type="number" name="curveSize" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value = "0">
+                                </div>
                             </div>
                         </div>
-                        <div id = 'scatterSettingsHolderCurve' class = 'scatterSettingsHolderSection'>
-                            <div class = 'subScatterInputLabelsFlex'>
-                                <label for="curveColor" class = 'subScatterInputLabelsBig'>Curve Color</label>
-                                <input type="color" name = "curveColor" value = "#00ff7b" class = 'scatterColorPickers'  onChange = "updateScatterDrawings()" >
-                            </div>
-                            <div class = 'subScatterInputLabelsFlex'>
-                                <label for="curveSize" class = 'subScatterInputLabelsBig'>Size (0 = hide curve)</label>
-                                <input type="number" name="curveSize" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value = "0">
-                            </div>
-                        </div>
+
                         <br>
-                        <div class = 'scatterInputLabelsFlex'>
-                            <h2 class = 'scatterInputLabels'>Other Graph Options</h2>
-                            <div class = 'scatterArrowHolder'>
-                                <h2 class = 'scatterArrow'>&gt;</h2>
+
+                        <div class = "scatterPropHolder">
+                            <div class = 'scatterInputLabelsFlex'>
+                                <h2 class = 'scatterInputLabels'>Other Graph Options</h2>
+                                <div class = 'scatterArrowHolder'>
+                                    <h2 class = 'scatterArrow'>&gt;</h2>
+                                </div>
                             </div>
-                        </div>
-                        <div id = 'scatterSettingsHolderPlot' class = 'scatterSettingsHolderSection'>
-                            <div class = 'subScatterInputLabelsFlex'>
-                                <label for="plotColor" class = 'subScatterInputLabelsBig'>Plot Color</label>
-                                <input type="color" name = "plotColor" value = "#0008ff" class = 'scatterColorPickers'  onChange = "updateScatterDrawings()" >
-                            </div>
-                            <div class = 'subScatterInputLabelsFlex'>
-                                <label for="plotSize" class = 'subScatterInputLabelsBig'>Plot Size</label>
-                                <input type="number" name="plotSize" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value = "12">
-                            </div>
-                            <div class = 'subScatterInputLabelsFlex'>
-                                <label for="incrementsX" class = 'subScatterInputLabelsBig'>X increments</label>
-                                <input type="number" name="incrementsX" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value="4">
-                            </div>
-                            <div class = 'subScatterInputLabelsFlex'>
-                                <label for="incrementsY" class = 'subScatterInputLabelsBig'>Y increments</label>
-                                <input type="number" name="incrementsY" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value="4">
+                            <div id = 'scatterSettingsHolderPlot' class = 'scatterSettingsHolderSection'>
+                                <div class = 'subScatterInputLabelsFlex'>
+                                    <label for="plotColor" class = 'subScatterInputLabelsBig'>Plot Color</label>
+                                    <input type="color" name = "plotColor" value = "#0008ff" class = 'scatterColorPickers'  onChange = "updateScatterDrawings()" >
+                                </div>
+                                <div class = 'subScatterInputLabelsFlex'>
+                                    <label for="plotSize" class = 'subScatterInputLabelsBig'>Plot Size</label>
+                                    <input type="number" name="plotSize" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value = "12">
+                                </div>
+                                <div class = 'subScatterInputLabelsFlex'>
+                                    <label for="incrementsX" class = 'subScatterInputLabelsBig'>X increments</label>
+                                    <input type="number" name="incrementsX" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value="4">
+                                </div>
+                                <div class = 'subScatterInputLabelsFlex'>
+                                    <label for="incrementsY" class = 'subScatterInputLabelsBig'>Y increments</label>
+                                    <input type="number" name="incrementsY" class = "scatterBoundInputSmall" onChange = "updateScatterDrawings()" value="4">
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -91,8 +91,8 @@ app.get('/api/activities/:accountID', (req, res) => {
                     //make sure this is an array of Promise objects.
                     Promise.all([
                         getIndividualPaginatedData(1, key),
-                        getIndividualPaginatedData(2, key), 
-                        /*getIndividualPaginatedData(3, key), 
+                        /*getIndividualPaginatedData(2, key), 
+                        getIndividualPaginatedData(3, key), 
                         getIndividualPaginatedData(4, key),
                         getIndividualPaginatedData(5, key), 
                         getIndividualPaginatedData(6, key)*/]).then(() => {

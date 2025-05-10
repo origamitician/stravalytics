@@ -310,7 +310,7 @@ function drawTrendGraph() {
     let titles = trendObj.dataTitles;
     var dataSet = anychart.data.set(data);
     const series = [];
-    const seriesColors = ['red', 'cornflowerblue', 'seagreen', 'orange', 'darkblue', 'gold', 'lime','purple']
+    const seriesColors = ['red', 'cornflowerblue', 'seagreen', 'orange', 'darkblue', 'gold', 'lime','purple', 'red', 'cornflowerblue', 'seagreen', 'orange', 'darkblue', 'gold', 'lime','purple', 'red', 'cornflowerblue', 'seagreen', 'orange', 'darkblue', 'gold', 'lime','purple', 'red', 'cornflowerblue', 'seagreen', 'orange', 'darkblue', 'gold', 'lime','purple']
 
     if (data[0].length > seriesColors.length) {
         const tempDataTitles = [...titles];

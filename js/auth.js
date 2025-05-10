@@ -213,6 +213,7 @@ if (indexOfAuthorization == -1) {
     document.getElementById('notLoggedInBody').style.display = 'none';
     document.getElementById('transition').style.display = 'block';
     document.getElementById('statusMsg').innerHTML = 'Redirecting...'
+    
     fetch('/api/token/' + accessCode)
     .then((res)=> res.json()).then(json => {
         localStorage.setItem('isLoggedIn', 'true')

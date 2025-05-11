@@ -15,6 +15,39 @@ function getNumberOfColons(str) {
     return colonNum;
 }
 
+
+// add event listeners to be able to show/hide the variables in scatter plot
+let variablesToggled = []
+
+function renderVariableDisplay() {
+    variablesToggled.forEach((item, index) => {
+        if (item) {
+            document.getElementsByClassName('scatterSettingsHolderSection')[index].style.display = "block"
+            document.getElementsByClassName('scatterPropHolder')[index].style.backgroundColor = "rgba(16, 168, 0, 0.25)";
+            document.getElementsByClassName('scatterArrow')[index].style.transform="rotate(90deg)";
+        } else {
+            document.getElementsByClassName('scatterSettingsHolderSection')[index].style.display = "none"
+            document.getElementsByClassName('scatterPropHolder')[index].style.backgroundColor = "white";
+            
+            document.getElementsByClassName('scatterArrow')[index].style.transform="rotate(0)";
+        }
+    })
+}
+
+function toggleVariableDisplay(id) {
+    variablesToggled[id] = !variablesToggled[id];
+    renderVariableDisplay();
+}
+
+
+for (let i = 0; i < document.getElementsByClassName('scatterInputLabelsFlex').length; i++) {
+    variablesToggled.push(false)
+    document.getElementsByClassName('scatterInputLabelsFlex')[i].addEventListener('click', () => {toggleVariableDisplay(i)})
+}
+
+// render the appearance of the variables
+renderVariableDisplay()
+
 //variable names that are referenced by the values of the dropdown.
 const variableDisplay = [
     {value: 'distance', display: 'Distance', placeholder: 'Distance (mi)', unit: 'mi', displayDecimalPoints: 2, predDecimalPoints: 2}, 
@@ -370,6 +403,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
     const horizontalIncrement = document.getElementsByName('incrementsX')[0].value;
 
     // draw the grid.
+
     for(let i = 0; i < verticalIncrement; i++){
         for(let j = 0; j < horizontalIncrement; j++){
             let grid = document.createElement('div');
@@ -415,6 +449,7 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
         plot.className = 'plot';
         plot.style.left = ((fixedArray[i].x - bottomX) / (topX - bottomX))*100 + '%';
         plot.style.bottom = ((fixedArray[i].y - bottomY) / (topY- bottomY))*100 -3 + '%';
+
         if(tertiaryProp) {
             // if user selects a tertiary prop
             if (fixedArray[i].z == null) {
@@ -443,11 +478,15 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
         plot.addEventListener('mouseout', hidePrediction)
         plot.style.height = document.getElementsByName('plotSize')[0].value + "px";
         plot.style.width = document.getElementsByName('plotSize')[0].value + "px";
+        plot.style.position = "absolute";
+        plot.style.transform = "translate(-50%, -50%)";
         document.getElementById('scatterPlot').appendChild(plot)
     }
 
     let maxRSquared = -2;
     let calib;
+
+    // draw the trendline/trendcurve
 
     calib = regression.linear(regressionArray);
     if(calib.r2 >= maxRSquared) {
@@ -485,24 +524,6 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
     }
 
     console.log("max R squared is: " + maxRSquared)
-
-    /*
-    let canvHeight;
-    if(myCanvas.getBoundingClientRect().width == 0) {
-        canvWidth = window.innerWidth *0.8;
-        canvHeight = window.innerHeight *0.8
-    } else {
-        canvWidth = myCanvas.getBoundingClientRect().width;
-        canvHeight = myCanvas.getBoundingClientRect().height;
-    }
-
-    c.beginPath();
-    c.lineWidth = 4;
-    c.strokeStyle = "orange";
-    const scrubbingRate = 301
-
-    c.moveTo(0, canvHeight)
-    */
 
     const coefficientArray = []; // to house negative coefficents, if needed
     for (let i = 0; i < calibCoefficients.length; i++) {
@@ -546,6 +567,8 @@ function renderScatterplot(arr, prop1, prop2, tertiaryProp, changedVariable){
             plot.style.backgroundColor = document.getElementsByName('curveColor')[0].value
             plot.style.height = document.getElementsByName('curveSize')[0].value + "px";
             plot.style.width = document.getElementsByName('curveSize')[0].value + "px";
+            plot.style.position = "absolute";
+            plot.style.transform = "translate(-50%, -50%)";
             plot.addEventListener('mouseover', () => showPrediction(prop1, prop2, newID))
             plot.addEventListener('mouseout', hidePrediction)
             document.getElementById('scatterPlot').appendChild(plot)

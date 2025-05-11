@@ -499,22 +499,18 @@ input::-webkit-inner-spin-button {
     margin-bottom: 2%;
 }
 
-.scatterInputLabelsFlex{
+.scatterInputLabelsFlex {
     display: flex;
     width: 100%;
     position: relative;
     font-size: 125%;
-
-}
-
-.scatterPropHolder {
     margin-bottom: 2%;
     transition: 0.3s;
-    border-left: 3px solid seagreen;
-    background-color: rgba(16, 168, 0, 0.25);
+    box-sizing: border-box;
+    --webkit-user-select: none;
 }
 
-.scatterPropHolder:hover {
+.scatterInputLabelsFlex:hover {
     background-color: rgba(16, 168, 0, 0.25);
     transition: 0.3s;
     cursor: pointer;
@@ -549,6 +545,7 @@ input::-webkit-inner-spin-button {
     left: 50%;
     transform: translate(-50%, -50%);
     margin: 0;
+    transition: 0.3s;
 }
 
 .subScatterInputLabels{
@@ -566,6 +563,10 @@ input::-webkit-inner-spin-button {
     margin-top: auto;
     margin-bottom: auto;
     font-weight: bold;
+}
+
+.scatterPropHolder {
+    border-left: 3px solid seagreen;
 }
 
 .subScatterInputLabelsColor{
@@ -650,12 +651,10 @@ input::-webkit-inner-spin-button {
     height: 65vh;
     margin-top: 2%;
     padding: 0;
-    box-sizing: border-box;
 }
 
 .plot{
-    position: absolute;
-    transform: translate(-50%, -50%);
+    
     border-radius: 50%;
     margin: 0;
     transition: 0.75;

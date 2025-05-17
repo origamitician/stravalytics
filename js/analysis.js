@@ -52,7 +52,8 @@ function runAnalysis() {
         
         let date = new Date(data[i].date)
         if ((duration === "weekly" && date.getDay() === 1) || (duration === "monthly" && date.getDate() === 1)) {
-            // if it's monday or the first day of the month.
+            // if it's monday or the first day of the month. Must do the calculations.
+
             let currentNumericalDate;
             let prevNumericalDate;
             let title;
@@ -60,6 +61,7 @@ function runAnalysis() {
                 // get the current numerical date
                 let dateOneDayAgo = new Date(Date.parse(date) - 86400000)
                 currentNumericalDate = (dateOneDayAgo.getMonth()+1) + "/" + dateOneDayAgo.getDate() + "/" + dateOneDayAgo.getFullYear().toString().substring(2) 
+
                 // get the date one week ago
                 prevDate = new Date(Date.parse(date) - 604800000)
                 prevNumericalDate = (prevDate.getMonth()+1) + "/" + prevDate.getDate() + "/" + prevDate.getFullYear().toString().substring(2)
@@ -83,7 +85,13 @@ function runAnalysis() {
                 // add the average per day.
                 if (numberOfDaysActive == 0) {
                     analyzedData.push({title: title, value: 0, daysActive: numberOfDaysActive, activities: subData})
+                    
+                } else if (!unitsThatCanBeTotaled.includes(variableToAnalyze)) {
+                    // if an average of a non-"summable" variable is requested.
+                    analyzedData.push({title: title, value: (sum/movingWeight).toFixed(currentUnitInfo.avgDecimalPlaces), daysActive: numberOfDaysActive, activities: subData})
+
                 } else {
+                    // if an average of a "summable" variable is requested.
                     analyzedData.push({title: title, value: (sum/numberOfDaysActive).toFixed(currentUnitInfo.avgDecimalPlaces), daysActive: numberOfDaysActive, activities: subData})
                 }
             }

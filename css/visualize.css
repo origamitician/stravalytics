@@ -846,6 +846,11 @@ input::-webkit-inner-spin-button {
     font-size: 90%;
 }
 
+.runLookupDivRank {
+    font-size: 95%;
+    opacity: 0.9;
+}
+
 
 @media only screen and (max-width: 1280px) {
     body{

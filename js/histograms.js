@@ -719,9 +719,10 @@ function renderTypeGraph(array, type, color, color2, sortBy){
 }
 
 function createRunLookup (id) {
+
     console.log(id);
     
-    const propertiesToParse = [{display: 'mi', property: 'distance', decimalPlaces: 3}, {display: '/mi', property: 'pace', decimalPlaces: 2}, {display: 'ft gain', property: 'elevation', decimalPlaces: 2}, {display: '% uptime', property: 'uptime', decimalPlaces: 2}, {display: 'moving', property: 'time', decimalPlaces: 0}, {display: 'elapsed', property: 'elapsedTime', decimalPlaces: 0}, {display: "% incline", property: 'incline' , decimalPlaces: 2}, {display: 'kudos', property: 'kudos', decimalPlaces: 0}, {display: 'steps/min', property: 'cadence', decimalPlaces: 2}, {display: 'steps/mile', property: 'stepsPerMile', decimalPlaces: 0}, {display: 'ft/stride', property: 'strideLength', decimalPlaces: 3}]
+    const propertiesToParse = [{display: 'mi', property: 'distance', decimalPlaces: 3, min: 'Shorter', max: 'Longer'}, {display: '/mi', property: 'pace', decimalPlaces: 2, min: 'faster', max: 'slower'}, {display: 'ft gain', property: 'elevation', decimalPlaces: 2, min: 'Less', max: 'More'}, {display: '% uptime', property: 'uptime', decimalPlaces: 2, min: 'Less', max: 'More'}, {display: 'moving time', property: 'time', decimalPlaces: 0, min: 'Shorter', max: 'Longer'}, {display: 'elapsed time', property: 'elapsedTime', decimalPlaces: 0, min: 'Shorter', max: 'Longer'}, {display: "% incline", property: 'incline' , decimalPlaces: 2, min: 'Gentler', max: 'Steeper'}, {display: 'kudos', property: 'kudos', decimalPlaces: 0, min: 'Less', max: 'More'}, {display: 'steps/min', property: 'cadence', decimalPlaces: 2, min: 'Lower', max: 'Higher'}, {display: 'steps/mile', property: 'stepsPerMile', decimalPlaces: 0, min: 'Less', max: 'More'}, {display: 'ft/stride', property: 'strideLength', decimalPlaces: 3, min: 'Shorter', max: 'Longer'}]
 
     const runObject = allActivities[allActivities.map(e => e.id).indexOf(id)]
 
@@ -802,9 +803,9 @@ function createRunLookup (id) {
             const rankDisplay = document.createElement('p');
             rankDisplay.className = 'runLookupDivRank';
             if (propertiesToParse[i].property === "pace") {
-                rankDisplay.innerHTML = 'Rank <b>' + (rank) + "/" + allActivities.length + "</b> (Top " + ((rank / allActivities.length)*100).toFixed(2) + "%)";
+                rankDisplay.innerHTML = propertiesToParse[i].min + ' than <b>' + (allActivities.length - rank) + "</b> of <b> " + allActivities.length + "</b> runs" + " (" + (((allActivities.length - rank)  / allActivities.length)*100).toFixed(2) + "%)";
             } else {
-                rankDisplay.innerHTML = 'Rank <b>' + (allActivities.length - rank) + "/" + allActivities.length + "</b> (Top " + (((allActivities.length - rank) / allActivities.length)*100).toFixed(2) + "%)";
+                rankDisplay.innerHTML = propertiesToParse[i].max + ' than <b>' + (rank-1) + "</b> of <b> " + allActivities.length + "</b> runs" + " (" + (((rank-1) / allActivities.length)*100).toFixed(2) + "%)";
             }
 
             statDiv.appendChild(rankDisplay);

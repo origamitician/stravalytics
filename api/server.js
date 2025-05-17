@@ -93,9 +93,9 @@ app.get('/api/activities/:accountID', (req, res) => {
                         getIndividualPaginatedData(1, key),
                         getIndividualPaginatedData(2, key), 
                         getIndividualPaginatedData(3, key), 
-                        /*getIndividualPaginatedData(4, key),
+                        getIndividualPaginatedData(4, key),
                         getIndividualPaginatedData(5, key), 
-                        getIndividualPaginatedData(6, key)*/]).then(() => {
+                        getIndividualPaginatedData(6, key)]).then(() => {
                             res.send(allActivities)
                         })
                 })

@@ -722,7 +722,7 @@ function createRunLookup (id) {
 
     console.log(id);
     
-    const propertiesToParse = [{display: 'mi', property: 'distance', decimalPlaces: 3, min: 'Shorter', max: 'Longer'}, {display: '/mi', property: 'pace', decimalPlaces: 2, min: 'faster', max: 'slower'}, {display: 'ft gain', property: 'elevation', decimalPlaces: 2, min: 'Less', max: 'More'}, {display: '% uptime', property: 'uptime', decimalPlaces: 2, min: 'Less', max: 'More'}, {display: 'moving time', property: 'time', decimalPlaces: 0, min: 'Shorter', max: 'Longer'}, {display: 'elapsed time', property: 'elapsedTime', decimalPlaces: 0, min: 'Shorter', max: 'Longer'}, {display: "% incline", property: 'incline' , decimalPlaces: 2, min: 'Gentler', max: 'Steeper'}, {display: 'kudos', property: 'kudos', decimalPlaces: 0, min: 'Less', max: 'More'}, {display: 'steps/min', property: 'cadence', decimalPlaces: 2, min: 'Lower', max: 'Higher'}, {display: 'steps/mile', property: 'stepsPerMile', decimalPlaces: 0, min: 'Less', max: 'More'}, {display: 'ft/stride', property: 'strideLength', decimalPlaces: 3, min: 'Shorter', max: 'Longer'}]
+    const propertiesToParse = [{display: 'mi', property: 'distance', decimalPlaces: 3, min: 'Shorter', max: 'Longer'}, {display: '/mi', property: 'pace', decimalPlaces: 2, min: 'Faster', max: 'Slower'}, {display: 'ft gain', property: 'elevation', decimalPlaces: 2, min: 'Less', max: 'More'}, {display: '% uptime', property: 'uptime', decimalPlaces: 2, min: 'Less', max: 'More'}, {display: 'moving time', property: 'time', decimalPlaces: 0, min: 'Shorter', max: 'Longer'}, {display: 'elapsed time', property: 'elapsedTime', decimalPlaces: 0, min: 'Shorter', max: 'Longer'}, {display: "% incline", property: 'incline' , decimalPlaces: 2, min: 'Gentler', max: 'Steeper'}, {display: 'kudos', property: 'kudos', decimalPlaces: 0, min: 'Less', max: 'More'}, {display: 'steps/min', property: 'cadence', decimalPlaces: 2, min: 'Lower', max: 'Higher'}, {display: 'steps/mile', property: 'stepsPerMile', decimalPlaces: 0, min: 'Less', max: 'More'}, {display: 'ft/stride', property: 'strideLength', decimalPlaces: 3, min: 'Shorter', max: 'Longer'}]
 
     const runObject = allActivities[allActivities.map(e => e.id).indexOf(id)]
 
@@ -755,7 +755,7 @@ function createRunLookup (id) {
             } else if (propertiesToParse[i].property == "uptime" && runObject[propertiesToParse[i].property] == 100) {
                 rank = allActivities.length - 1; //last
             } else {
-                rank = allActivities.map(e => e.id).indexOf(id) + 1;
+                rank = allActivities.map(e => e.id).indexOf(id);
             }
 
             let textColor = "black";
@@ -783,6 +783,22 @@ function createRunLookup (id) {
             mainDisplay.style.color = textColor
             statDiv.appendChild(mainDisplay);
 
+            // create the references on the bars
+            const underBar = document.createElement('div');
+            underBar.className = 'runLookupSpectrumBarReference'
+
+            const underBarLeft = document.createElement('p');
+            underBarLeft.className = 'runLookupSpectrumBarReferenceLeft';
+            underBarLeft.innerHTML = "[<-- " + propertiesToParse[i].min + "]";
+            underBar.appendChild(underBarLeft);
+
+            const underBarRight = document.createElement('p');
+            underBarRight.className = 'runLookupSpectrumBarReferenceRight';
+            underBarRight.innerHTML = "[" + propertiesToParse[i].max + " -->]";
+            underBar.appendChild(underBarRight);
+
+            statDiv.appendChild(underBar);
+
             // create spectrum
             const spectrum = document.createElement('div');
             spectrum.className = 'runLookupSpectrum';
@@ -795,9 +811,13 @@ function createRunLookup (id) {
             const bar = document.createElement('div');
             bar.className = 'runLookupSpectrumBar';
             bar.style.position = 'absolute';
+            bar.style.left = "0%";
+            bar.style.transition = 'transition: 0.5s';
             bar.style.left = ((rank / allActivities.length)*100) + "%";
             spectrum.appendChild(bar)
             statDiv.appendChild(spectrum);
+
+            
 
             // create ranking info
             const rankDisplay = document.createElement('p');
@@ -805,7 +825,7 @@ function createRunLookup (id) {
             if (propertiesToParse[i].property === "pace") {
                 rankDisplay.innerHTML = propertiesToParse[i].min + ' than <b>' + (allActivities.length - rank) + "</b> of <b> " + allActivities.length + "</b> runs" + " (" + (((allActivities.length - rank)  / allActivities.length)*100).toFixed(2) + "%)";
             } else {
-                rankDisplay.innerHTML = propertiesToParse[i].max + ' than <b>' + (rank-1) + "</b> of <b> " + allActivities.length + "</b> runs" + " (" + (((rank-1) / allActivities.length)*100).toFixed(2) + "%)";
+                rankDisplay.innerHTML = propertiesToParse[i].max + ' than <b>' + rank + "</b> of <b> " + allActivities.length + "</b> runs" + " (" + ((rank / allActivities.length)*100).toFixed(2) + "%)";
             }
 
             statDiv.appendChild(rankDisplay);

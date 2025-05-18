@@ -386,10 +386,15 @@ body{
 
 .runLookupDivMainText b {
     font-size: 225%;
+    
 }
 
 .runLookupDivMainText span {
     font-size: 100%;
+}
+
+.runLookupDivMainText {
+    margin-bottom: 1%;
 }
 
 .indivRunLookupDiv {
@@ -431,6 +436,7 @@ body{
     position: absolute;
     transform: translate(-50%, 0%);
     box-sizing: border-box;
+
 }
 
 #runLookupStravaLink {
@@ -849,6 +855,27 @@ input::-webkit-inner-spin-button {
 .runLookupDivRank {
     font-size: 95%;
     opacity: 0.9;
+}
+
+.runLookupSpectrumBarReference {
+    width: 100%;
+    display: flex;
+    margin-top: 0.5%;
+    margin-bottom: 0;
+    font-size: 80%;
+    opacity: 0.75;
+}
+
+.runLookupSpectrumBarReferenceRight {
+    text-align: right;
+    width: 50%;
+    margin: 0;
+}
+
+.runLookupSpectrumBarReferenceLeft {
+    text-align: left;
+    width: 50%;
+    margin: 0;
 }
 
 

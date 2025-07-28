@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=National+Park:wght@200..800&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="css/visualize.css">
@@ -124,11 +124,11 @@
                 <div class = "graphDiv">
                     <Button class = "incrementBtn" onClick = "showIncrementMenu('pace')">Edit</Button>
                     <h1 class = "graphHeader">Pace (min / mi)</h1>
-                    <p id = "pace_distribution_overview" class = "overview"></p>
+                    <p id = "curr_distribution_overview" class = "overview"></p>
                     <!--<canvas id = "pace_distribution" class = "graph"></canvas>-->
-                    <div id = "pace_distribution" class = "graph"></div>
-                    <div id = "pace_distribution_breakdown" class = "boxAndWhiskerData"></div>
-                    <div class = "infoWrapper" id = "pace_distribution_wrapper">
+                    <div id = "curr_distribution" class = "graph"></div>
+                    <div id = "curr_distribution_breakdown" class = "boxAndWhiskerData"></div>
+                    <div class = "infoWrapper" id = "curr_distribution_wrapper">
                         <div class = "infoWrapperLeft">
                             <p id = "pace_distribution_counter" class = "counterDisplay"><span></span> runs at <span></span> pace</p>
                             <p id = "pace_distribution_info" class = "info"></p>
@@ -608,7 +608,7 @@
 <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-base.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="js/summary.js"></script>
-<script src="js/histograms.js"></script>
+<script src="js/histograms_new.js"></script>
 <script src="js/scatter.js"></script>
 <script src="js/trends.js"></script>
 <script src="js/analysis.js"></script>

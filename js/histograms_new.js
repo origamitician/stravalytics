@@ -48,6 +48,8 @@ var pace_distribution = [];
 var elev_distribution = [];
 var elapsed_distribution = [];
 
+var curr_distribution = [];
+
 //helper function to convert seconds to m:ss
 
 function convert(seconds, decimalPlaces){
@@ -358,15 +360,21 @@ function renderGraph(){
     totalElapsedTime=0;
      //resetting pace distributions
 
+    /*
     getNumberOfBars(dist_distribution, "distance")
     getNumberOfBars(pace_distribution, "pace")
     getNumberOfBars(elev_distribution, "elevation")
-    getNumberOfBars(elapsed_distribution, "uptime")
+    getNumberOfBars(elapsed_distribution, "uptime")*/
 
+    getNumberOfBars(curr_distribution, "distance")
+
+    /*
     revertToDefaultStatistics(dist_distribution);
     revertToDefaultStatistics(pace_distribution);
     revertToDefaultStatistics(elev_distribution);
-    revertToDefaultStatistics(elapsed_distribution);
+    revertToDefaultStatistics(elapsed_distribution);*/
+
+    revertToDefaultStatistics(curr_distribution)
     
     var paras = document.getElementsByClassName('verticalOuterContainer');
 
@@ -383,10 +391,13 @@ function renderGraph(){
         establishIncrements(e, e.uptime, "uptime", elapsed_distribution)
     })*/
 
+    /*
     renderTypeGraph(dist_distribution, "dist_distribution", scrub.distance.color, scrub.distance.color2, "distance");
     renderTypeGraph(pace_distribution, "pace_distribution", scrub.pace.color, scrub.pace.color2, "pace");
     renderTypeGraph(elev_distribution, "elev_distribution", scrub.elevation.color, scrub.elevation.color2, "elevation");
-    renderTypeGraph(elapsed_distribution, "time_distribution", scrub.uptime.color, scrub.uptime.color2, "uptime");
+    renderTypeGraph(elapsed_distribution, "time_distribution", scrub.uptime.color, scrub.uptime.color2, "uptime");*/
+
+    renderTypeGraph(curr_distribution, scrub.distance.color, scrub.distance.color2, "distance")
 
     console.log(dist_distribution)
 }
@@ -510,10 +521,11 @@ function hidePercentiles() {
     displayInQuestion.style.display = "none";
 }
 
-function renderTypeGraph(array, type, color, color2, sortBy){
+function renderTypeGraph(array, color, color2, sortBy){
+    /*
     if(document.getElementById(type + "_breakdown").getElementsByClassName("percentileSpectrum")[0]) {
         document.getElementById(type + "_breakdown").getElementsByClassName("percentileSpectrum")[0].remove();
-    }
+    }*/
     
     totalMileage=0;
     totalElevGain=0;
@@ -549,8 +561,8 @@ function renderTypeGraph(array, type, color, color2, sortBy){
     const percentageSpectrum = document.createElement('div');
     percentageSpectrum.style.background = 'linear-gradient(to right, ' + color + ', ' + color2 + ')'
     percentageSpectrum.className = "percentileSpectrum"
-    percentageSpectrum.id = type + "_spectrum"
-    document.getElementById(type + "_breakdown").appendChild (percentageSpectrum);
+    percentageSpectrum.id = "curr_distribution_spectrum"
+    document.getElementById("curr_distribution_breakdown").appendChild(percentageSpectrum);
 
     /* place visual percentiles */
     const percentilesOfInterest = [5, 25, 50, 75, 95];
@@ -583,22 +595,22 @@ function renderTypeGraph(array, type, color, color2, sortBy){
         percentageInfo.style.backgroundColor = "white"
         percentageInfo.style.position = "absolute";
         percentageInfo.style.left = calculatedPosition + "%";
-        document.getElementById(type + "_spectrum").appendChild (percentageInfo);
+        document.getElementById("curr_distribution_spectrum").appendChild(percentageInfo);
 
         const percentageHoverHitbox = document.createElement('div');
         percentageHoverHitbox.className = 'percentileMarkersHoverFlex';
-        percentageHoverHitbox.id = 'percentileMarkersHover-' + type + "_" + i;
+        percentageHoverHitbox.id = 'percentileMarkersHover-curr_distribution_' + i;
         percentageHoverHitbox.style.height = (window.innerHeight*0.07)*0.8 + "px";
         percentageHoverHitbox.style.width = (window.innerHeight*0.07)*0.8 + "px";
         percentageHoverHitbox.style.left = calculatedPosition + "%";
         percentageHoverHitbox.addEventListener("mouseover", showPercentiles);
         percentageHoverHitbox.addEventListener("mouseout", hidePercentiles);
-        document.getElementById(type + "_spectrum").appendChild (percentageHoverHitbox);
+        document.getElementById("curr_distribution_spectrum").appendChild(percentageHoverHitbox);
 
         const percentageHoverHitboxText = document.createElement("p");
         percentageHoverHitboxText.className = 'percentileMarkersHoverText';
         percentageHoverHitboxText.innerHTML = percentilesOfInterest[i] + "%";
-        document.getElementById('percentileMarkersHover-' + type + "_" + i).appendChild (percentageHoverHitboxText);
+        document.getElementById('percentileMarkersHover-curr_distribution_' + i).appendChild(percentageHoverHitboxText);
 
         const r = (clr1.r + (clr2.r - clr1.r) * (calculatedPosition / 100))
         const g = (clr1.g + (clr2.g - clr1.g) * (calculatedPosition / 100))
@@ -607,18 +619,19 @@ function renderTypeGraph(array, type, color, color2, sortBy){
 
         const percentageDisplay = document.createElement('div');
         percentageDisplay.className = 'percentileMarkersDisplay';
-        percentageDisplay.id = 'percentileMarkersDisplay-' + type + "_" + i;
+        percentageDisplay.id = 'percentileMarkersDisplay-curr_distribution_' + i;
         percentageDisplay.style.color = percentileDisplayClr;
         percentageDisplay.style.border = "2px solid " + percentileDisplayClr;
         let percentileValue = (allActivities[Math.floor(len*(percentilesOfInterest[i]/100))][sortBy]).toFixed(2);
+        /*
         if (type == "pace_distribution") {
             // percentileValue = parseFloat(convert(percentileValue)).toFixed(2);
             percentileValue = convert(percentileValue, 2);
-        }
+        }*/
         percentageDisplay.innerHTML = percentileValue + " " + scrub[sortBy].abbrUnit + "<br>(" + percentilesOfInterest[i] + "th percentile)";
         percentageDisplay.style.left = calculatedPosition + "%";
 
-        document.getElementById(type + "_spectrum").appendChild (percentageDisplay);
+        document.getElementById("curr_distribution_spectrum").appendChild(percentageDisplay);
 
     }
 
@@ -643,31 +656,22 @@ function renderTypeGraph(array, type, color, color2, sortBy){
             var o = document.createElement("div");
             o.className = "verticalOuterContainer";
             o.style.width = 100/array.length + "%";
-            document.getElementById(type).appendChild(o);
+            document.getElementById("curr_distribution").appendChild(o);
 
             var verticalHolder = document.createElement("div");
             verticalHolder.className = "verticalHolder";
-            verticalHolder.id = i + "-" + type + "-" + rgbToHex(Math.round(red), Math.round(green), Math.round(blue))
+            verticalHolder.id = i + "-curr_distribution-" + rgbToHex(Math.round(red), Math.round(green), Math.round(blue))
             verticalHolder.style.height = window.innerHeight / 4 + "px";
             verticalHolder.addEventListener("click", showMoreStats);
             //verticalHolder.addEventListener("mouseout", disableStats);
             //verticalHolder.style.height = window.innerHeight / 3 + "px";
-            document.getElementById(type).getElementsByClassName("verticalOuterContainer")[i].appendChild(verticalHolder);
+            document.getElementById("curr_distribution").getElementsByClassName("verticalOuterContainer")[i].appendChild(verticalHolder);
 
             var verticalHolderBelow = document.createElement("p");
             verticalHolderBelow.className = "verticalHolderBelow";
-            if(type == "pace_distribution"){
-                verticalHolderBelow.innerHTML = getBarTitles(i, "pace", "/mi")
-                
-            }else if(type == "dist_distribution"){
-                verticalHolderBelow.innerHTML = getBarTitles(i, "distance", "mi")
-        
-            }else if (type == "elev_distribution"){
-                verticalHolderBelow.innerHTML = getBarTitles(i, "elevation", "ft")
-            }else{
-                verticalHolderBelow.innerHTML = getBarTitles(i, "uptime", "%")
-            }
-            document.getElementById(type).getElementsByClassName("verticalOuterContainer")[i].appendChild(verticalHolderBelow);
+            verticalHolderBelow.innerHTML = "test" //getBarTitles(i, sortBy, "/mi")
+
+            document.getElementById("curr_distribution").getElementsByClassName("verticalOuterContainer")[i].appendChild(verticalHolderBelow);
 
             //draw bars
             var verticalHolderStat = document.createElement("p");
@@ -682,14 +686,14 @@ function renderTypeGraph(array, type, color, color2, sortBy){
                 verticalHolderStatTop.className = "verticalHolderStatTop";
                 verticalHolderStatTop.innerHTML = array[i].count;
                 verticalHolderStatTop.style.bottom = ((array[i].count / greatest) * (window.innerHeight / 4)) + "px"
-                document.getElementById(type).getElementsByClassName("verticalHolder")[i].appendChild(verticalHolderStatTop);
+                document.getElementById("curr_distribution").getElementsByClassName("verticalHolder")[i].appendChild(verticalHolderStatTop);
             }
             
             verticalHolderStat.style.backgroundColor = gradientClr;
             verticalHolderStat.style.height = ((array[i].count / greatest) * (window.innerHeight / 4)) + "px";
             verticalHolderStat.style.marginTop = (((greatest - array[i].count) / greatest) * (window.innerHeight / 4)) + "px";
             verticalHolderStat.style.width = "100%";
-            document.getElementById(type).getElementsByClassName("verticalHolder")[i].appendChild(verticalHolderStat);
+            document.getElementById("curr_distribution").getElementsByClassName("verticalHolder")[i].appendChild(verticalHolderStat);
 
             //console.log(array);
             totalMileage += array[i].total_miles;
@@ -697,7 +701,7 @@ function renderTypeGraph(array, type, color, color2, sortBy){
             totalMovingTime +=array[i].total_time;
             totalElapsedTime +=array[i].total_elapsed_time;
 
-            document.getElementById(type + "_overview").style.color = color;
+            document.getElementById("curr_distribution_overview").style.color = color;
             i++;
         }
 

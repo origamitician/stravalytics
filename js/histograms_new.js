@@ -4,14 +4,25 @@ var startDate = Math.floor(Date.parse("01-01-2023") / 1000)
 var endDate = Math.floor(Date.now() / 1000);
 let scrub;
 
+let defaultClr1 = "#1688b5"
+let defaultClr2 = "#6e2aad"
+
 
 if (window.innerWidth > window.innerHeight) {
     // landscape mode
     scrub = {
-        pace: {left: 260, right: 600, increment: 20, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", color2: "#6e2aad", unit: "seconds/mi", abbrUnit: "/mi"},
-        uptime: {left: 60, right: 100, increment: 2, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", color2: "#2aad76", unit: "%", abbrUnit: "%"},
-        distance: {left: 0, right: 15, increment: 1, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", color2: '#ad2a3e', unit: "miles", abbrUnit: "mi"},
-        elevation: {left: 10, right: 510, increment: 25, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", color2: '#b80000', unit: "feet", abbrUnit: "ft"},
+        pace: {unit: "seconds/mi", abbrUnit: "/mi", roundTo: 5},
+        uptime: {unit: "%", abbrUnit: "%", roundTo: 0.5},
+        distance: {unit: "miles", abbrUnit: "mi", roundTo: 1},
+        elevation: {unit: "feet", abbrUnit: "ft", roundTo: 5},
+        movingTime: {unit: "", abbrUnit: "", roundTo: 60},
+        elapsedTime: {unit: "", abbrUnit: "", roundTo: 60},
+        incline: {unit: "", abbrUnit: "%", roundTo: 0.05},
+        kudos: {unit: "", abbrUnit: "", roundTo: 1},
+        cadence: {unit: "steps/min", abbrUnit: "spm", roundTo: 0.25},
+        totalSteps: {unit: "steps", abbrUnit: "", roundTo: 1000},
+        stepsPerMile: {unit: "steps/mile", abbrUnit: "steps/mi", roundTo: 10},
+        strideLength: {unit: "ft", abbrUnit: "ft", roundTo: 0.05},
     }
 } else {
     // portrait mode
@@ -22,6 +33,17 @@ if (window.innerWidth > window.innerHeight) {
         elevation: {left: 10, right: 510, increment: 50, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", color2: '#b80000', unit: "feet", abbrUnit: "ft"},
     }
 }
+
+Object.keys(scrub).forEach(key => {
+    scrub[key].color = defaultClr1
+    scrub[key].color2 = defaultClr2
+    scrub[key].left = null
+    scrub[key].right = null
+    scrub[key].increment = null
+    scrub[key].leftOutlier = true
+    scrub[key].rightOutlier = true
+    scrub[key].totalBars = null
+})
 
 // to establish gradients. Totally didn't copy this from StackOverflow
 function hexToRgb(hex) {
@@ -75,25 +97,10 @@ function convert(seconds, decimalPlaces){
     }
 }
 
-function revertToDefaultStatistics(array){
-    for(var i = 0; i < array.length; i++){
-        array[i].count = 0
-        array[i].total_elevation_gain = 0;
-        array[i].most_elevation_gain = -1;
-        array[i].least_elevation_gain = 2147483687;
-        array[i].total_miles = 0;
-        array[i].most_miles = -1;
-        array[i].least_miles = 2147483687;
-        array[i].total_time = 0;
-        array[i].most_time = -1;
-        array[i].least_time = 2147483647;
-        array[i].total_elapsed_time = 0;
-        array[i].list_of_activities = [];
-    }
-}
-
 function updateDefaultStatistics(array, index, inputObject){
     //update these regardless of index
+    console.log("From updatedefaultstats: " + array)
+    console.log("From updatedefaultstats: index is = " + index)
     array[index].count++;
     array[index].total_elevation_gain+=inputObject.elevation
     array[index].total_miles+=inputObject.distance;
@@ -320,19 +327,11 @@ var totalPace=0
 var totalMovingTime=0
 var totalElapsedTime=0
 
-function getNumberOfBars(distribution, objectName){
-    let numBars = Number(scrub[objectName].leftOutlier) + Number(scrub[objectName].rightOutlier) + (scrub[objectName].right - scrub[objectName].left) / scrub[objectName].increment
-    scrub[objectName].totalBars = numBars
-
-    for(var i = 0; i < numBars; i++){
-        distribution[i] = {}
-    }
-}
-
-function establishIncrements(item, value, scrubProperty, distributionToUpdate){
+function establishIncrements(item, scrubProperty, distributionToUpdate){
     // item is one individual object returned from the Strava API.
     // value is object's value in question
-    if(value >= scrub[scrubProperty].right || value <= scrub[scrubProperty].left){
+    let value = item[scrubProperty]
+    if(item >= scrub[scrubProperty].right || value <= scrub[scrubProperty].left){
         //if left outlier is out
         if((scrub[scrubProperty].rightOutlier && value >= scrub[scrubProperty].right) || (!scrub[scrubProperty].rightOutlier && value == scrub[scrubProperty].right)){
             updateDefaultStatistics(distributionToUpdate, scrub[scrubProperty].totalBars-1, item);
@@ -353,55 +352,19 @@ function establishIncrements(item, value, scrubProperty, distributionToUpdate){
 }
 
 function renderGraph(){
+    curr_distribution = []
     totalMileage=0;
     totalElevGain=0;
     totalPace=0;
     totalMovingTime=0;
     totalElapsedTime=0;
-     //resetting pace distributions
+   
+    const elementsToRemove = document.querySelectorAll('.verticalOuterContainer');
 
-    /*
-    getNumberOfBars(dist_distribution, "distance")
-    getNumberOfBars(pace_distribution, "pace")
-    getNumberOfBars(elev_distribution, "elevation")
-    getNumberOfBars(elapsed_distribution, "uptime")*/
+    elementsToRemove.forEach(e => e.remove())
 
-    getNumberOfBars(curr_distribution, "distance")
-
-    /*
-    revertToDefaultStatistics(dist_distribution);
-    revertToDefaultStatistics(pace_distribution);
-    revertToDefaultStatistics(elev_distribution);
-    revertToDefaultStatistics(elapsed_distribution);*/
-
-    revertToDefaultStatistics(curr_distribution)
-    
-    var paras = document.getElementsByClassName('verticalOuterContainer');
-
-    while(paras[0]) {
-        paras[0].parentNode.removeChild(paras[0]);
-    }
-
-    //console.log(JSON.stringify(dist_distribution[0]))
-    /*allActivities.forEach(e => {
-        //sorts everything.
-        establishIncrements(e, e.distance, "distance", dist_distribution)
-        establishIncrements(e, e.pace, "pace", pace_distribution)
-        establishIncrements(e, e.elevation, "elevation", elev_distribution)
-        establishIncrements(e, e.uptime, "uptime", elapsed_distribution)
-    })*/
-
-    /*
-    renderTypeGraph(dist_distribution, "dist_distribution", scrub.distance.color, scrub.distance.color2, "distance");
-    renderTypeGraph(pace_distribution, "pace_distribution", scrub.pace.color, scrub.pace.color2, "pace");
-    renderTypeGraph(elev_distribution, "elev_distribution", scrub.elevation.color, scrub.elevation.color2, "elevation");
-    renderTypeGraph(elapsed_distribution, "time_distribution", scrub.uptime.color, scrub.uptime.color2, "uptime");*/
-
-    renderTypeGraph(curr_distribution, scrub.distance.color, scrub.distance.color2, "distance")
-
-    console.log(dist_distribution)
+    renderTypeGraph(curr_distribution, document.getElementsByName("histogramVariable")[0].value)
 }
-//render
 
 //helper method
 
@@ -521,7 +484,7 @@ function hidePercentiles() {
     displayInQuestion.style.display = "none";
 }
 
-function renderTypeGraph(array, color, color2, sortBy){
+function renderTypeGraph(array, sortBy){
     /*
     if(document.getElementById(type + "_breakdown").getElementsByClassName("percentileSpectrum")[0]) {
         document.getElementById(type + "_breakdown").getElementsByClassName("percentileSpectrum")[0].remove();
@@ -533,8 +496,13 @@ function renderTypeGraph(array, color, color2, sortBy){
     totalMovingTime=0;
     totalElapsedTime=0;
 
-    const clr1 = hexToRgb(color)
-    const clr2 = hexToRgb(color2)
+    const clr1 = hexToRgb(scrub[sortBy].color)
+    const clr2 = hexToRgb(scrub[sortBy].color2)
+
+    const minBarsLandscape = 14
+    const maxBarsLandscape = 20
+    const minBarsPortrait = 7
+    const maxBarsPortrait = 12
 
     //array is the array that is getting iterated over
     //type is the destination where the graph is getting added
@@ -552,14 +520,14 @@ function renderTypeGraph(array, color, color2, sortBy){
         }
         allActivities[lastIndex + 1] = currentElement;
     }
-    
-    allActivities.forEach(e => {
-        establishIncrements(e, e[sortBy], sortBy, array)
-    })
 
+    if (document.getElementById("curr_distribution_spectrum")) {
+        document.getElementById("curr_distribution_spectrum").remove()
+    }
+    
     /* create the spectrum */
     const percentageSpectrum = document.createElement('div');
-    percentageSpectrum.style.background = 'linear-gradient(to right, ' + color + ', ' + color2 + ')'
+    percentageSpectrum.style.background = 'linear-gradient(to right, ' + scrub[sortBy].color + ', ' + scrub[sortBy].color2 + ')'
     percentageSpectrum.className = "percentileSpectrum"
     percentageSpectrum.id = "curr_distribution_spectrum"
     document.getElementById("curr_distribution_breakdown").appendChild(percentageSpectrum);
@@ -568,6 +536,68 @@ function renderTypeGraph(array, color, color2, sortBy){
     const percentilesOfInterest = [5, 25, 50, 75, 95];
     
     // set the minimum and maximum values
+    const len = allActivities.length;
+    let percentVal5 = (allActivities[Math.floor(len*(0.05))][sortBy])
+    let percentVal95 = (allActivities[Math.floor(len*(0.95))][sortBy])
+
+    // automatically set the maximum and minimum values, if the left and right values are null. If they're not null, don't bother.
+
+    if (scrub[sortBy].left === null && scrub[sortBy].right === null) {
+        // the optimal number of bars on PC is anywhere between 14 and 22, plus or minus 2. On mobile, it's 8-12, plus or minus 2.
+
+        let percentVal5Adjusted = Math.floor(percentVal5 / scrub[sortBy].roundTo)*scrub[sortBy].roundTo
+        let percentVal95Adjusted = Math.ceil(percentVal95 / scrub[sortBy].roundTo)*scrub[sortBy].roundTo
+
+        let testIncrement;
+        let numBars;
+
+        for (let i = 1; i < 20; i++) {
+            testIncrement = scrub[sortBy].roundTo*i
+            numBars = Math.ceil((percentVal95Adjusted - percentVal5Adjusted) / testIncrement)
+
+            if ((numBars <= maxBarsLandscape && numBars >= minBarsLandscape) || numBars < minBarsLandscape) {
+                percentVal95Adjusted = percentVal5Adjusted + (numBars*testIncrement)
+                break
+            }
+        }
+
+        console.log("Lower end is: " + percentVal5Adjusted)
+        console.log("Higher end is: " + percentVal95Adjusted)
+
+        scrub[sortBy].left = percentVal5Adjusted
+        scrub[sortBy].right = percentVal95Adjusted
+        scrub[sortBy].increment = testIncrement
+        scrub[sortBy].totalBars = numBars + Number(scrub[sortBy].leftOutlier) + Number(scrub[sortBy].rightOutlier)
+    }
+
+    array = []
+
+    console.log("The total number of bars is: " + scrub[sortBy].totalBars)
+
+    for(var i = 0; i < scrub[sortBy].totalBars; i++){
+        array[i] = {}
+        array[i].count = 0
+        array[i].total_elevation_gain = 0;
+        array[i].most_elevation_gain = -1;
+        array[i].least_elevation_gain = 2147483687;
+        array[i].total_miles = 0;
+        array[i].most_miles = -1;
+        array[i].least_miles = 2147483687;
+        array[i].total_time = 0;
+        array[i].most_time = -1;
+        array[i].least_time = 2147483647;
+        array[i].total_elapsed_time = 0;
+        array[i].list_of_activities = [];
+    }
+
+    console.log(JSON.stringify(array))
+
+    allActivities.forEach(e => {
+        establishIncrements(e, sortBy, array)
+    })
+
+    // create the box and whisker plots
+
     let minValue = scrub[sortBy].left
     let maxValue = scrub[sortBy].right
     if (scrub[sortBy].leftOutlier) {
@@ -578,7 +608,6 @@ function renderTypeGraph(array, color, color2, sortBy){
         maxValue = scrub[sortBy].right + scrub[sortBy].increment;
     }
 
-    const len = allActivities.length;
     for (let i = 0; i < percentilesOfInterest.length; i++) {
         let calculatedPosition = ((allActivities[Math.floor(len*(percentilesOfInterest[i]/100))][sortBy] - minValue) / (maxValue - minValue)) * 100
         if (calculatedPosition < 0) {
@@ -669,7 +698,7 @@ function renderTypeGraph(array, color, color2, sortBy){
 
             var verticalHolderBelow = document.createElement("p");
             verticalHolderBelow.className = "verticalHolderBelow";
-            verticalHolderBelow.innerHTML = "test" //getBarTitles(i, sortBy, "/mi")
+            verticalHolderBelow.innerHTML = getBarTitles(i, sortBy, scrub[sortBy].abbrUnit)
 
             document.getElementById("curr_distribution").getElementsByClassName("verticalOuterContainer")[i].appendChild(verticalHolderBelow);
 
@@ -701,7 +730,7 @@ function renderTypeGraph(array, color, color2, sortBy){
             totalMovingTime +=array[i].total_time;
             totalElapsedTime +=array[i].total_elapsed_time;
 
-            document.getElementById("curr_distribution_overview").style.color = color;
+            document.getElementById("curr_distribution_overview").style.color = scrub[sortBy].color;
             i++;
         }
 

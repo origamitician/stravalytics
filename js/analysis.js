@@ -36,7 +36,6 @@ function runAnalysis() {
     } else {
         data = processAllActivitiesByDayAndProperty(allActivities, variableToAnalyze, 30, true).data
     }
-    console.log(data)
     
     // sort by week.
     analyzedData = []
@@ -184,14 +183,11 @@ function runAnalysis() {
                 } else if (unitsThatCanBeTotaled.includes(variableToAnalyze)) {
                     analyzedData.push({title: title, value: (sum/numberOfDaysActive).toFixed(currentUnitInfo.avgDecimalPlaces), daysActive: numberOfDaysActive, activities: subData})
                 } else {
-                    console.log("AVERAGING!")
                     analyzedData.push({title: title, value: (sum/movingWeight).toFixed(currentUnitInfo.avgDecimalPlaces), daysActive: numberOfDaysActive, activities: subData})
                 }
             }
         }
     }
-    console.log("------------------------------------------------")
-    console.log(analyzedData)
     createBreakdown(analyzedData, currentUnitInfo)
 }
 
@@ -215,10 +211,8 @@ function createBreakdown(array, uInfo) {
         paras[0].parentNode.removeChild(paras[0]);
     }
 
-    console.log(array)
     const weeklyValues = array.map(e => e.value)
     maximum = Math.max(...weeklyValues);
-    console.log("maximum is: " + maximum)
 
     for (let i = 0; i < array.length; i++) {
         const o = document.createElement("div");
@@ -326,7 +320,6 @@ function showBreakdown() {
         paras[0].parentNode.removeChild(paras[0]);
     }
 
-    console.log(this.id)
     const index = Number(this.id.split('-')[1])
     const toRender = analyzedData[index];
 
@@ -366,8 +359,6 @@ function showBreakdown() {
     }
 
     // add the gradient info.
-    console.log('-----------------------------')
-    console.log(analyzedDataInOrder.indexOf(toRender))
     let proportion = (100 - ((analyzedDataInOrder.indexOf(toRender) / analyzedDataInOrder.length)*100)).toFixed(2)
     let adjustedProportion = ((analyzedDataInOrder.indexOf(toRender) / (analyzedDataInOrder.length - 1))*100).toFixed(2)
     document.getElementById('analysisInfoRanking').innerHTML = currentUnitInfo.comparative  + " than <b> " + analyzedDataInOrder.indexOf(toRender) + "</b> (of " + analyzedDataInOrder.length + ") weeks [Top <b>" + proportion + "%</b>  of weeks]"

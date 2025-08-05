@@ -117,13 +117,29 @@
             
             <section id = "histogramDiv"  class="mainDiv">
                 <div class = 'quickOverviewTopDiv'>
-                    <h1>Histograms</h1>
+                    <h1>Histograms (DOES NOT WORK. WORK IN PROGRESS)</h1>
                     <p>Click on a bar to see more details. Clicking on a specific run will show you specific details of it!</p>
                 </div>
 
                 <div class = "graphDiv">
                     <Button class = "incrementBtn" onClick = "showIncrementMenu('pace')">Edit</Button>
                     <h1 class = "graphHeader">Pace (min / mi)</h1>
+                    <label for="analysisVariable">Variable</label>
+                    <select name="histogramVariable" class="analysisVariable" onChange = "renderGraph()" id="analysisVariableList">
+                        <option value="distance" selected>Distance</option>
+                        <option value="time">Moving Time</option>
+                        <option value="elapsedTime">Elapsed Time</option>
+                        <option value="uptime">Uptime (%)</option>
+                        <option value="elevation">Elevation Gain</option>
+                        <option value="incline">Incline</option>
+                        <option value="pace">Pace</option>
+                        <option value="kudos">Kudos</option>
+                        <option value="maxPace">Top speed</option>
+                        <option value="cadence">Cadence (steps/min)</option>
+                        <option value="stepsPerMile">Steps per mile</option>
+                        <option value="strideLength">Stride length</option>
+                        <option value="totalSteps">Steps</option>
+                    </select>
                     <p id = "curr_distribution_overview" class = "overview"></p>
                     <!--<canvas id = "pace_distribution" class = "graph"></canvas>-->
                     <div id = "curr_distribution" class = "graph"></div>
@@ -132,54 +148,6 @@
                         <div class = "infoWrapperLeft">
                             <p id = "pace_distribution_counter" class = "counterDisplay"><span></span> runs at <span></span> pace</p>
                             <p id = "pace_distribution_info" class = "info"></p>
-                        </div>
-                        <div class = "infoWrapperRight"></div>
-                    </div>
-                </div>
-                
-                <div class = "graphDiv">
-                    <Button class = "incrementBtn" onClick = "showIncrementMenu('uptime')">Edit</Button>
-                    <h1 class = "graphHeader">% Uptime</h1>
-                    <p id = "time_distribution_overview" class = "overview"></p>
-                    <!--<canvas id = "time_distribution" class = "graph"></canvas>-->
-                    <div id = "time_distribution" class = "graph"></div>
-                    <div id = "time_distribution_breakdown" class = "boxAndWhiskerData"></div>
-                    <div class = "infoWrapper" id = "time_distribution_wrapper">
-                        <div class = "infoWrapperLeft">
-                            <p id = "time_distribution_counter" class = "counterDisplay"><span></span> runs with <span></span> uptime</p>
-                            <p id = "time_distribution_info" class = "info"></p>
-                        </div>
-                        <div class = "infoWrapperRight"></div>
-                    </div>
-                </div>
-                
-                <div class = "graphDiv">
-                    <Button class = "incrementBtn" onClick = "showIncrementMenu('distance')">Edit</Button>
-                    <h1 class = "graphHeader">Distance</h1>
-                    <p id = "dist_distribution_overview" class = "overview"></p>
-                    <!--<canvas id = "distance_distribution" class = "graph"></canvas>-->
-                    <div id = "dist_distribution" class = "graph"></div>
-                    <div id = "dist_distribution_breakdown" class = "boxAndWhiskerData"></div>
-                    <div class = "infoWrapper" id = "dist_distribution_wrapper">
-                        <div class = "infoWrapperLeft">
-                            <p id = "dist_distribution_counter" class = "counterDisplay"><span></span> runs with distance <span></span></p>
-                            <p id = "dist_distribution_info" class = "info"></p>
-                        </div>
-                        <div class = "infoWrapperRight"></div>
-                    </div>
-                </div>
-                
-                <div class = "graphDiv">
-                    <Button class = "incrementBtn" onClick = "showIncrementMenu('elevation')">Edit</Button>
-                    <h1 class = "graphHeader">Elevation gain</h1>
-                    <p id = "elev_distribution_overview" class = "overview"></p>
-                    <!--<canvas id = "elev_distribution" class = "graph"></canvas>-->
-                    <div id = "elev_distribution" class = "graph"></div>
-                    <div id = "elev_distribution_breakdown" class = "boxAndWhiskerData"></div>
-                    <div class = "infoWrapper" id = "elev_distribution_wrapper">
-                        <div class = "infoWrapperLeft">
-                            <p id = "elev_distribution_counter" class = "counterDisplay"><span></span> runs with <span></span> elevation gain</p>
-                            <p id = "elev_distribution_info" class = "info"></p>
                         </div>
                         <div class = "infoWrapperRight"></div>
                     </div>

@@ -11,18 +11,18 @@ let defaultClr2 = "#6e2aad"
 if (window.innerWidth > window.innerHeight) {
     // landscape mode
     scrub = {
-        pace: {unit: "seconds/mi", abbrUnit: "/mi", roundTo: 5},
-        uptime: {unit: "%", abbrUnit: "%", roundTo: 0.5},
-        distance: {unit: "miles", abbrUnit: "mi", roundTo: 1},
-        elevation: {unit: "feet", abbrUnit: "ft", roundTo: 5},
-        movingTime: {unit: "", abbrUnit: "", roundTo: 60},
-        elapsedTime: {unit: "", abbrUnit: "", roundTo: 60},
-        incline: {unit: "", abbrUnit: "%", roundTo: 0.05},
-        kudos: {unit: "", abbrUnit: "", roundTo: 1},
-        cadence: {unit: "steps/min", abbrUnit: "spm", roundTo: 0.25},
-        totalSteps: {unit: "steps", abbrUnit: "", roundTo: 1000},
-        stepsPerMile: {unit: "steps/mile", abbrUnit: "steps/mi", roundTo: 10},
-        strideLength: {unit: "ft", abbrUnit: "ft", roundTo: 0.05},
+        pace: {unit: "seconds/mi", abbrUnit: "/mi", roundTo: 5, title: "Pace"},
+        uptime: {unit: "%", abbrUnit: "%", roundTo: 0.5, title: "Uptime", ceiling: 100},
+        distance: {unit: "miles", abbrUnit: "mi", roundTo: 1, title: "Distance"},
+        elevation: {unit: "feet", abbrUnit: "ft", roundTo: 5, title: "Elevation"},
+        time: {unit: "", abbrUnit: "", roundTo: 60, title: "Moving Time"},
+        elapsedTime: {unit: "", abbrUnit: "", roundTo: 60, title: "Elapsed Time"},
+        incline: {unit: "", abbrUnit: "%", roundTo: 0.05, title: "Incline"},
+        kudos: {unit: "", abbrUnit: "", roundTo: 1, title: "Kudos"},
+        cadence: {unit: "steps/min", abbrUnit: "spm", roundTo: 0.25, title: "Cadence"},
+        totalSteps: {unit: "steps", abbrUnit: "", roundTo: 1000, title: "Steps"},
+        stepsPerMile: {unit: "steps/mile", abbrUnit: "", roundTo: 10, title: "Steps per Mile"},
+        strideLength: {unit: "ft", abbrUnit: "ft", roundTo: 0.05, title: "Stride Length"},
     }
 } else {
     // portrait mode
@@ -64,12 +64,7 @@ function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
-//variables for graph
-var dist_distribution = []
-var pace_distribution = [];
-var elev_distribution = [];
-var elapsed_distribution = [];
-
+// this is the variable that holds all the histogram data.
 var curr_distribution = [];
 
 //helper function to convert seconds to m:ss
@@ -97,66 +92,63 @@ function convert(seconds, decimalPlaces){
     }
 }
 
-function updateDefaultStatistics(array, index, inputObject){
+function updateDefaultStatistics(index, inputObject){
     //update these regardless of index
-    console.log("From updatedefaultstats: " + array)
-    console.log("From updatedefaultstats: index is = " + index)
-    array[index].count++;
-    array[index].total_elevation_gain+=inputObject.elevation
-    array[index].total_miles+=inputObject.distance;
-    array[index].total_time+=inputObject.time;
-    array[index].total_elapsed_time+=inputObject.elapsedTime;
-    array[index].list_of_activities.push(inputObject);
+    // console.log("From updatedefaultstats: " + curr_distribution)
+    // console.log("From updatedefaultstats: index is = " + index)
+    curr_distribution[index].count++;
+    curr_distribution[index].total_elevation_gain+=inputObject.elevation
+    curr_distribution[index].total_miles+=inputObject.distance;
+    curr_distribution[index].total_time+=inputObject.time;
+    curr_distribution[index].total_elapsed_time+=inputObject.elapsedTime;
+    curr_distribution[index].list_of_activities.push(inputObject);
 
-    if(inputObject.elevation > array[index].most_elevation_gain){
-        array[index].most_elevation_gain = inputObject.elevation;
+    if(inputObject.elevation > curr_distribution[index].most_elevation_gain){
+        curr_distribution[index].most_elevation_gain = inputObject.elevation;
     }
 
-    if (inputObject.elevation < array[index].least_elevation_gain){
-        array[index].least_elevation_gain = inputObject.elevation;
+    if (inputObject.elevation < curr_distribution[index].least_elevation_gain){
+        curr_distribution[index].least_elevation_gain = inputObject.elevation;
     }
 
-    if(inputObject.distance> array[index].most_miles){
-        array[index].most_miles = inputObject.distance
+    if(inputObject.distance> curr_distribution[index].most_miles){
+        curr_distribution[index].most_miles = inputObject.distance
     }
 
-    if(inputObject.distance < array[index].least_miles){
-        array[index].least_miles = inputObject.distance
+    if(inputObject.distance < curr_distribution[index].least_miles){
+        curr_distribution[index].least_miles = inputObject.distance
     }
 }
 
 function showMoreStats(){
+    const varToAnalyze = document.getElementsByName("histogramVariable")[0].value
     //process - get index and graph type from the id that was clicked.
+    console.log(this.id)
     var processed = this.id.split("-");
-    for(let i = 0; i <  document.getElementById(processed[1]).getElementsByClassName("verticalHolder").length; i++){
-        document.getElementById(processed[1]).getElementsByClassName("verticalHolder")[i].style.border = "0px solid black";
+    for(let i = 0; i < document.getElementById("curr_distribution").getElementsByClassName("verticalHolder").length; i++){
+        document.getElementById("curr_distribution").getElementsByClassName("verticalHolder")[i].style.border = "0px solid black";
         //document.getElementById(processed[1]).getElementsByClassName("verticalHolder")[i].addEventListener("mouseover", () => {this.style.border = "2px solid black"})
         //console.log("removing all borders")
     }
     
     this.style.border = "2px dotted black";
-    document.getElementById(processed[1] + "_wrapper").style.display = "block";
-    document.getElementById(processed[1] + "_wrapper").style.display = "flex";
-    if(processed[1] == "dist_distribution"){
-        showStatsOnHTML(dist_distribution, processed[1], parseInt(processed[0]), processed[2])
-    }else if(processed[1] == "pace_distribution"){
-        showStatsOnHTML(pace_distribution, processed[1], parseInt(processed[0]), processed[2])
-    }else if(processed[1] == "elev_distribution"){
-        showStatsOnHTML(elev_distribution, processed[1], parseInt(processed[0]), processed[2])
-    }else if(processed[1] == "time_distribution"){
-        showStatsOnHTML(elapsed_distribution, processed[1], parseInt(processed[0]), processed[2])
-    }
-    let span1 = document.getElementById(processed[1] + "_counter").getElementsByTagName("span")[0]
-    let span2 = document.getElementById(processed[1] + "_counter").getElementsByTagName("span")[1]
+    document.getElementById("curr_distribution_wrapper").style.display = "block";
+    document.getElementById("curr_distribution_wrapper").style.display = "flex";
 
-    span1.innerHTML = document.getElementById(processed[1]).getElementsByClassName("verticalHolderStat")[processed[0]].innerHTML;
+    let span1 = document.getElementById("curr_distribution_counter").getElementsByTagName("span")[0]
+    let span2 = document.getElementById("curr_distribution_counter").getElementsByTagName("span")[1]
+    let span3 = document.getElementById("curr_distribution_counter").getElementsByTagName("span")[2]
+
+    span1.innerHTML = curr_distribution[processed[0]].count;
     span1.style.color = processed[2];
     span1.parentElement.style.borderLeft = "5px solid " + processed[2];
     span1.style.fontWeight = "bold";
 
-    span2.innerHTML = document.getElementById(processed[1]).getElementsByClassName("verticalHolderBelow")[processed[0]].innerHTML;
+    span2.innerHTML = document.getElementById("curr_distribution").getElementsByClassName("verticalHolderBelow")[processed[0]].innerHTML;
     span2.style.color = processed[2];
     span2.style.fontWeight = "bold";
+
+    span3.innerHTML = scrub[varToAnalyze].title.toLowerCase()
 }
 
 function disableStats(){
@@ -164,19 +156,19 @@ function disableStats(){
     document.getElementById(processed[1] + "_info").innerHTML = "Hover over graph to show more details!"
 }
 
-function showStatsOnHTML(array, location, id, color){
-    var convertedMileTime = convert(array[id].total_time / array[id].total_miles, 2)
-    var convertedKmTime = convert((array[id].total_time / array[id].total_miles) / 1.609, 2)
+function showStatsOnHTML(location, id, color){
+    var convertedMileTime = convert(curr_distribution[id].total_time / curr_distribution[id].total_miles, 2)
+    var convertedKmTime = convert((curr_distribution[id].total_time / curr_distribution[id].total_miles) / 1.609, 2)
     //console.log(convertedMileTime)
     //console.log(convertedKmTime);
     try{
         document.getElementById(location + "_info").innerHTML = "<b> Average pace: </b>" + convertedMileTime + "/mi (" + convertedKmTime +  "/km) <br><br>" +
 
-        "<b> Average distance: </b>" + (array[id].total_miles / array[id].count).toFixed(3) + " mi <br> (shortest " + array[id].least_miles.toFixed(3) + " mi; longest " + array[id].most_miles.toFixed(3) + " mi) <br><br>" + 
+        "<b> Average distance: </b>" + (curr_distribution[id].total_miles / curr_distribution[id].count).toFixed(3) + " mi <br> (shortest " + curr_distribution[id].least_miles.toFixed(3) + " mi; longest " + curr_distribution[id].most_miles.toFixed(3) + " mi) <br><br>" + 
 
-        "<b> Average elev gain: </b>" +  (array[id].total_elevation_gain / array[id].count).toFixed(2) + " ft <br>(highest " + array[id].most_elevation_gain.toFixed(2) + " ft) <br><br>" + 
+        "<b> Average elev gain: </b>" +  (curr_distribution[id].total_elevation_gain / curr_distribution[id].count).toFixed(2) + " ft <br>(highest " + curr_distribution[id].most_elevation_gain.toFixed(2) + " ft) <br><br>" + 
 
-        "<b> Average % uptime: </b>" + ((array[id].total_time / array[id].total_elapsed_time)*100).toFixed(2) + " %"
+        "<b> Average % uptime: </b>" + ((curr_distribution[id].total_time / curr_distribution[id].total_elapsed_time)*100).toFixed(2) + " %"
     }catch{
         //do nothing here since its buggy
     }
@@ -192,9 +184,8 @@ function showStatsOnHTML(array, location, id, color){
     }
 
     //render the chart
-    for (var i = -1; i < array[id].list_of_activities.length; i++){
+    for (var i = -1; i < curr_distribution[id].list_of_activities.length; i++){
         var outerDiv = document.createElement("div");
-        
 
         if(i >= 0){
             outerDiv.className = "outerDiv";
@@ -217,7 +208,7 @@ function showStatsOnHTML(array, location, id, color){
             span.innerHTML = "Date"
             document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
         }else{
-            let date = array[id].list_of_activities[i].startDate.split("T")[0].split("-")
+            let date = curr_distribution[id].list_of_activities[i].startDate.split("T")[0].split("-")
             span.innerHTML = date[1] + "/" + date[2] + "/" +date[0].substring(2, 4)
             document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
         }
@@ -242,14 +233,14 @@ function showStatsOnHTML(array, location, id, color){
             span.setAttribute("href", "https://strava.com/activities/" + array[id].list_of_activities[i].id);
             span.setAttribute("target", "_blank");*/
 
-            if(array[id].list_of_activities[i].name.length > 30){
-                span.innerHTML = array[id].list_of_activities[i].name.substring(0, 30) + "...";
+            if(curr_distribution[id].list_of_activities[i].name.length > 30){
+                span.innerHTML = curr_distribution[id].list_of_activities[i].name.substring(0, 30) + "...";
             }else{
-                span.innerHTML  = array[id].list_of_activities[i].name;
+                span.innerHTML  = curr_distribution[id].list_of_activities[i].name;
             }
             span.style.color = 'darkblue';
             span.style.textDecoration = 'underline';
-            span.addEventListener('click', createRunLookup.bind(this, array[id].list_of_activities[i].id))
+            span.addEventListener('click', createRunLookup.bind(this, curr_distribution[id].list_of_activities[i].id))
             document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
         }
 
@@ -264,7 +255,7 @@ function showStatsOnHTML(array, location, id, color){
             span.innerHTML = "Distance"
             document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
         }else{
-            span.innerHTML = (array[id].list_of_activities[i].distance).toFixed(3) + "mi"
+            span.innerHTML = (curr_distribution[id].list_of_activities[i].distance).toFixed(3) + "mi"
             document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
         }
 
@@ -279,10 +270,10 @@ function showStatsOnHTML(array, location, id, color){
             span.innerHTML = "Pace /mi"
             document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
         }else{
-            if(array[id].list_of_activities[i].pace == 0){
+            if(curr_distribution[id].list_of_activities[i].pace == 0){
                 span.innerHTML = "[INVALID]"
             }else{
-                let convertedTime = (array[id].list_of_activities[i].pace)
+                let convertedTime = (curr_distribution[id].list_of_activities[i].pace)
                 span.innerHTML = convert(convertedTime, 2)
             }
             
@@ -300,7 +291,7 @@ function showStatsOnHTML(array, location, id, color){
             span.innerHTML = "% Uptime"
             document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
         }else{
-            span.innerHTML = ((array[id].list_of_activities[i].time / array[id].list_of_activities[i].elapsedTime)*100).toFixed(2) + "%";
+            span.innerHTML = ((curr_distribution[id].list_of_activities[i].time / curr_distribution[id].list_of_activities[i].elapsedTime)*100).toFixed(2) + "%";
             document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
         }
 
@@ -315,7 +306,7 @@ function showStatsOnHTML(array, location, id, color){
             span.innerHTML = "Elev. gain"
             document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
         }else{
-            span.innerHTML = (array[id].list_of_activities[i].elevation).toFixed(2) + "ft"
+            span.innerHTML = (curr_distribution[id].list_of_activities[i].elevation).toFixed(2) + "ft"
             document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
         }
     }
@@ -327,25 +318,28 @@ var totalPace=0
 var totalMovingTime=0
 var totalElapsedTime=0
 
-function establishIncrements(item, scrubProperty, distributionToUpdate){
+function establishIncrements(item, scrubProperty){
     // item is one individual object returned from the Strava API.
     // value is object's value in question
     let value = item[scrubProperty]
-    if(item >= scrub[scrubProperty].right || value <= scrub[scrubProperty].left){
-        //if left outlier is out
+    if(value >= scrub[scrubProperty].right || value <= scrub[scrubProperty].left){
+        //if right outlier is enabled
         if((scrub[scrubProperty].rightOutlier && value >= scrub[scrubProperty].right) || (!scrub[scrubProperty].rightOutlier && value == scrub[scrubProperty].right)){
-            updateDefaultStatistics(distributionToUpdate, scrub[scrubProperty].totalBars-1, item);
+            console.log("adding stuff to right outlier")
+            updateDefaultStatistics(scrub[scrubProperty].totalBars-1, item);
         }      
 
+        // if left outlier is enabled
         if((scrub[scrubProperty].leftOutlier && value <= scrub[scrubProperty].left) || (!scrub[scrubProperty].leftOutlier && value == scrub[scrubProperty].left)){
-            updateDefaultStatistics(distributionToUpdate, 0, item);
+             console.log("adding stuff to left outlier")
+            updateDefaultStatistics(0, item);
         }
     }else if (value < scrub[scrubProperty].right && value > scrub[scrubProperty].left){
         if(scrub[scrubProperty].leftOutlier){
-            updateDefaultStatistics(distributionToUpdate, Math.floor((value - scrub[scrubProperty].left)/ scrub[scrubProperty].increment) + 1, item);
+            updateDefaultStatistics(Math.floor((value - scrub[scrubProperty].left) / scrub[scrubProperty].increment) + 1, item);
         }else{
             if(value != scrub[scrubProperty].right && value != scrub[scrubProperty].right){
-                updateDefaultStatistics(distributionToUpdate, Math.floor((value - scrub[scrubProperty].left) / scrub[scrubProperty].increment), item);
+                updateDefaultStatistics(Math.floor((value - scrub[scrubProperty].left) / scrub[scrubProperty].increment), item);
             }
         }
     }
@@ -363,7 +357,7 @@ function renderGraph(){
 
     elementsToRemove.forEach(e => e.remove())
 
-    renderTypeGraph(curr_distribution, document.getElementsByName("histogramVariable")[0].value)
+    renderTypeGraph(document.getElementsByName("histogramVariable")[0].value)
 }
 
 //helper method
@@ -371,35 +365,37 @@ function renderGraph(){
 function getBarTitles(i, scrubName, unit){
     //i is the index
     if(i == 0 && scrub[scrubName].leftOutlier){
-        if(scrubName == "pace"){
+        if(scrubName == "pace" || scrubName == "maxPace"){
             return "<" + convert(scrub[scrubName].left) + unit;
-        }else{
+        } else if (scrubName == "time" || scrubName == "elapsedTime") {
+            return "<" + convert(scrub[scrubName].left, 0) + unit;
+        } else {
             return "<" + (scrub[scrubName].left) + unit;
         }
         
     }else if (i == scrub[scrubName].totalBars - 1 && scrub[scrubName].rightOutlier){
-        if(scrubName == "pace"){
+        if(scrubName == "pace" || scrubName == "maxPace"){
             return  ">" + convert(scrub[scrubName].right) + unit;
-        }else{
+        } else if (scrubName == "time" || scrubName == "elapsedTime") {
+            return  ">" + convert(scrub[scrubName].right, 0) + unit;
+        } else {
             return  ">" + (scrub[scrubName].right) + unit;
         }
         
     }else{
-        if(scrubName == "pace"){
-            if(!scrub[scrubName].leftOutlier){
-                return (convert(scrub[scrubName].left + (i*scrub[scrubName].increment)) + "-" + convert(scrub[scrubName].left + ((i+1)*scrub[scrubName].increment)) + unit);
-            }else{
-                return (convert(scrub[scrubName].left + ((i-1)*scrub[scrubName].increment)) + "-" + convert(scrub[scrubName].left + ((i)*scrub[scrubName].increment)) + unit);
-            }
-        }else{
-            if(!scrub[scrubName].leftOutlier){
-                return ((scrub[scrubName].left + (i*scrub[scrubName].increment)) + "-" + (scrub[scrubName].left + ((i+1)*scrub[scrubName].increment)) + unit);
-            }else{
-                return ((scrub[scrubName].left + ((i-1)*scrub[scrubName].increment)) + "-" + (scrub[scrubName].left + ((i)*scrub[scrubName].increment)) + unit);
-            }
+        let valLeft = scrub[scrubName].left + ((i-Number(scrub[scrubName].leftOutlier))*scrub[scrubName].increment) 
+        let valRight = scrub[scrubName].left + ((i+1-Number(scrub[scrubName].leftOutlier))*scrub[scrubName].increment)
+
+        if(scrubName == "pace" || scrubName == "maxPace"){
+            return (convert(valLeft) + "-" + convert(valRight) + unit);
+        } else if (scrubName == "time" || scrubName == "elapsedTime") { 
+            return (convert(valLeft, 0) + "-" + convert(valRight, 0) + unit);
+        } else {
+            return (valLeft + "-" + valRight + unit);
         }
     }
 }
+
 var currentField = null;
 function showIncrementMenu(field){
     currentField = field;
@@ -484,7 +480,7 @@ function hidePercentiles() {
     displayInQuestion.style.display = "none";
 }
 
-function renderTypeGraph(array, sortBy){
+function renderTypeGraph(sortBy){
     /*
     if(document.getElementById(type + "_breakdown").getElementsByClassName("percentileSpectrum")[0]) {
         document.getElementById(type + "_breakdown").getElementsByClassName("percentileSpectrum")[0].remove();
@@ -534,6 +530,8 @@ function renderTypeGraph(array, sortBy){
 
     /* place visual percentiles */
     const percentilesOfInterest = [5, 25, 50, 75, 95];
+
+    
     
     // set the minimum and maximum values
     const len = allActivities.length;
@@ -566,35 +564,40 @@ function renderTypeGraph(array, sortBy){
 
         scrub[sortBy].left = percentVal5Adjusted
         scrub[sortBy].right = percentVal95Adjusted
+        if (percentVal5Adjusted == 0) {
+            scrub[sortBy].leftOutlier = false
+        }
+        if (sortBy == "uptime" && percentVal95Adjusted > 100) {
+            scrub[sortBy].right = percentVal95Adjusted - testIncrement
+            numBars--;
+        }
         scrub[sortBy].increment = testIncrement
         scrub[sortBy].totalBars = numBars + Number(scrub[sortBy].leftOutlier) + Number(scrub[sortBy].rightOutlier)
     }
 
-    array = []
-
     console.log("The total number of bars is: " + scrub[sortBy].totalBars)
 
     for(var i = 0; i < scrub[sortBy].totalBars; i++){
-        array[i] = {}
-        array[i].count = 0
-        array[i].total_elevation_gain = 0;
-        array[i].most_elevation_gain = -1;
-        array[i].least_elevation_gain = 2147483687;
-        array[i].total_miles = 0;
-        array[i].most_miles = -1;
-        array[i].least_miles = 2147483687;
-        array[i].total_time = 0;
-        array[i].most_time = -1;
-        array[i].least_time = 2147483647;
-        array[i].total_elapsed_time = 0;
-        array[i].list_of_activities = [];
+        curr_distribution[i] = {}
+        curr_distribution[i].count = 0
+        curr_distribution[i].total_elevation_gain = 0;
+        curr_distribution[i].most_elevation_gain = -1;
+        curr_distribution[i].least_elevation_gain = 2147483687;
+        curr_distribution[i].total_miles = 0;
+        curr_distribution[i].most_miles = -1;
+        curr_distribution[i].least_miles = 2147483687;
+        curr_distribution[i].total_time = 0;
+        curr_distribution[i].most_time = -1;
+        curr_distribution[i].least_time = 2147483647;
+        curr_distribution[i].total_elapsed_time = 0;
+        curr_distribution[i].list_of_activities = [];
     }
 
-    console.log(JSON.stringify(array))
-
     allActivities.forEach(e => {
-        establishIncrements(e, sortBy, array)
+        establishIncrements(e, sortBy)
     })
+
+    console.log(curr_distribution)
 
     // create the box and whisker plots
 
@@ -651,12 +654,17 @@ function renderTypeGraph(array, sortBy){
         percentageDisplay.id = 'percentileMarkersDisplay-curr_distribution_' + i;
         percentageDisplay.style.color = percentileDisplayClr;
         percentageDisplay.style.border = "2px solid " + percentileDisplayClr;
-        let percentileValue = (allActivities[Math.floor(len*(percentilesOfInterest[i]/100))][sortBy]).toFixed(2);
-        /*
-        if (type == "pace_distribution") {
-            // percentileValue = parseFloat(convert(percentileValue)).toFixed(2);
-            percentileValue = convert(percentileValue, 2);
-        }*/
+        let val = allActivities[Math.floor(len*(percentilesOfInterest[i]/100))][sortBy]
+        let percentileValue;
+
+        if (sortBy == "maxPace" || sortBy == "pace") {
+            percentileValue = convert(val, 2);
+        } else if (sortBy == "time" || sortBy == "elapsedTime") {
+            percentileValue = convert(val, 0);
+        } else {
+            percentileValue = val.toFixed(2)
+        }
+ 
         percentageDisplay.innerHTML = percentileValue + " " + scrub[sortBy].abbrUnit + "<br>(" + percentilesOfInterest[i] + "th percentile)";
         percentageDisplay.style.left = calculatedPosition + "%";
 
@@ -664,27 +672,27 @@ function renderTypeGraph(array, sortBy){
 
     }
 
-    if(array != undefined){
-        //console.log("array is: " + array)
+    if(curr_distribution != undefined){
+        //console.log("curr_distribution is: " + curr_distribution)
         let greatest = -1;
         
-        //get the greatest element in the array
-        for (var j = 0; j< array.length; j++){
-            if(array[j].count > greatest){
-                greatest = array[j].count;
+        //get the greatest element in the curr_distribution
+        for (var j = 0; j< curr_distribution.length; j++){
+            if(curr_distribution[j].count > greatest){
+                greatest = curr_distribution[j].count;
             }
         }
 
         //draw graph + bars
         let i = 0;
-        while(i < array.length){
-            const red = (clr1.r + (clr2.r - clr1.r) * (i / array.length))
-            const green = (clr1.g + (clr2.g - clr1.g) * (i / array.length))
-            const blue = (clr1.b + (clr2.b - clr1.b) * (i / array.length))
+        while(i < curr_distribution.length){
+            const red = (clr1.r + (clr2.r - clr1.r) * (i / curr_distribution.length))
+            const green = (clr1.g + (clr2.g - clr1.g) * (i / curr_distribution.length))
+            const blue = (clr1.b + (clr2.b - clr1.b) * (i / curr_distribution.length))
             const gradientClr = 'rgb(' + red + ', ' + green + ', ' + blue + ')'
             var o = document.createElement("div");
             o.className = "verticalOuterContainer";
-            o.style.width = 100/array.length + "%";
+            o.style.width = 100/curr_distribution.length + "%";
             document.getElementById("curr_distribution").appendChild(o);
 
             var verticalHolder = document.createElement("div");
@@ -705,30 +713,30 @@ function renderTypeGraph(array, sortBy){
             //draw bars
             var verticalHolderStat = document.createElement("p");
             verticalHolderStat.className= "verticalHolderStat";
-            if(array[i].count / greatest > 0.2){
-                verticalHolderStat.innerHTML = array[i].count;
+            if(curr_distribution[i].count / greatest > 0.2){
+                verticalHolderStat.innerHTML = curr_distribution[i].count;
             }else{
-                verticalHolderStat.innerHTML = array[i].count;
+                verticalHolderStat.innerHTML = curr_distribution[i].count;
                 verticalHolderStat.style.fontSize = "0px";
                 //creating overflow text on the top of the
                 var verticalHolderStatTop = document.createElement("p");
                 verticalHolderStatTop.className = "verticalHolderStatTop";
-                verticalHolderStatTop.innerHTML = array[i].count;
-                verticalHolderStatTop.style.bottom = ((array[i].count / greatest) * (window.innerHeight / 4)) + "px"
+                verticalHolderStatTop.innerHTML = curr_distribution[i].count;
+                verticalHolderStatTop.style.bottom = ((curr_distribution[i].count / greatest) * (window.innerHeight / 4)) + "px"
                 document.getElementById("curr_distribution").getElementsByClassName("verticalHolder")[i].appendChild(verticalHolderStatTop);
             }
             
             verticalHolderStat.style.backgroundColor = gradientClr;
-            verticalHolderStat.style.height = ((array[i].count / greatest) * (window.innerHeight / 4)) + "px";
-            verticalHolderStat.style.marginTop = (((greatest - array[i].count) / greatest) * (window.innerHeight / 4)) + "px";
+            verticalHolderStat.style.height = ((curr_distribution[i].count / greatest) * (window.innerHeight / 4)) + "px";
+            verticalHolderStat.style.marginTop = (((greatest - curr_distribution[i].count) / greatest) * (window.innerHeight / 4)) + "px";
             verticalHolderStat.style.width = "100%";
             document.getElementById("curr_distribution").getElementsByClassName("verticalHolder")[i].appendChild(verticalHolderStat);
 
-            //console.log(array);
-            totalMileage += array[i].total_miles;
-            totalElevGain +=array[i].total_elevation_gain;
-            totalMovingTime +=array[i].total_time;
-            totalElapsedTime +=array[i].total_elapsed_time;
+            //console.log(curr_distribution);
+            totalMileage += curr_distribution[i].total_miles;
+            totalElevGain +=curr_distribution[i].total_elevation_gain;
+            totalMovingTime +=curr_distribution[i].total_time;
+            totalElapsedTime +=curr_distribution[i].total_elapsed_time;
 
             document.getElementById("curr_distribution_overview").style.color = scrub[sortBy].color;
             i++;

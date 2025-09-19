@@ -6,32 +6,19 @@ let scrub;
 
 let defaultClr1 = "#1688b5"
 let defaultClr2 = "#6e2aad"
-
-
-if (window.innerWidth > window.innerHeight) {
-    // landscape mode
-    scrub = {
-        pace: {unit: "seconds/mi", abbrUnit: "/mi", roundTo: 5, title: "Pace"},
-        uptime: {unit: "%", abbrUnit: "%", roundTo: 0.5, title: "Uptime", ceiling: 100},
-        distance: {unit: "miles", abbrUnit: "mi", roundTo: 1, title: "Distance"},
-        elevation: {unit: "feet", abbrUnit: "ft", roundTo: 5, title: "Elevation"},
-        time: {unit: "", abbrUnit: "", roundTo: 60, title: "Moving Time"},
-        elapsedTime: {unit: "", abbrUnit: "", roundTo: 60, title: "Elapsed Time"},
-        incline: {unit: "", abbrUnit: "%", roundTo: 0.05, title: "Incline"},
-        kudos: {unit: "", abbrUnit: "", roundTo: 1, title: "Kudos"},
-        cadence: {unit: "steps/min", abbrUnit: "spm", roundTo: 0.25, title: "Cadence"},
-        totalSteps: {unit: "steps", abbrUnit: "", roundTo: 1000, title: "Steps"},
-        stepsPerMile: {unit: "steps/mile", abbrUnit: "", roundTo: 10, title: "Steps per Mile"},
-        strideLength: {unit: "ft", abbrUnit: "ft", roundTo: 0.05, title: "Stride Length"},
-    }
-} else {
-    // portrait mode
-    scrub = {
-        pace: {left: 260, right: 600, increment: 34, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#149c1f", color2: "#6e2aad", unit: "seconds/mi", abbrUnit: ""},
-        uptime: {left: 60, right: 100, increment: 4, leftOutlier: true, rightOutlier: false, totalBars: null, color: "#b33bad", color2: "#2aad76", unit: "%", abbrUnit: "%"},
-        distance: {left: 0, right: 15, increment: 1.5, leftOutlier: false, rightOutlier: true, totalBars: null, color: "#1688b5", color2: '#ad2a3e', unit: "miles", abbrUnit: "mi"},
-        elevation: {left: 10, right: 510, increment: 50, leftOutlier: true, rightOutlier: true, totalBars: null, color: "#ff8400", color2: '#b80000', unit: "feet", abbrUnit: "ft"},
-    }
+scrub = {
+    pace: {unit: "seconds/mi", abbrUnit: "/mi", roundTo: 5, title: "Pace"},
+    uptime: {unit: "%", abbrUnit: "%", roundTo: 0.5, title: "Uptime", ceiling: 100},
+    distance: {unit: "miles", abbrUnit: "mi", roundTo: 1, title: "Distance"},
+    elevation: {unit: "feet", abbrUnit: "ft", roundTo: 5, title: "Elevation"},
+    time: {unit: "", abbrUnit: "", roundTo: 60, title: "Moving Time"},
+    elapsedTime: {unit: "", abbrUnit: "", roundTo: 60, title: "Elapsed Time"},
+    incline: {unit: "", abbrUnit: "%", roundTo: 0.05, title: "Incline"},
+    kudos: {unit: "", abbrUnit: "", roundTo: 1, title: "Kudos"},
+    cadence: {unit: "steps/min", abbrUnit: "spm", roundTo: 0.25, title: "Cadence"},
+    totalSteps: {unit: "steps", abbrUnit: "", roundTo: 1000, title: "Steps"},
+    stepsPerMile: {unit: "steps/mile", abbrUnit: "", roundTo: 10, title: "Steps per Mile"},
+    strideLength: {unit: "ft", abbrUnit: "ft", roundTo: 0.05, title: "Stride Length"},
 }
 
 Object.keys(scrub).forEach(key => {
@@ -397,8 +384,9 @@ function getBarTitles(i, scrubName, unit){
 }
 
 var currentField = null;
-function showIncrementMenu(field){
-    currentField = field;
+function showIncrementMenu(){
+    field = document.getElementsByName("histogramVariable")[0].value
+    currentField = field
     document.getElementById("settingsTitle").innerHTML = "Edit " + field + " increments"
     document.getElementById("settingsTitle").style.color = scrub[field].color
     document.getElementById("settings").style.display = "block";
@@ -427,6 +415,8 @@ function showIncrementMenu(field){
     document.getElementsByName("distributionColor")[0].value = scrub[field].color;
     document.getElementsByName("distributionColor2")[0].value = scrub[field].color2;
 }
+
+document.getElementsByClassName("incrementBtn")[0].addEventListener("click", showIncrementMenu)
 
 function closeSettingsMenu(){
     document.getElementById("settings").style.display = "none";
@@ -498,7 +488,18 @@ function renderTypeGraph(sortBy){
     const minBarsLandscape = 14
     const maxBarsLandscape = 20
     const minBarsPortrait = 7
-    const maxBarsPortrait = 12
+    const maxBarsPortrait = 10
+
+    let minBars;
+    let maxBars;
+
+    if (window.innerHeight >= window.innerWidth) {
+        minBars = minBarsPortrait
+        maxBars = maxBarsPortrait
+    } else {
+        minBars = minBarsLandscape
+        maxBars = maxBarsLandscape
+    }
 
     //array is the array that is getting iterated over
     //type is the destination where the graph is getting added
@@ -531,8 +532,6 @@ function renderTypeGraph(sortBy){
     /* place visual percentiles */
     const percentilesOfInterest = [5, 25, 50, 75, 95];
 
-    
-    
     // set the minimum and maximum values
     const len = allActivities.length;
     let percentVal5 = (allActivities[Math.floor(len*(0.05))][sortBy])
@@ -553,7 +552,7 @@ function renderTypeGraph(sortBy){
             testIncrement = scrub[sortBy].roundTo*i
             numBars = Math.ceil((percentVal95Adjusted - percentVal5Adjusted) / testIncrement)
 
-            if ((numBars <= maxBarsLandscape && numBars >= minBarsLandscape) || numBars < minBarsLandscape) {
+            if ((numBars <= maxBars && numBars >= minBars) || numBars < minBars) {
                 percentVal95Adjusted = percentVal5Adjusted + (numBars*testIncrement)
                 break
             }
@@ -763,7 +762,7 @@ function createRunLookup (id) {
 
     console.log(id);
     
-    const propertiesToParse = [{display: 'mi', property: 'distance', decimalPlaces: 3, min: 'Shorter', max: 'Longer'}, {display: '/mi', property: 'pace', decimalPlaces: 2, min: 'Faster', max: 'Slower'}, {display: 'ft gain', property: 'elevation', decimalPlaces: 2, min: 'Less', max: 'More'}, {display: '% uptime', property: 'uptime', decimalPlaces: 2, min: 'Less', max: 'More'}, {display: 'moving time', property: 'time', decimalPlaces: 0, min: 'Shorter', max: 'Longer'}, {display: 'elapsed time', property: 'elapsedTime', decimalPlaces: 0, min: 'Shorter', max: 'Longer'}, {display: "% incline", property: 'incline' , decimalPlaces: 2, min: 'Gentler', max: 'Steeper'}, {display: 'kudos', property: 'kudos', decimalPlaces: 0, min: 'Less', max: 'More'}, {display: 'steps/min', property: 'cadence', decimalPlaces: 2, min: 'Lower', max: 'Higher'}, {display: 'steps/mile', property: 'stepsPerMile', decimalPlaces: 0, min: 'Less', max: 'More'}, {display: 'ft/stride', property: 'strideLength', decimalPlaces: 3, min: 'Shorter', max: 'Longer'}]
+    const propertiesToParse = [{display: 'mi', property: 'distance', decimalPlaces: 3, min: 'Shorter', max: 'Longer'}, {display: '/mi', property: 'pace', decimalPlaces: 2, min: 'Faster', max: 'Slower'}, {display: 'ft gain', property: 'elevation', decimalPlaces: 2, min: 'Less', max: 'More'}, {display: '% uptime', property: 'uptime', decimalPlaces: 2, min: 'Less', max: 'More'}, {display: 'moving time', property: 'time', decimalPlaces: 0, min: 'Shorter', max: 'Longer'}, {display: 'elapsed time', property: 'elapsedTime', decimalPlaces: 0, min: 'Shorter', max: 'Longer'}, {display: "% incline", property: 'incline' , decimalPlaces: 2, min: 'Gentler', max: 'Steeper'}, {display: 'kudos', property: 'kudos', decimalPlaces: 0, min: 'Less', max: 'More'}, {display: 'steps/min', property: 'cadence', decimalPlaces: 2, min: 'Lower', max: 'Higher'}, {display: 'steps/mile', property: 'stepsPerMile', decimalPlaces: 0, min: 'Less', max: 'More'}, {display: 'ft/stride', property: 'strideLength', decimalPlaces: 3, min: 'Shorter', max: 'Longer'}, {display: 'steps', property: 'totalSteps', decimalPlaces: 0, min: 'Less', max: 'More'}]
 
     const runObject = allActivities[allActivities.map(e => e.id).indexOf(id)]
 

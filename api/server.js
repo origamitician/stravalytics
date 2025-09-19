@@ -91,11 +91,13 @@ app.get('/api/activities/:accountID', (req, res) => {
                     //make sure this is an array of Promise objects.
                     Promise.all([
                         getIndividualPaginatedData(1, key),
-                        getIndividualPaginatedData(2, key), 
+                        /*getIndividualPaginatedData(2, key), 
                         getIndividualPaginatedData(3, key), 
                         getIndividualPaginatedData(4, key),
                         getIndividualPaginatedData(5, key), 
-                        getIndividualPaginatedData(6, key)]).then(() => {
+                        getIndividualPaginatedData(6, key),
+                        getIndividualPaginatedData(7, key)
+                        */]).then(() => {
                             res.send(allActivities)
                         })
                 })
@@ -144,5 +146,3 @@ mongoose.connect(process.env.MONGO_URI, () => {
         console.log("Server is running on port: " + port);
     })
 })
-
-

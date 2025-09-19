@@ -324,6 +324,9 @@ body{
     margin: 0 0 0 2%;
 }
 
+.analysisVariable {
+    font-size: 150%;
+}
 .settingsLabelsBox{
     width: 10%;
     font-size: 110%;

@@ -8,6 +8,7 @@ let defaultClr1 = "#1688b5"
 let defaultClr2 = "#6e2aad"
 scrub = {
     pace: {unit: "seconds/mi", abbrUnit: "/mi", roundTo: 5, title: "Pace"},
+    maxPace: {unit: "seconds/mi", abbrUnit: "/mi", roundTo: 5, title: "Pace"},
     uptime: {unit: "%", abbrUnit: "%", roundTo: 0.5, title: "Uptime", ceiling: 100},
     distance: {unit: "miles", abbrUnit: "mi", roundTo: 1, title: "Distance"},
     elevation: {unit: "feet", abbrUnit: "ft", roundTo: 5, title: "Elevation"},
@@ -30,6 +31,7 @@ Object.keys(scrub).forEach(key => {
     scrub[key].leftOutlier = true
     scrub[key].rightOutlier = true
     scrub[key].totalBars = null
+    scrub[key].edited = false
 })
 
 // to establish gradients. Totally didn't copy this from StackOverflow
@@ -434,14 +436,13 @@ function applySettings(){
 
     scrub[key].leftOutlier = document.getElementsByName("leftOutlierCheck")[0].checked;
     scrub[key].rightOutlier = document.getElementsByName("rightOutlierCheck")[0].checked;
+
+    scrub[key].totalBars = Math.round((scrub[key].right - scrub[key].left) / scrub[key].increment) + Number(scrub[key].leftOutlier) + Number(scrub[key].rightOutlier)
     scrub[key].color = document.getElementsByName("distributionColor")[0].value;
     scrub[key].color2 = document.getElementsByName("distributionColor2")[0].value;
     document.getElementById("settings").style.display = "none";
 
-    pace_distribution = [];
-    elev_distribution = [];
-    dist_distribution = [];
-    elapsed_distribution = [];
+    curr_distribution = []
     renderGraph()
 }
 
@@ -539,7 +540,9 @@ function renderTypeGraph(sortBy){
 
     // automatically set the maximum and minimum values, if the left and right values are null. If they're not null, don't bother.
 
-    if (scrub[sortBy].left === null && scrub[sortBy].right === null) {
+    // --> start manual computation for left and right outliers and number of bars.
+
+    if (scrub[sortBy].left === null && scrub[sortBy].right === null && !scrub[sortBy].edited) {
         // the optimal number of bars on PC is anywhere between 14 and 22, plus or minus 2. On mobile, it's 8-12, plus or minus 2.
 
         let percentVal5Adjusted = Math.floor(percentVal5 / scrub[sortBy].roundTo)*scrub[sortBy].roundTo
@@ -573,6 +576,8 @@ function renderTypeGraph(sortBy){
         scrub[sortBy].increment = testIncrement
         scrub[sortBy].totalBars = numBars + Number(scrub[sortBy].leftOutlier) + Number(scrub[sortBy].rightOutlier)
     }
+
+    // --> end manual computation for left and right outliers and number of bars.
 
     console.log("The total number of bars is: " + scrub[sortBy].totalBars)
 

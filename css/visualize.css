@@ -1,9 +1,9 @@
 body{
-    font-family: 'Roboto slab', sans-serif;
-    /* font-family: 'Nunito', sans-serif; */
-    /* font-family: 'National Park', sans-serif; */
-    /* font-family: 'Wix MadeFor Display', sans-serif; */
-    /* font-family: 'Inter', sans-serif; */
+    /*font-family: 'Roboto slab', sans-serif;*/
+    /*font-family: 'Nunito', sans-serif; */
+    /*font-family: 'National Park', sans-serif;*/
+    font-family: 'Wix MadeFor Display', sans-serif; 
+    /*font-family: 'Inter', sans-serif;*/
     font-size: 100%;
     overflow-x: hidden;
 }
@@ -66,10 +66,6 @@ body{
     margin-top: 3%;
 }
 
-.infoWrapper{
-    display: none;
-}
-
 #histogramDiv {
     width: 90%;
     margin-left: 5%;
@@ -121,16 +117,16 @@ body{
     width: 100%;
     margin-left: 0%;
     margin-top: 3%;
+    display: none;
 }
 
 .infoWrapperLeft{
-    width: 35%;
+    width: 100%;
 }
 
 
 .infoWrapperRight{
-    margin-left: 5%;
-    width: 60%;
+    width: 100%;
     overflow-y:scroll;
     border: 3px solid black;
     overflow-x: hidden;
@@ -138,7 +134,7 @@ body{
 
 .info{
     font-size: 115%;
-    margin-bottom: 10%;
+    margin-bottom: 0%;
     
 }
 
@@ -172,10 +168,11 @@ body{
     padding-left: 5%;
     margin-top: 0;
 }
+
 .indivGrid{
     display: inline-block;
     text-align: center;
-    font-size: 90%;
+    font-size: 110%;
     /*border: 2px solid pink;*/
     box-sizing: border-box;
 }

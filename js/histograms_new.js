@@ -7,19 +7,19 @@ let scrub;
 let defaultClr1 = "#1688b5"
 let defaultClr2 = "#6e2aad"
 scrub = {
-    pace: {unit: "seconds/mi", abbrUnit: "/mi", roundTo: 5, title: "Pace"},
-    maxPace: {unit: "seconds/mi", abbrUnit: "/mi", roundTo: 5, title: "Pace"},
-    uptime: {unit: "%", abbrUnit: "%", roundTo: 0.5, title: "Uptime", ceiling: 100},
-    distance: {unit: "miles", abbrUnit: "mi", roundTo: 1, title: "Distance"},
-    elevation: {unit: "feet", abbrUnit: "ft", roundTo: 5, title: "Elevation"},
-    time: {unit: "", abbrUnit: "", roundTo: 60, title: "Moving Time"},
-    elapsedTime: {unit: "", abbrUnit: "", roundTo: 60, title: "Elapsed Time"},
-    incline: {unit: "", abbrUnit: "%", roundTo: 0.05, title: "Incline"},
-    kudos: {unit: "", abbrUnit: "", roundTo: 1, title: "Kudos"},
-    cadence: {unit: "steps/min", abbrUnit: "spm", roundTo: 0.25, title: "Cadence"},
-    totalSteps: {unit: "steps", abbrUnit: "", roundTo: 1000, title: "Steps"},
-    stepsPerMile: {unit: "steps/mile", abbrUnit: "", roundTo: 10, title: "Steps per Mile"},
-    strideLength: {unit: "ft", abbrUnit: "ft", roundTo: 0.05, title: "Stride Length"},
+    pace: {unit: "seconds/mi", abbrUnit: "/mi", roundTo: 5, decimalPlaces: 2, title: "Pace"},
+    maxPace: {unit: "seconds/mi", abbrUnit: "/mi", roundTo: 5, decimalPlaces: 2, title: "Pace"},
+    uptime: {unit: "%", abbrUnit: "%", roundTo: 0.5, title: "Uptime", decimalPlaces: 2, ceiling: 100},
+    distance: {unit: "miles", abbrUnit: "mi", roundTo: 1, decimalPlaces: 3, title: "Distance"},
+    elevation: {unit: "feet", abbrUnit: "ft", roundTo: 5, decimalPlaces: 2, title: "Elevation"},
+    time: {unit: "", abbrUnit: "", roundTo: 60, decimalPlaces: 0, title: "Moving Time"},
+    elapsedTime: {unit: "", abbrUnit: "", roundTo: 60, decimalPlaces: 0, title: "Elapsed Time"},
+    incline: {unit: "", abbrUnit: "%", roundTo: 0.05, decimalPlaces: 3, title: "Incline"},
+    kudos: {unit: "", abbrUnit: "", roundTo: 1, decimalPlaces: 0, title: "Kudos"},
+    cadence: {unit: "steps/min", abbrUnit: "spm", roundTo: 0.25, decimalPlaces: 2, title: "Cadence"},
+    totalSteps: {unit: "steps", abbrUnit: "", roundTo: 1000, decimalPlaces: 0, title: "Steps"},
+    stepsPerMile: {unit: "steps/mile", abbrUnit: "", roundTo: 10, decimalPlaces: 0, title: "Steps per Mile"},
+    strideLength: {unit: "ft", abbrUnit: "ft", roundTo: 0.05, decimalPlaces: 3, title: "Stride Length"},
 }
 
 Object.keys(scrub).forEach(key => {
@@ -122,8 +122,6 @@ function showMoreStats(){
     
     this.style.border = "2px dotted black";
     document.getElementById("curr_distribution_wrapper").style.display = "block";
-    document.getElementById("curr_distribution_wrapper").style.display = "flex";
-
     let span1 = document.getElementById("curr_distribution_counter").getElementsByTagName("span")[0]
     let span2 = document.getElementById("curr_distribution_counter").getElementsByTagName("span")[1]
     let span3 = document.getElementById("curr_distribution_counter").getElementsByTagName("span")[2]
@@ -138,6 +136,8 @@ function showMoreStats(){
     span2.style.fontWeight = "bold";
 
     span3.innerHTML = scrub[varToAnalyze].title.toLowerCase()
+
+    showStatsOnHTML(processed[0], processed[2], varToAnalyze)
 }
 
 function disableStats(){
@@ -145,13 +145,13 @@ function disableStats(){
     document.getElementById(processed[1] + "_info").innerHTML = "Hover over graph to show more details!"
 }
 
-function showStatsOnHTML(location, id, color){
+function showStatsOnHTML(id, color, varToHighlight){
     var convertedMileTime = convert(curr_distribution[id].total_time / curr_distribution[id].total_miles, 2)
     var convertedKmTime = convert((curr_distribution[id].total_time / curr_distribution[id].total_miles) / 1.609, 2)
     //console.log(convertedMileTime)
     //console.log(convertedKmTime);
     try{
-        document.getElementById(location + "_info").innerHTML = "<b> Average pace: </b>" + convertedMileTime + "/mi (" + convertedKmTime +  "/km) <br><br>" +
+        document.getElementById("curr_distribution_info").innerHTML = "<b> Average pace: </b>" + convertedMileTime + "/mi (" + convertedKmTime +  "/km) <br><br>" +
 
         "<b> Average distance: </b>" + (curr_distribution[id].total_miles / curr_distribution[id].count).toFixed(3) + " mi <br> (shortest " + curr_distribution[id].least_miles.toFixed(3) + " mi; longest " + curr_distribution[id].most_miles.toFixed(3) + " mi) <br><br>" + 
 
@@ -162,142 +162,95 @@ function showStatsOnHTML(location, id, color){
         //do nothing here since its buggy
     }
 
-    var chartRows = document.getElementById(location + "_wrapper").getElementsByClassName('outerDiv');
+    // remove all rows from the table
+    var chartRows = document.getElementById("curr_distribution_wrapper").getElementsByClassName('outerDiv');
 
     while(chartRows[0]) {
         chartRows[0].parentNode.removeChild(chartRows[0]);
     }
 
-    if((document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0])){
-        document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].remove()
+    if((document.getElementById("curr_distribution_wrapper").getElementsByClassName("headerDiv")[0])){
+        document.getElementById("curr_distribution_wrapper").getElementsByClassName("headerDiv")[0].remove()
     }
 
-    //render the chart
+    // create the table
     for (var i = -1; i < curr_distribution[id].list_of_activities.length; i++){
         var outerDiv = document.createElement("div");
 
         if(i >= 0){
             outerDiv.className = "outerDiv";
-            document.getElementById(location + "_wrapper").getElementsByClassName("infoWrapperRight")[0].appendChild(outerDiv);
+            document.getElementById("curr_distribution_wrapper").getElementsByClassName("infoWrapperRight")[0].appendChild(outerDiv);
         }else {
-                outerDiv.className = "headerDiv"
-                document.getElementById(location + "_wrapper").getElementsByClassName("infoWrapperRight")[0].appendChild(outerDiv);
-            
+            outerDiv.className = "headerDiv"
+            document.getElementById("curr_distribution_wrapper").getElementsByClassName("infoWrapperRight")[0].appendChild(outerDiv);
         }
 
-        document.getElementById(location + "_wrapper").getElementsByClassName("infoWrapperRight")[0].style.height = window.innerHeight/2 + "px"
+        document.getElementById("curr_distribution_wrapper").getElementsByClassName("infoWrapperRight")[0].style.height = window.innerHeight/2 + "px"
 
         let span;
         span = document.createElement("span");
         span.className = "indivGrid";
         //span.id = "date";
-        span.style.width = "15%"
+        span.style.width = "10%"
         span.style.textAlign = "left";
         if(i == -1){
             span.innerHTML = "Date"
-            document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
+            document.getElementById("curr_distribution_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
         }else{
             let date = curr_distribution[id].list_of_activities[i].startDate.split("T")[0].split("-")
             span.innerHTML = date[1] + "/" + date[2] + "/" +date[0].substring(2, 4)
-            document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
+            document.getElementById("curr_distribution_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
         }
         
         span = document.createElement("span");
         span.className = "indivGrid";
-        span.style.width = "25%"
+        span.style.width = "20%"
         span.style.textAlign = "left";
         span.id = "runLookupLink";
         //span.id = "title";
         if(i == -1){
             span.innerHTML = "Title"
-            document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
+            document.getElementById("curr_distribution_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
         }else{
-            /*if(array[id].list_of_activities[i].name.length > 30){
-                var innerLink = document.createTextNode(array[id].list_of_activities[i].name.substring(0, 30) + "...");
-            }else{
-                var innerLink = document.createTextNode(array[id].list_of_activities[i].name);
-            }
-            span.appendChild(innerLink)
-            span.style.color = "darkblue"
-            span.setAttribute("href", "https://strava.com/activities/" + array[id].list_of_activities[i].id);
-            span.setAttribute("target", "_blank");*/
-
-            if(curr_distribution[id].list_of_activities[i].name.length > 30){
-                span.innerHTML = curr_distribution[id].list_of_activities[i].name.substring(0, 30) + "...";
+            if(curr_distribution[id].list_of_activities[i].name.length > 50){
+                span.innerHTML = curr_distribution[id].list_of_activities[i].name.substring(0, 50) + "...";
             }else{
                 span.innerHTML  = curr_distribution[id].list_of_activities[i].name;
             }
             span.style.color = 'darkblue';
             span.style.textDecoration = 'underline';
             span.addEventListener('click', createRunLookup.bind(this, curr_distribution[id].list_of_activities[i].id))
-            document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
+            document.getElementById("curr_distribution_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
         }
 
-        span = document.createElement("span");
-        span.className = "indivGrid";
-        span.style.width = "15%"
-        if(location == "dist_distribution"){
-            span.style.fontWeight = "bold";
-            span.style.color = color;
-        }
-        if(i == -1){
-            span.innerHTML = "Distance"
-            document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
-        }else{
-            span.innerHTML = (curr_distribution[id].list_of_activities[i].distance).toFixed(3) + "mi"
-            document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
+        let defaultVariables = ["distance", "pace", "time","elapsedTime", "elevation"]
+
+        if (!defaultVariables.includes(varToHighlight)) {
+            defaultVariables.unshift(varToHighlight)
         }
 
-        span = document.createElement("span");
-        span.className = "indivGrid";
-        span.style.width = "15%"
-        if(location == "pace_distribution"){
-            span.style.fontWeight = "bold";
-            span.style.color = color;
-        }
-        if(i == -1){
-            span.innerHTML = "Pace /mi"
-            document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
-        }else{
-            if(curr_distribution[id].list_of_activities[i].pace == 0){
-                span.innerHTML = "[INVALID]"
+        defaultVariables.forEach(item => {
+            span = document.createElement("span");
+            span.className = "indivGrid";
+
+            span.style.width = (70 / defaultVariables.length) + "%"
+
+            if(i == -1){
+                span.innerHTML = scrub[item].title
+                document.getElementById("curr_distribution_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
             }else{
-                let convertedTime = (curr_distribution[id].list_of_activities[i].pace)
-                span.innerHTML = convert(convertedTime, 2)
+                if (item == varToHighlight) {
+                    span.style.color = color
+                    span.style.fontWeight = "bold"
+                }
+                if (item == "time" || item == "elapsedTime" || item == "pace" || item == "maxPace") {
+                    span.innerHTML = convert(curr_distribution[id].list_of_activities[i][item], scrub[item].decimalPlaces)
+                } else {
+                    span.innerHTML = (curr_distribution[id].list_of_activities[i][item]).toFixed(scrub[item].decimalPlaces) + scrub[item].abbrUnit
+                }
+                document.getElementById("curr_distribution_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
             }
-            
-            document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
-        }
-
-        span = document.createElement("span");
-        span.className = "indivGrid";
-        span.style.width = "15%"
-        if(location == "time_distribution"){
-            span.style.fontWeight = "bold";
-            span.style.color = color;
-        }
-        if(i == -1){
-            span.innerHTML = "% Uptime"
-            document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
-        }else{
-            span.innerHTML = ((curr_distribution[id].list_of_activities[i].time / curr_distribution[id].list_of_activities[i].elapsedTime)*100).toFixed(2) + "%";
-            document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
-        }
-
-        span = document.createElement("span");
-        span.className = "indivGrid";
-        span.style.width = "15%"
-        if(location == "elev_distribution"){
-            span.style.fontWeight = "bold";
-            span.style.color = color;
-        }
-        if(i == -1){
-            span.innerHTML = "Elev. gain"
-            document.getElementById(location + "_wrapper").getElementsByClassName("headerDiv")[0].appendChild(span)
-        }else{
-            span.innerHTML = (curr_distribution[id].list_of_activities[i].elevation).toFixed(2) + "ft"
-            document.getElementById(location + "_wrapper").getElementsByClassName("outerDiv")[i].appendChild(span)
-        }
+        })
     }
 }
 
